@@ -2070,6 +2070,7 @@ public class ProjectController {
                     fileInfoEntity.setCreator(getUser().getUsername());
                     fileInfoEntity.setCreateTime(myFmt2.format(new Date()));
                     fileInfoEntity.setAudit(0);
+                    //fileInfoEntity.setFileClassify(1);
                     fileInfoEntity.setFileClassify(1);
 
                     File file = new File(projectFilePath + savFilePath);
