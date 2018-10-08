@@ -218,6 +218,9 @@ function OnPhaseItemChange() {
                 // }
             })
 
+            if(selHtml==""||selHtml.length<=0){
+                selHtml += "<option value='-1' selected='selected'>--全部文件--</option>";
+            }
             $("#attachlist").html("");
             $("#attachlist").append(selHtml);
             refreshFileTable();

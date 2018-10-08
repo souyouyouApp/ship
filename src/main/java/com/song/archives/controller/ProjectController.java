@@ -1302,7 +1302,7 @@ public class ProjectController {
 
     @RequestMapping(value = "DeleteFilesByIds")
     @ResponseBody
-    public String DeleteFilesByIds(@RequestParam(value = "fids") long[] fids, @RequestParam(value = "pid") Long pid, @RequestParam(value = "attachfid") long attachfid, @RequestParam(value = "phaseid") long phaseid) {
+    public String DeleteFilesByIds(@RequestParam(value = "fids") long[] fids, @RequestParam(value = "pid") Long pid, @RequestParam(value = "attachfid",defaultValue = "-1") long attachfid, @RequestParam(value = "phaseid",defaultValue = "-1") long phaseid) {
         result = new JSONObject();
         operationLogInfo = "用户【" + getUser().getUsername() + "】删除文件【";
         try {
