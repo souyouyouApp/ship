@@ -129,11 +129,15 @@
 
 
     function AddCyDanwei() {
-        $("#type").val("0");
+        $("#type").val("");
         $("#editDanweiId").val("0");
         $("#danweiName").val("");
         $("#contractName").val("");
         $("#mobile").val("");
+        $("#contractTime").val("");
+        $("#yanshouTime").val("");
+        $("#fee").val("");
+        $("#content").val("");
 
         $("#btn_addcydanwei").trigger("click");
     }

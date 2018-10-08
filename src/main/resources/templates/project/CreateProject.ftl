@@ -405,6 +405,7 @@
             if (htmlstr != null && htmlstr.length > 0) {
                 //$("#proLeaders").innerHTML(htmlstr);
                 $("#proLeaders").append(htmlstr);
+                $("#proLeaders").val("");
                 $("#proJoiners").append(htmlstr);
                 $("#proCompleteors").append(htmlstr);
                 $('#proJoiners').selectpicker();

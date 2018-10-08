@@ -167,7 +167,10 @@
     }
 
     function ImportProject() {
+
         $("#importProjModal .modal-body").html(promodalContent);
+
+        $("#startImport").removeAttr("disabled");
 
         $('#importProjFile').fileinput({//初始化上传文件框
             showUpload: false,
