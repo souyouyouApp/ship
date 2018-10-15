@@ -315,6 +315,7 @@
     }
 
     function gotoSearchdetail(resultKey, resultType, miniResultType) {
+
         if (resultType == "project") {
             $("#page-wrapper").load("ProjectDetail?pid=" + resultKey);
         } else if (resultType == "anli") {
@@ -330,6 +331,11 @@
             gotoSearchdetail(resultKey, miniResultType);
         }
 
+
+        $('.modal').map(function () {
+            $(this).modal('hide');
+        });
+        $(".modal-backdrop").remove();
     }
 
     //请求服务数据时所传参数
