@@ -20,6 +20,16 @@ public class NotifyEntity implements Serializable {
     private String personal;
     private Integer fileClassify;
     private Long fileId;
+    private String fileName;
+
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public Long getFileId() {
         return fileId;

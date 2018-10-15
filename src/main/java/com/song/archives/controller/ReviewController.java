@@ -85,6 +85,7 @@ public class ReviewController {
             notify.setPersonal(fileInfoEntity.getCreator());
             notify.setFileClassify(fileClassify);
             notify.setFileId(fileId);
+            notify.setFileName(fileInfoEntity.getFileName());
             notifyRepository.save(notify);
 
             fileInfoRepository.save(fileInfoEntity);

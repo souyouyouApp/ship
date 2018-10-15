@@ -1,3 +1,4 @@
+
 <nav class="navbar navbar-default navbar-static-top" role="navigation"
      style="margin-bottom: 0; background-image: url('static/img/banner.jpg')">
     <div class="navbar-header">
@@ -56,16 +57,17 @@
             result = JSON.parse(result);
 
             if (result.msg == "success") {
-
+                var liStr = "";
                 if (result.result.length > 0 ){
                     $('.fa-bell').css('color','red');
                     $.each( result.result, function( index, val ) {
 //                        <span class="pull-right text-muted small">12 minutes ago</span>
-                        var liStr = '<li class="divider"></li> <li> <a onclick="notifyDetail('+this.fileId+','+this.fileClassify+')"> <div> <i class="fa fa-twitter fa-fw"></i>'+this.content+' </div></a></li>'
-                        $('.dropdown-alerts').html(liStr);
+                        liStr += '<li class="divider"></li> <li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li>'
+
                     } );
+                    $('.dropdown-alerts').html(liStr);
                 }else {
-                    var liStr = '<li class="divider"></li> <li> <a href="#"> <div> <i class="fa fa-twitter fa-fw"></i><b>暂无通知</b> </div></a></li>'
+                     liStr += '<li class="divider"></li> <li> <a href="#"> <div> <i class="fa fa-twitter fa-fw"></i><b>暂无通知</b> </div></a></li>'
 
                     $('.dropdown-alerts').html(liStr)
                 }
@@ -74,36 +76,58 @@
     })
     
     
-    function notifyDetail(fileId,fileClassify) {
-        $.ajax({
-            type: "post",
-            url: "findTidByFileId",
-            data: {fileId: fileId},
-            async: false,
-            success: function (data) {
-                /**
-                * 1 项目文件
-                * 2 案例库文件
-                * 3 资料库文件
-                * 4 专家库
-                * 5 公告库
-                 **/
-                switch (fileClassify){
-                    case 1:
-                        $("#page-wrapper").load("ProjectDetail?pid=" + data);
-                        break;
-                    case 2:
-                        $("#page-wrapper").load("createAnliPage?aid=" + data);
-                        break;
-                    case 3:
-                        $("#page-wrapper").load("createData?zid=" + data);
-                        break;
-                    case 5:
-                        $("#page-wrapper").load("createAnnoucePage?aid=" + data);
-                        break;
-                }
-            }
+    function notifyDetail(fileName,fileClassify,content) {
+
+        /**
+         * 1 项目文件
+         * 2 案例库文件
+         * 3 资料库文件
+         * 4 专家库
+         * 5 公告库
+         **/
+        var clssify = '';
+        switch (fileClassify){
+            case 1:
+                clssify = '项目文件';
+//              $("#page-wrapper").load("ProjectDetail?pid=" + data);
+                break;
+            case 2:
+                clssify = '案例文件';
+//              $("#page-wrapper").load("createAnliPage?aid=" + data);
+                break;
+            case 3:
+                clssify = '资料文件';
+//              $("#page-wrapper").load("createData?zid=" + data);
+                break;
+            case 5:
+                clssify = '公告文件';
+//              $("#page-wrapper").load("createAnnoucePage?aid=" + data);
+                break;
+        }
+
+//        layer.alert(clssify+'['+fileName+']:'+content, {
+//            skin: 'layui-layer-molv' //样式类名
+//            ,closeBtn: 0
+//        });
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-demo', //样式类名
+            area: ['500px', '500px'],
+            closeBtn: 1, //不显示关闭按钮
+            anim: 2,
+            shadeClose: true, //开启遮罩关闭
+            content: '<div class="content"><form class="form-horizontal"><div class="form-group"><label for="name" class="col-sm-2 control-label">文件类别</label><div class="col-sm-4">'+clssify+'</div></div><div class="form-group"><label for="name" class="col-sm-2 control-label">文件名称</label><div class="col-sm-4">'+fileName+'</div></div><div class="form-group"><label for="name" class="col-sm-2 control-label">审核信息</label><div class="col-sm-4">'+content+'</div></div></form></div>'
         });
+
+//        $.ajax({
+//            type: "post",
+//            url: "findTidByFileId",
+//            data: {fileId: fileId},
+//            async: false,
+//            success: function (data) {
+//
+//            }
+//        });
 
         
     }
