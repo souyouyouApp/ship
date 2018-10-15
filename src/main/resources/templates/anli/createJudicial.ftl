@@ -624,9 +624,9 @@
                                 viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                             }
 
-                            if(audit == -1){
+                            if(fileType == 1 && audit == -1){
                                 viewDiv += '<label style="margin-left: 20px;color: red;">审核未通过</label>'
-                            }else if(audit == 0){
+                            }else if(fileType == 1 && audit == 0){
                                 viewDiv = '<label style="margin-left: 20px;color: grey;">审核中</label>'
                             }
 

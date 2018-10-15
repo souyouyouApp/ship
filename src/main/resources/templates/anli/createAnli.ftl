@@ -780,9 +780,9 @@
                             }
 
 
-                            if(audit == -1){
+                            if(fileType == 1 && audit == -1){
                                 viewDiv += '<label style="margin-left: 20px;color: red;">审核未通过</label>'
-                            }else if(audit == 0){
+                            }else if(fileType == 1 && audit == 0){
                                 viewDiv = '<label style="margin-left: 20px;color: grey;">审核中</label>'
                             }
 
