@@ -62,7 +62,7 @@
                     $('.fa-bell').css('color','red');
                     $.each( result.result, function( index, val ) {
 //                        <span class="pull-right text-muted small">12 minutes ago</span>
-                        liStr += '<li class="divider"></li> <li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li>'
+                        liStr += '<div id="'+this.id+'" ><li class="divider"></li> <li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
 
                     } );
                     $('.dropdown-alerts').html(liStr);
@@ -74,9 +74,19 @@
             }
         });
     })
-    
-    
-    function notifyDetail(fileName,fileClassify,content) {
+
+
+    function delNotify(id) {
+
+        $.post("delNotify", {nId:id}, function (result) {
+            result = JSON.parse(result);
+            if (result.msg == 'success') {
+                layer.msg('删除成功')
+                $('#'+id).remove()
+            }
+        });
+    }
+     function notifyDetail(fileName,fileClassify,content) {
 
         /**
          * 1 项目文件

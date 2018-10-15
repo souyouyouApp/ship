@@ -134,6 +134,36 @@ public class ReviewController {
     }
 
 
+
+    @ArchivesLog(operationType = "delNotify", operationName = "删除通知信息")
+    @RequestMapping(value = "/delNotify")
+    @ResponseBody
+    String delNotify(@RequestParam(value = "nId") Long nId) {
+
+        result = new JSONObject();
+        operationLogInfo = "用户【" + getUser().getUsername() + "】删除通知信息【";
+        NotifyEntity notifyEntity = null;
+        try{
+            notifyEntity = notifyRepository.findOne(nId);
+
+            notifyRepository.delete(notifyEntity);
+            msg = SUCCESS;
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            msg = "delete notify failed";
+
+        }
+
+
+        operationLogInfo = notifyEntity.getContent() + "】,操作结果【" + msg + "】";
+        result.put("msg", msg);
+        result.put("operationLog", operationLogInfo);
+        return result.toString();
+    }
+
+
+
     /**
      * 文件列表
      *
