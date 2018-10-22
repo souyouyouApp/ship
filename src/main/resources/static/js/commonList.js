@@ -11,8 +11,9 @@ function checkMenu(type){
             result = JSON.parse(result);
 
             if (result.result.length == 0){
-                layer.msg("请创建菜单后,再进行相关操作")
-                $("#page-wrapper").load("menuList/"+type);
+                layer.msg("请联系系统管理员创建菜单后,再进行相关操作")
+                return;
+                // $("#page-wrapper").load("menuList/"+type);
             }
 
         }

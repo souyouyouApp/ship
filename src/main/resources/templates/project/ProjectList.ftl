@@ -53,10 +53,9 @@
                     onclick="ImportProject()" class="btn btn-primary" style="margin-left: 20px;">
                 <span class="glyphicon glyphicon-import" aria-hidden="true"></span>导入项目
             </button>
-            <button id="btn_downloadTemplate" type="button"
-                    onclick="DownProjectTemplate()" class="btn btn-primary" style="margin-left: 20px;">
+            <a id="btn_downloadTemplate" href="downLoadDataTempate?fileName=项目模板.xlsx" download="项目模板.xlsx" class="btn btn-primary" style="margin-left: 20px;">
                 <span class="glyphicon glyphicon-download" aria-hidden="true"></span> 下载模板
-            </button>
+            </a>
 
         </div>
 

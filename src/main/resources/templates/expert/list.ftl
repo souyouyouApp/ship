@@ -116,7 +116,7 @@
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
-                                    <a href="downLoadDataTempate?fileName=专家模板.xlsx">下载模板</a>
+                                    <a href="downLoadDataTempate?fileName=专家模板.xlsx" download="专家模板">下载模板</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" onclick="batchImport()" data-toggle="modal" data-target="#fileuploadModal">批量导入</a>
