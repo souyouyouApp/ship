@@ -31,6 +31,7 @@ function tab(val) {
     }
     if (val == 10) {
         $("#page-wrapper").load("roleList")
+        
     }
     if (val == 11) {
         $("#page-wrapper").load("permissionList")
@@ -59,7 +60,6 @@ function review(type) {
 
 $(document).ready(
     function () {
-        console.log(1111)
         $("#page-wrapper").load("main")
     }
 )

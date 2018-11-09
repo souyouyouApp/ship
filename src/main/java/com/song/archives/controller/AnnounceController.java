@@ -251,15 +251,13 @@ public class AnnounceController {
             List<Predicate> predicatesWhereArr = new ArrayList<>();
 
             if (null == typeId && StringUtils.isEmpty(searchValue)) {
-                predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
-                return criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicates.size()]));
+                return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
 
 
             if (null != typeId) {
                 predicatesWhereArr.add(criteriaBuilder.equal(root.get("typeId"), typeId));
             }
-            predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
 
             Predicate whereEquals = criteriaBuilder.or(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
 
