@@ -569,10 +569,10 @@
 
         var data = CKEDITOR.instances.ckeditor.getData();
 
-        if (data == '') {
-            layer.msg('请填写资料摘要');
-            return false;
-        }
+//        if (data == '') {
+//            layer.msg('请填写资料摘要');
+//            return false;
+//        }
 
         if ($('#typeId').val() == '') {
             layer.msg('请选择资料类别');

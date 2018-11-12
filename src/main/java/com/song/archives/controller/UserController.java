@@ -235,6 +235,28 @@ public class UserController {
         return result.toString();
     }
 
+
+    @ArchivesLog(operationType = "updateUser", operationName = "更新用户信息")
+    @RequestMapping(value = "updateUser")
+    @ResponseBody
+    String updateUser(User user) {
+
+        try {
+            user.setAvailable(true);
+            user.setType(0);
+            userRepository.save(user);
+            msg = "success";
+        } catch (Exception e) {
+            msg = "update user failed";
+        }
+
+        operationLogInfo = "用户【" + getUser().getUsername() + "】更新用户:" + user.toString();
+        result.put("msg", msg);
+        result.put("operationLog", operationLogInfo);
+        return result.toString();
+    }
+
+
     @ArchivesLog(operationType = "getUserInfo", operationName = "新建用户")
     @RequestMapping(value = "getUserInfo")
     @ResponseBody

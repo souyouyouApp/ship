@@ -87,10 +87,10 @@
             responseHandler: responseHandler,//请求数据成功后，渲染表格前的方法
 
             columns: [
-                {
-                    field: 'id',
-                    title: '编号'
-                },
+//                {
+//                    field: 'id',
+//                    title: '编号'
+//                },
                 {
                     field: 'operationDescrib',
                     title: '操作信息',

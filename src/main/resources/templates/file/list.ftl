@@ -231,10 +231,10 @@
             exportDataType: "basic",
 
             columns: [
-                {
-                    field: 'id',
-                    title: '文件编号',
-                },
+//                {
+//                    field: 'id',
+//                    title: '文件编号',
+//                },
                 {
                     field: 'fileClassify',
                     title: '文件类别',

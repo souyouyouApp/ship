@@ -154,6 +154,13 @@ $(function () {
                     }
                 }
             },
+            idNo: {
+                validators: {
+                    notEmpty: {
+                        message: '专家证件号码不能为空'
+                    }
+                }
+            },
             classificlevelId: {
                 message:'密级不能为空',
                 validators: {

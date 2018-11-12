@@ -60,6 +60,8 @@ public class LogAspect {
         viewNames.add("getlallusers");
         viewNames.add("LoadYantaoLogList");
         viewNames.add("LoadCuishouLogList");
+        viewNames.add("findMenuByTypeAndParentId");
+        viewNames.add("LoadAlertList");
     }
 
     private static Object OperationLogLock=new Object();
@@ -136,9 +138,9 @@ public class LogAspect {
             operationLog.setOperationUserName(user.getUsername());
         }
 
-        if (viewNames.contains(methodName)) {
-            operationLog.setOperationDescrib("跳转页面:" + operationName);
-        }
+//        if (viewNames.contains(methodName)) {
+//            operationLog.setOperationDescrib("跳转页面:" + operationName);
+//        }
 
 
     }
@@ -158,6 +160,8 @@ public class LogAspect {
                 }else {
                     operationLog.setOperationOutPut(ret.toString());
                 }
+
+                System.out.println(operationLog.getOperationType()+"---"+operationLog.getOperationOutPut());
             } else {
 
                 JSONObject retObj = JSONObject.fromObject(ret);
@@ -166,10 +170,13 @@ public class LogAspect {
                     operationLog.setOperationDescrib(retObj.getString("operationLog"));
                     operationLog.setOperationOutPut(JSONObject.fromObject(ret).toString());
                 }
+                System.out.println(operationLog.getOperationType()+"-111--"+operationLog.getOperationOutPut());
             }
 
             synchronized (operationLog) {
-                operationRepository.save(operationLog);
+                if (operationLog.getOperationOutPut() != null && !operationLog.getOperationOutPut().equals("")){
+                    operationRepository.save(operationLog);
+                }
             }
 
         }catch (Exception e){

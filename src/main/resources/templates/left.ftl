@@ -24,8 +24,9 @@
                 <!-- /input-group -->
             </li>
             <li>
-                <a href="index"><i class="fa fa-laptop fa-fw"></i> 首页</a>
+                <a href="index"><i class="fa fa-laptop fa-fw"></i> 首页 </a>
             </li>
+            <@shiro.lacksRole name = "commonUser">
             <li>
                 <a href="javascript:void(0)" onclick="tab(1)"><i class="fa fa-cubes fa-fw"></i> 项目管理<#--<span
                         class="fa arrow"></span>--></a>
@@ -56,6 +57,7 @@
                 <#--</ul>-->
                 <!-- /.nav-second-level -->
             </li>
+            </@shiro.lacksRole>
         <@shiro.hasAnyRoles name="administrator,securitor,superadmin">
             <li>
                 <a href="javascript:void(0)" onclick="tab(9)"><i class="fa fa-users fa-fw"></i> 用户管理<#--<span
@@ -92,12 +94,12 @@
             <#--</ul>-->
             </li>
         </@shiro.hasRole>
-
+        <@shiro.lacksRole name = "commonUser">
             <li>
                 <a href="javascript:void(0)" onclick="tab(13)"><i class="fa fa-gear fa-wordpress"></i> 标签管理<#--<span
                         class="fa arrow"></span>--></a>
             </li>
-
+        </@shiro.lacksRole>
 
         <#--<li>-->
         <#--<a href="#"><i class="fa fa-database fa-fw"></i> 属性管理<span class="fa arrow"></span></a>-->

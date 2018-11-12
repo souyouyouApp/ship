@@ -79,7 +79,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="createUserLabel">新建用户</h4>
+                <h4 class="modal-title" id="createUserLabel">用户信息</h4>
             </div>
             <div class="user-body">
 
@@ -87,6 +87,28 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 <button type="button" onclick="saveUser();" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<#--弹框-->
+<div class="modal fade" id="updateUser" role="dialog"
+     aria-labelledby="updateUserLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="updateUserLabel">用户信息</h4>
+            </div>
+            <div class="update-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="updateUserInfo();" class="btn btn-primary">保存</button>
             </div>
         </div>
     </div>
@@ -134,6 +156,11 @@
                 {
                     field: 'username',
                     title: '用户名',
+                    formatter: function (value, row) {
+                        console.log(row)
+                        return '<span style="color:#00F;text-decoration:underline;cursor:pointer" onclick="updateUser('+row.id+',\''+row.username+'\',\''+row.realName+'\',\''+row.positions+'\',\''+row.mobile+'\',\''+row.permissionLevel+'\',\''+row.description+'\')' +
+                                '" data-target="#updateUser" data-toggle="modal">'+value+'</span>';
+                    }
                 },
                 {
                     field: 'realName',
@@ -237,8 +264,44 @@
             $('#table').bootstrapTable('refresh', {url: 'users'});
         }
     })
-    
-    
+
+    function updateUser(id,username,realName,positions,mobile,permissionLevel,description) {
+        var content = '<div class="panel-body"><div class="row"><div class="col-lg-10"><form role="form" id="updateForm">' +
+                        '<input type="hidden" id="id" name="id" value="'+id+'"/> '+
+                '<div class="form-group"><label>用户名</label><input class="form-control" name="username" id="username" value="'+username+'" placeholder="请输入用户名" />' +
+                '</div><div class="form-group"><label>真实姓名</label><input class="form-control" name="realName" id="realName" value="'+realName+'" placeholder="请输入真实姓名" />' +
+                '</div><div class="form-group"><label>密码</label><input class="form-control" name="password" id="password" placeholder="请输入密码" />' +
+                '</div><div class="form-group"><label for="select">职务</label><select id="positions" name="positions" value="'+positions+'" class="form-control">' +
+                '<option value="-1">请选择职务</option><option value="1">主任</option><option value="2">处长</option><option value="3">助理</option></select></div>' +
+                '<div class="form-group"><label for="permissionLevel">密级</label><select id="permissionLevel" name="permissionLevel" class="form-control">' +
+                '<option value="4">机密</option><option value="3">秘密</option><option value="2">内部</option><option value="1">公开</option></select></div>' +
+                '<div class="form-group"><label>手机号码</label><input class="form-control" name="mobile" id="mobile" value="'+mobile+'" placeholder="请输入手机号码" /></div>' +
+                '<div class="form-group"><label>描述信息</label><input class="form-control" name="description" id="description" value="'+description+'" placeholder="请输入描述信息" /></div>' +
+                '</form></div></div></div>';
+
+        $('.update-body').html(content);
+
+        $("#positions").val(positions)
+        $("#permissionLevel").val(permissionLevel)
+    }
+
+
+    function updateUserInfo() {
+        $.post("updateUser", $("#updateForm").serialize(), function (result) {
+            result = JSON.parse(result);
+            if (result.msg == 'success') {
+                layer.msg('操作成功');
+                $("#table").bootstrapTable('refresh')
+                $('.modal').map(function () {
+                    $(this).modal('hide');
+                });
+                $(".modal-backdrop").remove();
+            } else {
+                layer.msg(result.msg)
+            }
+        });
+    }
+
     function operateUser(uid,status,username) {
 
         var msg = '';
@@ -399,32 +462,32 @@
                         }
                     }
                 },
-                mobile: {
-                    message: '手机校验失败',
-                    validators: {
-                        notEmpty: {
-                            message: '手机不能为空'
-                        },
-                        stringLength: {
-                            min: 11,
-                            max: 11,
-                            message: '请输入11位手机号码'
-                        },
-                        regexp: {
-                            regexp: /^1[3|5|8]{1}[0-9]{9}$/,
-                            message: '请输入正确的手机号码'
-                        }
-
-                    }
-                },
-                description: {
-                    message: '描述校验失败',
-                    validators: {
-                        notEmpty: {
-                            message: '描述不能为空'
-                        }
-                    }
-                },
+//                mobile: {
+//                    message: '手机校验失败',
+//                    validators: {
+//                        notEmpty: {
+//                            message: '手机不能为空'
+//                        },
+//                        stringLength: {
+//                            min: 11,
+//                            max: 11,
+//                            message: '请输入11位手机号码'
+//                        },
+//                        regexp: {
+//                            regexp: /^1[3|5|8]{1}[0-9]{9}$/,
+//                            message: '请输入正确的手机号码'
+//                        }
+//
+//                    }
+//                },
+//                description: {
+//                    message: '描述校验失败',
+//                    validators: {
+//                        notEmpty: {
+//                            message: '描述不能为空'
+//                        }
+//                    }
+//                },
                 positions: {
                     message: '职位不能为空',
                     validators: {

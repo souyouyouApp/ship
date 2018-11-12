@@ -47,18 +47,22 @@ public class AuthRealm extends AuthorizingRealm {
         //安全管理员
         if (user.getUsername().equals("securitor")){
             authorizationInfo.addRole("securitor");
+            authorizationInfo.addRole("commonUser");
         }
         //系统管理员
         if (user.getUsername().equals("administrator")){
             authorizationInfo.addRole("administrator");
+            authorizationInfo.addRole("commonUser");
         }
         //安全审计员
         if (user.getUsername().equals("comptroller")){
             authorizationInfo.addRole("comptroller");
+            authorizationInfo.addRole("commonUser");
         }
 
         if(user.getRoles() != null){
             for(Role role:user.getRoles()){
+                System.out.println(role.getName());
                 authorizationInfo.addRole(role.getIdentification());
                 for(Permission p:role.getPermissions()){
                     authorizationInfo.addStringPermission(p.getIdentification());

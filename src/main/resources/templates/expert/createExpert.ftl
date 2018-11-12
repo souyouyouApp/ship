@@ -110,19 +110,19 @@
         </#if>
         </div>
 
-        <div class="form-group">
-            <label for="classiclevelId" class="col-sm-2 control-label">密级</label>
-            <div class="col-sm-4">
-                <select name="classiclevelId" id="classiclevelId" class="form-control">
-                <#--<option value="-1">请选择</option>-->
-                    <option value="4">机密</option>
-                    <option value="3">秘密</option>
-                    <option value="2">内部</option>
-                    <option value="1">公开</option>
-                </select>
-            </div>
+        <#--<div class="form-group">-->
+            <#--<label for="classiclevelId" class="col-sm-2 control-label">密级</label>-->
+            <#--<div class="col-sm-4">-->
+                <#--<select name="classiclevelId" id="classiclevelId" class="form-control">-->
+                <#--&lt;#&ndash;<option value="-1">请选择</option>&ndash;&gt;-->
+                    <#--<option value="4">机密</option>-->
+                    <#--<option value="3">秘密</option>-->
+                    <#--<option value="2">内部</option>-->
+                    <#--<option value="1">公开</option>-->
+                <#--</select>-->
+            <#--</div>-->
 
-        </div>
+        <#--</div>-->
 
 
         <div class="form-group">
@@ -148,7 +148,7 @@
         <div class="form-group">
             <label for="gender" class="col-sm-2 control-label">性别</label>
             <div class="col-sm-4">
-                <select id="gender" name="gender" class="form-control">
+                <select id="gender" name="gender" required class="form-control">
                     <option value="男">男</option>
                     <option value="女">女</option>
                 </select>
@@ -160,7 +160,7 @@
         <div class="form-group">
             <label for="idNo" class="col-sm-2 control-label">身份证号</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="idNo" name="idNo"  placeholder="身份证号" value="${expert.idNo!}">
+                <input type="text" class="form-control" id="idNo" name="idNo" required  placeholder="身份证号" value="${expert.idNo!}">
             </div>
         </div>
 
