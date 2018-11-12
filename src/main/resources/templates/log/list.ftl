@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="static/css/bootstrap-table.min.css">
 <link rel="stylesheet" href="static/css/layer.css">
+<link href="static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
+
+<script src="static/js/bootstrap-datetimepicker.js"></script>
 <script src="static/js/bootstrap-table.min.js"></script>
 <script src="static/js/bootstrap-table-zh-CN.min.js"></script>
 <script src="static/js/layer.js"></script>
@@ -20,10 +23,20 @@
                     <span>姓名: </span>
                     <input name="operationUsername" class="form-control w70" type="text" placeholder="操作人员"/>
                 </div>
-                &nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;
                 <div class="form-group">
                     <span>操作信息: </span>
                     <input name="operationDetail" class="form-control w70" type="text" placeholder="操作信息"/>
+                </div>
+                &nbsp;&nbsp;
+                <div class="form-group">
+                    <span>起始时间: </span>
+                    <input name="startDate" class="form-control w70" type="date" placeholder="起始时间"/>
+                </div>
+                &nbsp;&nbsp;
+                <div class="form-group">
+                    <span>结束时间: </span>
+                    <input name="endDate" class="form-control w70" type="date" placeholder="结束时间"/>
                 </div>
                 &nbsp;&nbsp;
                 <div class="form-group">

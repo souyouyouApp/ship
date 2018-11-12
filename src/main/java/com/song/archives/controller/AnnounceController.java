@@ -79,6 +79,8 @@ public class AnnounceController {
 
         result = new JSONObject();
 
+        Long id = entity.getId();
+
         try{
 
             if (null != entity.getId()){
@@ -122,7 +124,15 @@ public class AnnounceController {
 
             }
 
-            operationLogInfo = "用户【"+getUser().getUsername()+"】执行创建公告操作,操作结果 【"+msg+"】";
+            String operationType = "";
+
+            if (id != null){
+                operationType = "更新公告";
+            }else {
+                operationType = "新建公告";
+            }
+
+            operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+announceInfoEntity.getTitle()+"】,操作结果 【"+msg+"】";
 
             result.put("operationLog",operationLogInfo);
 
@@ -216,6 +226,7 @@ public class AnnounceController {
         modelAndView.addObject("proentity",announceInfoEntity);
         modelAndView.addObject("mid",3);
         modelAndView.addObject("users",users);
+        modelAndView.addObject("levelId",getUser().getPermissionLevel());
 
         return modelAndView;
     }

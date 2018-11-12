@@ -66,7 +66,7 @@ public class AuthenticationController {
     @ResponseBody
     String saveRole(Role role) {
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】新建角色:"+role.toString();
+        operationLogInfo = "用户【"+getUser().getUsername()+"】新建角色【"+role.getDescription()+"】";
 
         try {
             roleRepository.save(role);
@@ -100,7 +100,7 @@ public class AuthenticationController {
                 for (Long rid : rids) {
                     Role role = roleRepository.findOne(rid);
                     List<User> users = userRepository.findUsersByRoleId(rid);
-                    operationLogInfo += role.getName()+",";
+                    operationLogInfo += role.getDescription()+",";
                     for (User user : users) {
                         user.getRoles().remove(role);
                         userRepository.save(user);
@@ -314,7 +314,7 @@ public class AuthenticationController {
 
             for (Long rid : rids) {
                 Role role = roleRepository.findOne(rid);
-                operationLogInfo += role.getName() + ",";
+                operationLogInfo += role.getDescription() + ",";
                 roles.add(role);
             }
 

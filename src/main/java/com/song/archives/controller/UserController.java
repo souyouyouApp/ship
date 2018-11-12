@@ -107,7 +107,9 @@ public class UserController {
     String logs(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                 @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                 @RequestParam(value = "operationUsername", defaultValue = "") String operationUsername,
-                @RequestParam(value = "operationDetail", defaultValue = "") String operationDescrib) {
+                @RequestParam(value = "operationDetail", defaultValue = "") String operationDescrib,
+                @RequestParam(value = "startDate", defaultValue = "") String startDate,
+                @RequestParam(value = "endDate", defaultValue = "") String endDate) {
         page = page - 1;
         Sort sort = new Sort(Sort.Direction.ASC, "id");
         Pageable pageable = new PageRequest(page, size, sort);
@@ -125,7 +127,31 @@ public class UserController {
                 predicates.add(criteriaBuilder.like(root.get("operationDescrib"), "%" + operationDescrib + "%"));
             }
 
+            if (!startDate.equals("") && !endDate.equals("")){
+                predicates.add(criteriaBuilder.between(root.get("operationStartTime"),startDate,endDate));
+            }
+
+
+            //安全审计员只能查看三员日志
+            if (getUser().getUsername().equals("comptroller")){
+                predicates.add(criteriaBuilder.equal(root.get("operationUserName"),"comptroller"));
+                predicates.add(criteriaBuilder.equal(root.get("operationUserName"),"securitor"));
+                predicates.add(criteriaBuilder.equal(root.get("operationUserName"),"administrator"));
+
+                return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
+            }
+
+            //系统管理员只能查看普通用户及安全审计员日志
+            if (getUser().getUsername().equals("administrator")){
+                predicates.add(criteriaBuilder.notEqual(root.get("operationUserName"),"securitor"));
+                predicates.add(criteriaBuilder.notEqual(root.get("operationUserName"),"administrator"));
+
+                return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            }
+
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+
         };
 
         Page<OperationLog> operationLogs = operationRepository.findAll(specification, pageable);
@@ -229,7 +255,7 @@ public class UserController {
             msg = "save user failed";
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】新建用户:" + user.toString();
+        operationLogInfo = "用户【" + getUser().getUsername() + "】新建用户【" + user.getUsername()+"】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -250,14 +276,14 @@ public class UserController {
             msg = "update user failed";
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】更新用户:" + user.toString();
+        operationLogInfo = "用户【" + getUser().getUsername() + "】更新用户【" + user.getUsername()+"】信息";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
 
-    @ArchivesLog(operationType = "getUserInfo", operationName = "新建用户")
+    @ArchivesLog(operationType = "getUserInfo", operationName = "获取用户信息")
     @RequestMapping(value = "getUserInfo")
     @ResponseBody
     String getUserInfo(Long uid) {
@@ -394,6 +420,7 @@ public class UserController {
     String sign_in(@RequestParam("username") String username,
                    @RequestParam("password") String password, HttpSession session) {
 
+        result = new JSONObject();
 
         Subject currentUser = SecurityUtils.getSubject();
 
@@ -420,7 +447,7 @@ public class UserController {
             msg = "登录异常!";
         }
 
-        operationLogInfo = "用户【" + username + "】登录操作,操作结果 【" + msg + "】";
+        operationLogInfo = "用户【" + username + "】进行登录,操作结果 【" + msg + "】";
 
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);

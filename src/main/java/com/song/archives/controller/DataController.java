@@ -82,6 +82,9 @@ public class DataController {
     @Autowired
     private MsgAttachRepository msgAttachRepository;
 
+    @Autowired
+    private OperationRepository operationRepository;
+
     @Value("${data.templatePath}")
     private String dataTemplatePath;
 
@@ -91,6 +94,8 @@ public class DataController {
 
     @Value("${filePath}")
     private String filePath;
+
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
     /**
@@ -176,9 +181,16 @@ public class DataController {
                                  @RequestParam(value = "ids") Long[] ids,
                                  @RequestParam(value = "type") String type) {
 
+
+
+        OperationLog operation = new OperationLog();
+        operation.setOperationStartTime(dateFormat.format(new Date()));
+
         List<File> files = new ArrayList<>();
 
         List<File> typeFiles;
+
+        String logFileName = "";
         for (Long id : ids) {
             typeFiles = new ArrayList<>();
             String fileName = "";
@@ -204,6 +216,8 @@ public class DataController {
 
             }
 
+
+            logFileName += fileName;
             if (null != moduleFileEntitys) {
                 for (ModuleFileEntity moduleFileEntity : moduleFileEntitys) {
 
@@ -218,6 +232,13 @@ public class DataController {
             }
 
 
+
+            operation.setOperationDescrib("用户【"+getUser().getRealName()+"】下载文件【"+logFileName+"】");
+            operation.setOperationUserId(getUser().getId());
+            operation.setOperationEndTime(dateFormat.format(new Date()));
+            operation.setOperationUserName(getUser().getUsername());
+            operation.setOperationType("getFile");
+            operationRepository.save(operation);
             //按照个例打包成一个文件
             File caseZip = new File(filePath + "/" + fileName + ".zip");
             try {
@@ -294,8 +315,6 @@ public class DataController {
 
             }
 
-            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-
             if (entity != null) {
                 entity.setAuthor(getUser().getRealName());
                 entity.setPublishDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
@@ -318,7 +337,15 @@ public class DataController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行创建资料信息操作";
+        String operationType = "";
+
+        if (entity.getId() == null){
+            operationType = "新建资料";
+        }else {
+            operationType = "更新资料";
+        }
+
+        operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+entity.getTitle()+"】";
         result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
 
@@ -353,6 +380,7 @@ public class DataController {
         result = new JSONObject();
 
 
+
         FileInfoEntity fileInfo = new FileInfoEntity();
         ModuleFileEntity moduleFile = new ModuleFileEntity();
 
@@ -367,6 +395,8 @@ public class DataController {
 
                 File file = new File(filePath + "/" + originalFilename);
                 multipartFile.transferTo(file);
+
+                fileName = originalFilename;
 
                 fileInfo.setFileName(originalFilename);
                 fileInfo.setOriginalFileName(multipartFile.getOriginalFilename());
@@ -415,7 +445,7 @@ public class DataController {
             msg = "IOException";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行上传附件操作";
+        operationLogInfo = "用户【"+getUser().getUsername()+"】上传附件【"+fileName+"】";
         result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
 
@@ -434,6 +464,10 @@ public class DataController {
     public void getFile(@RequestParam(value = "mid") Long mid,
                         @RequestParam(value = "type", required = false) String type,
                         HttpServletResponse response) {
+        OperationLog operation = new OperationLog();
+        operation.setOperationStartTime(dateFormat.format(new Date()));
+
+
         File file;
         String fileType;
         if (null != type) {
@@ -450,6 +484,15 @@ public class DataController {
             file = new File(fileInfoEntity.getFilePath());
 
         }
+
+        operation.setOperationDescrib("用户【"+getUser().getRealName()+"】下载文件【"+file.getName()+"】");
+        operation.setOperationUserId(getUser().getId());
+        operation.setOperationEndTime(dateFormat.format(new Date()));
+        operation.setOperationUserName(getUser().getUsername());
+        operation.setOperationType("getFile");
+        operationRepository.save(operation);
+
+
 
 
         //判断文件是否存在如果不存在就返回默认图标
@@ -537,6 +580,7 @@ public class DataController {
         modelAndView.addObject("info", ziliaoInfoEntity);
         modelAndView.addObject("proentity",ziliaoInfoEntity);
         modelAndView.addObject("mid",5);
+        modelAndView.addObject("levelId",getUser().getPermissionLevel());
         return modelAndView;
     }
 

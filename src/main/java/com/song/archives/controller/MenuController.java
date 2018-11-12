@@ -196,7 +196,7 @@ public class MenuController {
             msg = "save AnliTypeMenu failed";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】新建:"+entity.toString();
+        operationLogInfo = "用户【"+getUser().getUsername()+"】新建菜单【"+entity.getTypeName()+"】,操作结果【"+msg+"】";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         return result.toString();
@@ -299,10 +299,10 @@ public class MenuController {
             msg = SUCCESS;
 
         } catch (Exception e) {
-            logger.error("上传编辑图片:" + e.getMessage());
+            logger.error("获取用户通知信息:" + e.getMessage());
             msg = "Exception";
         }
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行上传编辑图片操作";
+//        operationLogInfo = "用户【"+getUser().getUsername()+"】获取用户通知信息";
         result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
         result.put("result", JSONArray.fromObject(notifyEntities));

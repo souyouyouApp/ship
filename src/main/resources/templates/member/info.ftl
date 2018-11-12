@@ -191,7 +191,7 @@
 //                    $("#page-wrapper").load("expertList")
                 },
                 error: function (data) {
-                    layer.err("新建专家失败")
+                    layer.err("新建用户失败")
                 }
             });
         }

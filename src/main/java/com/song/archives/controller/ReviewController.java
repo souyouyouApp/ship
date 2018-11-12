@@ -62,17 +62,19 @@ public class ReviewController {
     @ArchivesLog(operationType = "auditFileById", operationName = "审核文件")
     @RequestMapping(value = "/auditFileById")
     @ResponseBody
-    String auditFile(@RequestParam(value = "fileId") Long fileId,
+    String auditFileById(@RequestParam(value = "fileId") Long fileId,
                      @RequestParam(value = "result") Integer auditResult,
                      @RequestParam(value = "fileClassify") Integer fileClassify,
                      @RequestParam(value = "content",required = false) String content) {
 
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getUsername() + "】审核文件【";
+        String fileName = "";
 
         try{
             FileInfoEntity fileInfoEntity = fileInfoRepository.findOne(fileId);
             fileInfoEntity.setAudit(auditResult);
+
+            fileName = fileInfoEntity.getFileName();
 
             if (null == content || content.equals("")){
                 content = "审核通过";
@@ -98,7 +100,7 @@ public class ReviewController {
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = "用户【" + getUser().getUsername() + "】审核文件【"+fileName+ "】,操作结果【" + msg + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();

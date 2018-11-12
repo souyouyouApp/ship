@@ -76,6 +76,8 @@ public class AnliController {
 
         result = new JSONObject();
 
+        Long id = entity.getId();
+
         try {
 
             if (null != entity.getId()) {
@@ -107,7 +109,15 @@ public class AnliController {
 
             }
 
-            operationLogInfo = "用户【" + getUser().getUsername() + "】执行创建案例操作,操作结果 【" + msg + "】";
+            String operationType = "";
+
+            if (id != null){
+                operationType = "更新案例";
+            }else {
+                operationType = "新建案例";
+            }
+
+            operationLogInfo = "用户【" + getUser().getUsername() + "】"+operationType+"【"+entity.getTitle()+"】,操作结果 【" + msg + "】";
 
             result.put("operationLog", operationLogInfo);
 
@@ -149,6 +159,7 @@ public class AnliController {
         modelAndView.addObject("info", anliInfoEntity);
         modelAndView.addObject("proentity", anliInfoEntity);
         modelAndView.addObject("mid", 3);
+        modelAndView.addObject("levelId", getUser().getPermissionLevel());
         return modelAndView;
     }
 

@@ -40,7 +40,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">登录</h3>
                     <div class="panel-body">
-                        <form action="sign_in" id="loginForm">
+                        <form id="loginForm">
                             <fieldset>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="请输入用户名" name="username" type="text" autofocus="autofocus" value="superadmin" required="required"/>
@@ -86,13 +86,13 @@
 
 
         $("#loginBtn").click(login);
-
-        document.onkeydown = function(e){
-            var ev = document.all ? window.event : e;
-            if(ev.keyCode==13) {
-                document.getElementById('loginBtn').click = login();
-            }
-        };
+        //
+        // document.onkeydown = function(e){
+        //     var ev = document.all ? window.event : e;
+        //     if(ev.keyCode==13) {
+        //         document.getElementById('loginBtn').click = login();
+        //     }
+        // };
 
         
         function login() {

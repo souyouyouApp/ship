@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="index.html"><span style="color: white; font-weight: bold">知识共享管理平台</span></a>
+        <a class="navbar-brand" href="index.html"><span style="color: white; font-weight: bold">知识共享管理平台</span><span style="margin-left: 10px;color: red;">机密&nbsp;★</span></a>
     </div>
     <!-- /.navbar-header -->
 

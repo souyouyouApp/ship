@@ -118,7 +118,7 @@
         <#--</li>-->
         <#--</ul>-->
         <#--</li>-->
-        <@shiro.hasAnyRoles name="comptroller,superadmin">
+        <@shiro.hasAnyRoles name="comptroller,superadmin,administrator">
             <li>
                 <a href="javascript:void(0)" onclick="tab(16)"><i class="fa fa-file fa-fw"></i> 日志管理<#--<span
                         class="fa arrow"></span>--></a>
@@ -148,7 +148,7 @@
                 </ul>
             </li>
         </@shiro.hasAnyRoles>
-            <@shiro.hasAnyRoles name="comptroller,superadmin">
+           <@shiro.hasPermission name="uploadfile:verify">
             <li>
                 <a href="#"><i class="fa fa-chain fa-fw"></i> 审核管理<span class="spc_span fa arrow"></span></a>
                 <ul class="nav nav-1-level ">
@@ -166,7 +166,7 @@
                     </li>
                 </ul>
             </li>
-            </@shiro.hasAnyRoles>
+            </@shiro.hasPermission>
         </ul>
     </div>
     <!-- /.sidebar-collapse -->

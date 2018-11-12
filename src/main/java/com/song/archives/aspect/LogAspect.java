@@ -31,37 +31,28 @@ public class LogAspect {
 
     static {
 
-        viewNames.add("viewJump");
-        viewNames.add("main");
-        viewNames.add("memberList");
-        viewNames.add("login");
-        viewNames.add("memberList");
-        viewNames.add("roleList");
-        viewNames.add("permissionList");
-        viewNames.add("logList");
-        viewNames.add("menuList");
-        viewNames.add("dataList");
-        viewNames.add("createData");
-        viewNames.add("createAnliPage");
-        viewNames.add("anliList");
+        viewNames.add("sign_in");
+        viewNames.add("sign_out");
+        viewNames.add("createZiliao");
+        viewNames.add("delData");
+        viewNames.add("uploadAatachment");
+        viewNames.add("createAnli");
+        viewNames.add("delAnli");
         viewNames.add("createAnnounce");
-        viewNames.add("announceList");
-        viewNames.add("createData");
-        viewNames.add("dataList");
-        viewNames.add("createExpert");
-        viewNames.add("expertList");
-        viewNames.add("inBoxList");
-        viewNames.add("outBoxList");
-        viewNames.add("draftList");
-        viewNames.add("msgDetail");
-        viewNames.add("newMessage");
-        viewNames.add("ProjectList");
-        viewNames.add("users");
-        viewNames.add("getlallusers");
-        viewNames.add("LoadYantaoLogList");
-        viewNames.add("LoadCuishouLogList");
-        viewNames.add("findMenuByTypeAndParentId");
-        viewNames.add("LoadAlertList");
+        viewNames.add("delAnnounce");
+        viewNames.add("saveUser");
+        viewNames.add("updateUser");
+        viewNames.add("deleteUserByIds");
+        viewNames.add("updatePassword");
+        viewNames.add("saveRole");
+        viewNames.add("deleteRoleByIds");
+        viewNames.add("savePermission");
+        viewNames.add("deletePermissionByIds");
+        viewNames.add("saveRoles");
+        viewNames.add("savePermissions");
+        viewNames.add("saveMenu");
+        viewNames.add("deleteMenu");
+        viewNames.add("auditFileById");
     }
 
     private static Object OperationLogLock=new Object();
@@ -153,15 +144,13 @@ public class LogAspect {
 
             String methodName = joinPoint.getSignature().getName();
 
-            if (viewNames.contains(methodName) || methodName.equals("sign_out")) {
+            if (methodName.equals("sign_out")) {
 
                 if (null == ret){
                     operationLog.setOperationOutPut("");
                 }else {
                     operationLog.setOperationOutPut(ret.toString());
                 }
-
-                System.out.println(operationLog.getOperationType()+"---"+operationLog.getOperationOutPut());
             } else {
 
                 JSONObject retObj = JSONObject.fromObject(ret);
@@ -170,11 +159,10 @@ public class LogAspect {
                     operationLog.setOperationDescrib(retObj.getString("operationLog"));
                     operationLog.setOperationOutPut(JSONObject.fromObject(ret).toString());
                 }
-                System.out.println(operationLog.getOperationType()+"-111--"+operationLog.getOperationOutPut());
             }
 
             synchronized (operationLog) {
-                if (operationLog.getOperationOutPut() != null && !operationLog.getOperationOutPut().equals("")){
+                if (viewNames.contains(methodName)){
                     operationRepository.save(operationLog);
                 }
             }
