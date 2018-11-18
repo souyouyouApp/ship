@@ -167,6 +167,10 @@
                 </ul>
             </li>
             </@shiro.hasPermission>
+
+            <li>
+                <a href="javascript:void(0)" onclick="tab(17)"><i class="fa fa-space-shuttle fa-fw"></i> 存储空间管理</a>
+            </li>
         </ul>
     </div>
     <!-- /.sidebar-collapse -->

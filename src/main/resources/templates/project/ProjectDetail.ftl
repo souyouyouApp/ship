@@ -36,7 +36,7 @@
         <!-- /.col-lg-12 -->
     </div>
     <input type="hidden" id="basePath" value="${basePath}">
-
+    <input type="hidden" id="levelId" value="${levelId}">
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">

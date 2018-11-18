@@ -47,11 +47,10 @@
                                     <div class="form-group col-md-6">
                                         <label>项目密级</label>
                                         <select class="form-control" id="classificlevelId" name="classificlevelId">
-                                        <#--<option value="-1">请选择</option>-->
-                                            <option value="4">机密</option>
-                                            <option value="3">秘密</option>
-                                            <option value="2">内部</option>
-                                            <option value="1">公开</option>
+                                        <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                   <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                   <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                   <#if (levelId >= 1)>  <option value="1">公开</option></#if>
                                         </select>
                                     </div>
 
@@ -140,18 +139,7 @@
                                 </div>
                             </div>
                         </div>
-                    <#--<div class="panel panel-default">-->
-                    <#--<div class="panel-heading">-->
-                    <#--<h4 class="panel-title">-->
-                    <#--<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">报奖信息</a>-->
-                    <#--</h4>-->
-                    <#--</div>-->
-                    <#--<div id="collapseTwo" class="panel-collapse collapse">-->
-                    <#--<div class="panel-body">-->
-                    <#---->
-                    <#--</div>-->
-                    <#--</div>-->
-                    <#--</div>-->
+                        <#-- 创建项目时去掉时间阶段，编辑时在录入
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
@@ -164,7 +152,6 @@
                                         <label for="dtp_input2">立项时间</label>
                                         <input class="form-control" type="date" id="createPhasetime"
                                                name="createPhasetime">
-                                    <#--<input class="form-control" id="createPhasetime" name="createPhasetime">-->
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>立项提前通知时间</label>
@@ -190,7 +177,6 @@
                                         <label for="dtp_input4">中期检查时间</label>
                                         <input class="form-control" type="date" id="midcheckPhasetime"
                                                name="midcheckPhasetime">
-                                    <#--<input class="form-control" id="createPhasetime" name="createPhasetime">-->
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>中期检查提前通知时间</label>
@@ -203,7 +189,6 @@
                                         <label for="dtp_input4">结题时间</label>
                                         <input class="form-control" type="date" id="closePhasetime"
                                                name="closePhasetime">
-                                    <#--<input class="form-control" id="createPhasetime" name="createPhasetime">-->
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>结题提前通知时间</label>
@@ -216,7 +201,6 @@
                                         <label for="dtp_input4">验收时间</label>
                                         <input class="form-control" type="date" id="endPhasetime"
                                                name="endPhasetime">
-                                    <#--<input class="form-control" id="createPhasetime" name="createPhasetime">-->
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>验收管理提前通知时间</label>
@@ -228,7 +212,6 @@
                                     <div class="form-group col-md-6">
                                         <label>是否报奖</label>
                                         <select class="form-control" id="isreportReward" name="isreportReward">
-                                            <#--<option value="-1">请输入</option>-->
                                             <option value="0">否</option>
                                             <option value="1">是</option>
                                         </select>
@@ -237,7 +220,6 @@
                                     <div class="form-group col-md-6">
                                         <label>报奖渠道</label>
                                         <select class="form-control" id="reportChannel" name="reportChannel">
-                                            <#--<option value="-1">请输入</option>-->
                                             <option value="0">院内</option>
                                             <option value="1">集团</option>
                                             <option value="2">地方/行业/学会</option>
@@ -249,6 +231,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        -->
                     </div>
                     <div class="form-group col-md-12" style="margin-left: 40%">
                         <script language="JavaScript" type="text/javascript">
@@ -438,5 +422,6 @@
 
     $(document).ready(function () {
         LoadUsers();
+        $("#classificlevelId").val("");
     })
 </script>

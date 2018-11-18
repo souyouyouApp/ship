@@ -46,6 +46,10 @@ function tab(val) {
         $("#page-wrapper").load("logList")
     }
 
+    if (val == 17) {
+        $("#page-wrapper").load("storageList")
+    }
+
 
 }
 

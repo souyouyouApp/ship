@@ -210,7 +210,7 @@ $(document).ready(function () {
                 validators: {
                     callback: {
                         callback: function (value, validator) {
-                            if (value == -1) {
+                            if (!value) {
                                 return false;
                             } else {
                                 return true;
