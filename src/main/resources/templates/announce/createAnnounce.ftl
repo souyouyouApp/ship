@@ -134,7 +134,7 @@
                 <select id="relatedUsers" name="relatedUsers" class="selectpicker form-control" multiple required data-live-search="true">
                     <#--<option value="-1">请选择相关人员</option>-->
                 <#foreach user in users>
-                    <option value="${user.id}">${user.realName!}</option>
+                    <option value="${user.id}" selected="${uids?seq_contains(user.id)?string("selected", "")}">${user.realName!}</option>
                 </#foreach>
                 </select>
             </div>
@@ -287,10 +287,10 @@
         $('#relatedUsers').selectpicker();
 
         var uidStr = '${info.relatedUserIds!}';
-
+        debugger
         var relatedUsers = [];
         if (uidStr != ''){
-            uidArr = uidStr.split('');
+            uidArr = uidStr.substring(1,uidStr.length-1).split(',');
             $.each(uidArr,function () {
                 if (this != '[' && this != ']'){
                     relatedUsers.push(this);
@@ -746,6 +746,8 @@
             }
         });
     }
+
+
 
 
 </script>
