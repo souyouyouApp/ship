@@ -231,10 +231,15 @@
             exportDataType: "basic",
 
             columns: [
-               {
-                   field: 'type',
-                   title: '操作类别',
-               },
+
+                {
+                    field: 'fileName',
+                    title: '文件名称',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return '<a href="downLoadFile?fileId=' + row.fileId + '" download="'+row.fileName+'">' + value + '</a>'
+                    }
+                },
                 {
                     field: 'fileClassify',
                     title: '文件类别',
@@ -253,13 +258,17 @@
 
                 },
                 {
-                    field: 'fileName',
-                    title: '文件名称',
-                    sortable: true,
+                    field: 'type',
+                    title: '操作类别',
                     formatter: function (value, row, index) {
-                        return '<a href="downLoadFile?fileId=' + row.id + '" target="view_window">' + value + '</a>'
+                        if (value == "DOWNLOAD")
+                            return '下载';
+                        if (value == "UPLOAD")
+                            return '上传';
+
                     }
-                },{
+                },
+                {
                     field: 'classificlevelId',
                     title: '密级',
                     formatter: function (value, row, index) {
