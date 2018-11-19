@@ -668,10 +668,12 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "CreateProject")
-    public String CreateProject() {
+    public ModelAndView CreateProject() {
 
-
-        return "project/CreateProject";
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("project/CreateProject");
+        modelAndView.addObject("levelId", getUser().getPermissionLevel());
+        return modelAndView;
     }
 
     @RequestMapping(value = "/ProjectList")
@@ -690,6 +692,7 @@ public class ProjectController {
 //      获得本项目的地址(例如: http://localhost:8080/MyApp/)赋值给basePath变量
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
         model.addObject("basePath", basePath);
+        model.addObject("levelId", getUser().getPermissionLevel());
         Specification<User> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
             // List<Predicate> predicates = new ArrayList<>();
@@ -965,60 +968,90 @@ public class ProjectController {
         result = new JSONObject();
         User user = getUser();
 
-        if (user.getType() == 1) {
-            Specification<ProjectInfoEntity> specification1 = new Specification<ProjectInfoEntity>() {
-                @Override
-                public Predicate toPredicate(Root<ProjectInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                    List<Predicate> predicates = new ArrayList<Predicate>();
+        Specification<ProjectInfoEntity> specification1 = new Specification<ProjectInfoEntity>() {
+            @Override
+            public Predicate toPredicate(Root<ProjectInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<Predicate>();
 
 
-                    Path<String> pid = root.get("id");
+                Path<Integer> classificlevelId = root.get("classificlevelId");
 
-                    Predicate predicate = criteriaBuilder.notEqual(pid, 0);
+                Predicate predicate = criteriaBuilder.lessThanOrEqualTo(classificlevelId,getUser().getPermissionLevel());
 
-                    return predicate;
-                }
-            };
-
-            List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
-            result.put("msg", "success");
-            result.put("data", projectInfoEntities.size());
-        } else {
-            Specification<ProjectInfoEntity> specification1 = new Specification<ProjectInfoEntity>() {
-                @Override
-                public Predicate toPredicate(Root<ProjectInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                    List<Predicate> predicates = new ArrayList<Predicate>();
+                return predicate;
+            }
+        };
 
 
-                    Path<String> proLeaders = root.get("proLeaders");
+        List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
+        result.put("msg", "success");
+        result.put("data", projectInfoEntities.size());
 
-                    Predicate predicate = criteriaBuilder.equal(proLeaders, user.getRealName().toString());
-
-                    predicates.add(predicate);
-
-                    Predicate predicate0 = criteriaBuilder.equal(root.get("creater"), user.getId().toString());
-
-                    predicates.add(predicate0);
-
-                    Path<String> proJoiners = root.get("proJoiners");
-
-                    Predicate predicate1 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getRealName().toString() + ",%");
-
-                    predicates.add(predicate1);
-
-                    Predicate predicate2 = criteriaBuilder.like(proJoiners.as(String.class), user.getRealName().toString() + ",%");
-                    predicates.add(predicate2);
-                    Predicate predicate3 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getRealName().toString());
-                    predicates.add(predicate3);
-
-                    return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
-                }
-            };
-
-            List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
-            result.put("msg", "success");
-            result.put("data", projectInfoEntities.size());
-        }
+//        if (user.getType() == 1) {
+//            Specification<ProjectInfoEntity> specification1 = new Specification<ProjectInfoEntity>() {
+//                @Override
+//                public Predicate toPredicate(Root<ProjectInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+//                    List<Predicate> predicates = new ArrayList<Predicate>();
+//
+//
+//                    Path<String> pid = root.get("id");
+//
+//                    Predicate predicate = criteriaBuilder.notEqual(pid, 0);
+//
+//                    return predicate;
+//                }
+//            };
+//
+//            List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
+//            result.put("msg", "success");
+//            result.put("data", projectInfoEntities.size());
+//        } else {
+//            Specification<ProjectInfoEntity> specification1 = new Specification<ProjectInfoEntity>() {
+//                @Override
+//                public Predicate toPredicate(Root<ProjectInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+//                    List<Predicate> predicates = new ArrayList<Predicate>();
+//
+//
+//                    Path<String> proLeaders = root.get("proLeaders");
+//
+//                    Predicate predicate = criteriaBuilder.equal(proLeaders, user.getRealName().toString());
+//
+//                    predicates.add(predicate);
+//
+//                    Predicate predicate0 = criteriaBuilder.equal(root.get("creater"), user.getId().toString());
+//
+//                    predicates.add(predicate0);
+//
+//                    Path<String> proJoiners = root.get("proJoiners");
+//
+//                    Predicate predicate1 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getRealName().toString() + ",%");
+//
+//                    predicates.add(predicate1);
+//
+//                    Predicate predicate2 = criteriaBuilder.like(proJoiners.as(String.class), user.getRealName().toString() + ",%");
+//                    predicates.add(predicate2);
+//                    Predicate predicate3 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getRealName().toString());
+//                    predicates.add(predicate3);
+//
+//                    Path<Integer> classlevelId=root.get("classificlevelId");
+//
+//                    Predicate predicate4=criteriaBuilder.lessThanOrEqualTo(classlevelId,getUser().getPermissionLevel());
+//
+//                    Predicate predicate5= criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
+//
+//                    List<Predicate> predicates1=new ArrayList<>();
+//                    predicates1.add(predicate4);
+//                    predicates1.add(predicate5);
+//                    return criteriaBuilder.and(predicates1.toArray(new Predicate[predicates1.size()]));
+//
+//
+//                }
+//            };
+//
+//            List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
+//            result.put("msg", "success");
+//            result.put("data", projectInfoEntities.size());
+//        }
         return result.toString();
 
     }
@@ -1045,7 +1078,21 @@ public class ProjectController {
             if ((keywords == null || keywords.equals("")) && (conditionText == null || conditionText.equals("-1"))) {
 
                 //if (user.getType() == 1) {
-                Page projectlist = projectRepository.findAll(pageable);
+                Specification<ProjectInfoEntity> specification = new Specification<ProjectInfoEntity>() {
+
+                    @Override
+                    public Predicate toPredicate(Root<ProjectInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+
+
+                        Path<Integer> projectLevelId = root.get("classificlevelId");
+
+                        return criteriaBuilder.lessThanOrEqualTo(projectLevelId, user.getPermissionLevel());
+
+                    }
+                };
+
+                Page projectlist = projectRepository.findAll(specification, pageable);
+
                 result.put("result", JSONArray.fromObject(projectlist));
 
             } else {
@@ -1079,6 +1126,11 @@ public class ProjectController {
                             predicateOne = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
                         }
 
+
+                        Predicate levelPredicate = null;
+                        Path<Integer> projectLevelId = root.get("classificlevelId");
+
+                        levelPredicate = criteriaBuilder.lessThanOrEqualTo(projectLevelId, user.getPermissionLevel());
                         //Predicate condiPredicate = null;
                         Predicate beginCondiPredicate = null;
                         Predicate endCondiPredicate = null;
@@ -1118,7 +1170,7 @@ public class ProjectController {
                             List<Predicate> p1 = new ArrayList<>();
                             p1.add(beginCondiPredicate);
                             p1.add(endCondiPredicate);
-
+                            p1.add(levelPredicate);
                             return criteriaBuilder.and(p1.toArray(new Predicate[p1.size()]));
                         } else {
 
@@ -1127,6 +1179,7 @@ public class ProjectController {
                                 p1.add(beginCondiPredicate);
                                 p1.add(endCondiPredicate);
                                 p1.add(predicateOne);
+                                p1.add(levelPredicate);
                                 return criteriaBuilder.and(p1.toArray(new Predicate[p1.size()]));
                             } else {
                                 return predicateOne;
@@ -1928,6 +1981,11 @@ public class ProjectController {
 
             int successCount = 0, failCount = 0;
 
+            Map<String, Integer> levelMap = new HashMap<>();
+            levelMap.put("机密", 4);
+            levelMap.put("秘密", 3);
+            levelMap.put("内部", 2);
+            levelMap.put("公开", 1);
 
             for (int i = 0; i < projectDatas.size(); i++) {
                 if (projectDatas.get(i)[0] != null && projectDatas.get(i)[2] != null && !projectDatas.get(i)[2].equals("") && !projectDatas.get(i)[3].equals("")) {
@@ -1978,8 +2036,9 @@ public class ProjectController {
                         projectInfoEntity.setProFrom(projectDatas.get(i)[9]);
                         //projectInfoEntity.setTotalFee(Double.parseDouble(projectDatas.get(i)[10]));
                         projectInfoEntity.setTotalFee(projectDatas.get(i)[10]);
-                        projectInfoEntity.setYanjiuZhouQi(Double.parseDouble(projectDatas.get(i)[11]));
-                        projectInfoEntity.setProRemark(projectDatas.get(i)[12]);
+                        projectInfoEntity.setClassificlevelId(levelMap.get(projectDatas.get(i)[11]));
+                        projectInfoEntity.setYanjiuZhouQi(Double.parseDouble(projectDatas.get(i)[12]));
+                        projectInfoEntity.setProRemark(projectDatas.get(i)[13]);
 
                         ProjectInfoEntity addProject = projectRepository.save(projectInfoEntity);
                         ChengYanDanWeiEntity chengYanDanWeiEntity = new ChengYanDanWeiEntity();

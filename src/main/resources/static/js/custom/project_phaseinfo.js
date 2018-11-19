@@ -154,6 +154,8 @@ $(document).ready(function () {
             rows: result[0].content //行数据，前面的key要与之前设置的dataField的值一致.
         };
     };
+
+    $("#paperClassicId").val("");
 });
 
 //刷新表格数据,点击你的按钮调用这个方法就可以刷新
@@ -249,7 +251,36 @@ function OnPhaseItemChange() {
 }
 
 
-var modalContent = '<form><div class="form-group">密级：<select id="seldzfile" name="seldzfile"><option value="4">机密</option><option value="3">秘密</option><option value="2">内部</option><option value="1">公开</option></select></div><div class="form-group" style="height: 300px;"><input id="projectfile" name="projectfile" type="file" multiple></div></form>';
+var modalContent = '<form><div class="form-group">密级：' +
+    '<select id="seldzfile" name="seldzfile">';
+
+    if($("#levelId").val()==4)
+    {
+        modalContent+='<option value="4">机密</option>';
+        modalContent+='<option value="3">秘密</option>';
+        modalContent+='<option value="2">内部</option>';
+        modalContent+='<option value="1">公开</option>';
+    }
+
+    if($("#levelId").val()==3){
+        modalContent+='<option value="3">秘密</option>';
+        modalContent+='<option value="2">内部</option>';
+        modalContent+='<option value="1">公开</option>';
+    }
+
+if($("#levelId").val()==2){
+    modalContent+='<option value="2">内部</option>';
+    modalContent+='<option value="1">公开</option>';
+}
+
+if($("#levelId").val()==1){
+    modalContent+='<option value="1">公开</option>';
+}
+
+
+modalContent+= '</select>' +
+    '</div><div class="form-group" style="height: 300px;">' +
+    '<input id="projectfile" name="projectfile" type="file" multiple></div></form>';
 
 
 function AddPaperModalConent() {
@@ -309,6 +340,8 @@ function AddModalContent() {
         }
     });
 
+    $("#seldzfile").val("");
+
     //上传文件成功，回调函数
     $('#projectfile').on("fileuploaded", function (event, data, previewId, index) {
         if (data.response.success == "success") {
@@ -322,6 +355,11 @@ function AddModalContent() {
 
             });
             $("#savePic").attr("disabled", "disabled");
+            $("#savePic1").trigger("click");
+            $('.modal').map(function () {
+                $(this).modal('hide');
+            });
+            $(".modal-backdrop").remove();
             refreshFileTable();
         } else {
             layer.msg("文件上传失败，请稍后重试!");
@@ -333,7 +371,12 @@ function AddModalContent() {
 
 $('#savePic').on('click', function () {// 提交图片信息 //
     //先上传文件，然后在回调函数提交表单
-    $('#projectfile').fileinput('upload');
+    if(!$("#seldzfile").val()){
+        layer.msg("请选择文件密级!");
+    }else
+    {
+        $('#projectfile').fileinput('upload');
+    }
 
 });
 
@@ -349,29 +392,32 @@ function EditAttachFile() {
         return;
     } else {
 
-        $("#btn_editfile1").trigger("click");
         $("#paperFileName").val(selectefid[0].fileName);
         $('#paperClassicId').val(selectefid[0].classificlevelId);
-        $.post("getlallusers", {}, function (result) {
-
-            result = JSON.parse(result);
-            var htmlstr = "";
-            $.each(result, function (i, item) {
-                htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
-            })
-
-            if (htmlstr != null && htmlstr.length > 0) {
-                //$("#proLeaders").innerHTML(htmlstr);
-                debugger;
-                $("#paperzrr").html("");
-                $("#jingbanName").append("");
-                $("#paperzrr").append(htmlstr);
-                $("#jingbanName").append(htmlstr);
-                $("#paperzrr option:contains('" + selectefid[0].zrr + "')").attr("selected", true);
-            }
-        })
-
+        $("#paperzrr").val(selectefid[0].zrr)
         $("#editFileId").val(selectefid[0].id);
+        $("#btn_editfile1").trigger("click");
+
+        // $.post("getlallusers", {}, function (result) {
+        //
+        //     result = JSON.parse(result);
+        //     var htmlstr = "";
+        //     $.each(result, function (i, item) {
+        //         htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+        //     })
+        //
+        //     if (htmlstr != null && htmlstr.length > 0) {
+        //         //$("#proLeaders").innerHTML(htmlstr);
+        //         debugger;
+        //         $("#paperzrr").html("");
+        //         $("#jingbanName").append("");
+        //         $("#paperzrr").append(htmlstr);
+        //         $("#jingbanName").append(htmlstr);
+        //         $("#paperzrr option:contains('" + selectefid[0].zrr + "')").attr("selected", true);
+        //     }
+        // })
+
+
     }
 
 }
@@ -379,7 +425,10 @@ function EditAttachFile() {
 function DownLoadAttachFile() {
     var selectedObjs = $("#filetable").bootstrapTable('getSelections');
     var ids = [];
-
+    if (selectedObjs == null || selectedObjs.length <= 0) {
+        layer.msg("请选择要下载的文件!");
+        return;
+    }
 
     var form = $("<form></form>").attr("action", "BatchDownProjectFiles").attr("method", "post");
     $.each(selectedObjs, function () {
@@ -387,16 +436,34 @@ function DownLoadAttachFile() {
     });
     form.append($("<input/>").attr("type", "hidden").attr("name", "proid").attr("value", $("#id").val()));
     form.appendTo('body')
-    debugger
     form.submit().remove();
 }
 
 function UploadPaper() {
+
+    if(!$("#paperClassicId").val()){
+        layer.msg("请选择文件密级！");
+
+        return ;
+    }
+
+    if(!$("#paperFileName").val()){
+        layer.msg("请输入文件名称！");
+
+        return ;
+    }
+    if(!$("#paperzrr").val()){
+        layer.msg("请选择责任人！");
+
+        return ;
+    }
+
+    //find("option:selected").text(),
     $.post("UploadPaper",
         {
             paperFileName: $("#paperFileName").val(),
             paperClassicId: $("#paperClassicId").val(),
-            zrr: $("#paperzrr").find("option:selected").text(),
+            zrr: $("#paperzrr").val(),
             paperproid: $("#paperproid").val(),
             attachid: $("#attachlist").val(),
             editFileId: $("#editFileId").val(),
@@ -415,7 +482,8 @@ function UploadPaper() {
             });
             $(".modal-backdrop").remove();
             $("#paperFileName").val('');
-            $('#paperClassicId option:first').attr("selected", true);
+            $('#paperClassicId').val('');
+            //$('#paperClassicId option:first').attr("selected", true);
             $('#paperzrr option:first').attr("selected", true);
         });
 }

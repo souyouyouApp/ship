@@ -105,7 +105,8 @@
 
                 <button type="button" class="btn btn-default" onclick="RefreshFilelist()" data-dismiss="modal">关闭
                 </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="savePic">保存</button>
+                <button type="button" class="btn btn-primary" id="savePic">保存</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" style="display: none" id="savePic1">保存</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -138,16 +139,18 @@
                         <div class="form-group col-md-12">
                             <label>保管人</label>
                             <select class="form-control" id="paperzrr" name="paperzrr">
+                                 <#list users as user>
+                                     <option value="${user.username}">${user.username}</option>
+                                 </#list>
                             </select>
                         </div>
                         <div class="form-group col-md-12">
                             <label>密级</label>
                             <select class="form-control" id="paperClassicId" name="paperClassicId">
-                            <#--<option value="-1">请选择</option>-->
-                                <option value="4">机密</option>
-                                <option value="3">秘密</option>
-                                <option value="2">内部</option>
-                                <option value="1">公开</option>
+                              <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                   <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                   <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                   <#if (levelId >= 1)>  <option value="1">公开</option></#if>
                             </select>
                         </div>
                     </form>
