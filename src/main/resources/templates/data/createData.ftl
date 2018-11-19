@@ -89,7 +89,7 @@
 
     <form class="form-horizontal" id="dataForm">
         <div class="form-group">
-            <input type="hidden" id="typeId" name="typeId" value="${info.typeId}"/>
+            <input type="hidden" id="typeId" name="typeId" value="${info.typeId!}"/>
             <input type="hidden" name="id" id="id" value="${info.id!}"/>
             <input type="hidden" id="keywordTid" name="keywordTid" value="${info.id!}"/>
             <input type="hidden" id="keywordMid" name="keywordMid" value="2">

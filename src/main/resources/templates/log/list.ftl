@@ -5,6 +5,7 @@
 <script src="static/js/bootstrap-datetimepicker.js"></script>
 <script src="static/js/bootstrap-table.min.js"></script>
 <script src="static/js/bootstrap-table-zh-CN.min.js"></script>
+<script src="static/js/table-export.min.js"></script>
 <script src="static/js/layer.js"></script>
 <script src="static/js/jquery.form.js"></script>
 <div class="row">
@@ -44,6 +45,12 @@
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
+                &nbsp;&nbsp;
+                <div class="form-group">
+                    <button class="btn btn-default" type="button" onclick="expert()">
+                        导出
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -65,6 +72,10 @@
 
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script type="text/javascript">
+    
+    function expert() {
+        $('#table').tableExport({ type: 'excel', escape: 'false'})
+    }
 
     function search() {
         $('#table').bootstrapTable('refresh')
