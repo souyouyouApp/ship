@@ -412,8 +412,11 @@
                     var mid = data.mid;
                     var fileName = data.fileName;
 
-                    addInput(mid, fileName, 1);
+                    var viewDiv = '审核中';
+                    var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+                    $("#attachment").append(childInput)
                     layer.msg("文件上传成功!");
+
 //
                     $("#saveFile").attr("disabled", "disabled");
                     $('.modal').map(function () {
@@ -572,6 +575,33 @@
 </script>
 
 <script type="text/javascript">
+
+    function qryFileAuitResult(fileId,fileName) {
+        $.ajax({
+            type: "post",
+            url: "getFileAuditResult",
+            data: {fileId: fileId,type:'DOWNLOAD'},
+            async: false,
+            success: function (result) {
+                result = JSON.parse(result);
+                if (result.auditResult == 0){
+                    layer.alert("下载请求已提交审核,请稍后。")
+                }else if(result.auditResult == -1){
+                    layer.alert("下载请求被拒绝,请联系审核人员。")
+                }else {
+                    // window.location.href=";
+                    var link = document.createElement('a');
+                    link.href="getFile?mid="+fileId;
+                    link.download = fileName;
+                    var e = document.createEvent('MouseEvents');
+                    e.initEvent('click', true, true);
+                    link.dispatchEvent(e);
+
+                }
+            }
+        });
+    }
+
     var classificlevelId = '${info.classificlevelId!}';
 
     if (classificlevelId != "") {
@@ -603,38 +633,54 @@
             data: {zid: '${info.id!}', type: 'AL'},
             async: false,
             success: function (data) {
-
-
                 data = JSON.parse(data)
                 $.each(data, function () {
                     var fileName = this.fileName;
-                    var audit = this.audit;
                     $.ajax({
                         type: "post",
                         url: "findModuleFileByFileCode",
                         data: {fileCode: this.fileCode},
                         async: false,
                         success: function (result) {
-                            result = JSON.parse(result)
+                            result = JSON.parse(result);
+                            debugger
+                            var fileId = result.id;
                             var fileType = result.fileType;
                             var viewDiv = '<span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>';
-                            if (fileType == 1) {
-                                viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
-                            } else {
-                                viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
-                            }
+                            $.ajax({
+                                type: "post",
+                                url: "getFileAuditResult",
+                                data: {fileId: fileId,type:'UPLOAD'},
+                                async: false,
+                                success: function (result) {
+                                    debugger
+                                    result = JSON.parse(result);
+                                    if (result.auditResult == -1) {
+                                        viewDiv = '<label style="margin-left: 20px;color: red;">审核未通过</label>'
+                                    }else if(result.auditResult == 0){
+                                        viewDiv = '<label style="margin-left: 20px;color: grey;">审核中</label>'
+                                    }else {
 
-                            if(fileType == 1 && audit == -1){
-                                viewDiv += '<label style="margin-left: 20px;color: red;">审核未通过</label>'
-                            }else if(fileType == 1 && audit == 0){
-                                viewDiv = '<label style="margin-left: 20px;color: grey;">审核中</label>'
-                            }
+                                        if (fileType == 1) {
+                                            // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
+                                        } else {
+                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
+                                        }
+
+                                    }
+
+
+
+                                }
+                            });
 
                             var childInput = '<div><input style="margin-top: 5px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
                             $("#attachment").append(childInput)
                         }
                     });
                 })
+
 
             }
         });

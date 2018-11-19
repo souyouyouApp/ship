@@ -453,7 +453,9 @@
                     var mid = data.mid;
                     var fileName = data.fileName;
 
-                    addInput(mid, fileName, 1);
+                    var viewDiv = '审核中';
+                    var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+                    $("#attachment").append(childInput)
                     layer.msg("文件上传成功!");
 
                     $("#saveFile").attr("disabled", "disabled");
@@ -624,7 +626,7 @@
 
 <script type="text/javascript">
 
-    function qryFileAuitResult(fileId) {
+    function qryFileAuitResult(fileId,fileName) {
         $.ajax({
             type: "post",
             url: "getFileAuditResult",
@@ -634,9 +636,16 @@
                 result = JSON.parse(result);
                 if (result.auditResult == 0){
                     layer.alert("下载请求已提交审核,请稍后。")
+                }else if(result.auditResult == -1){
+                    layer.alert("下载请求被拒绝,请联系审核人员。")
                 }else {
                     // window.location.href=";
-                    window.open("getFile?mid="+fileId,'_blank')
+                    var link = document.createElement('a');
+                    link.href="getFile?mid="+fileId;
+                    link.download = fileName;
+                    var e = document.createEvent('MouseEvents');
+                    e.initEvent('click', true, true);
+                    link.dispatchEvent(e);
 
                 }
             }
@@ -687,7 +696,6 @@
                 data = JSON.parse(data)
                 $.each(data, function () {
                     var fileName = this.fileName;
-                    var audit = this.audit;
                     $.ajax({
                         type: "post",
                         url: "findModuleFileByFileCode",
@@ -715,7 +723,7 @@
 
                                         if (fileType == 1) {
                                             // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
-                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
                                         } else {
                                             viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                                         }
