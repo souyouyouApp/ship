@@ -85,6 +85,9 @@ public class DataController {
     @Autowired
     private OperationRepository operationRepository;
 
+    @Autowired
+    private AuditInfoRepository auditInfoRepository;
+
     @Value("${data.templatePath}")
     private String dataTemplatePath;
 
@@ -419,11 +422,24 @@ public class DataController {
             fileInfo.setFileCode(String.valueOf(System.currentTimeMillis()));
             fileInfo.setClassificlevelId(classificlevel);
             fileInfo.setFileClassify(fileClassify);
-            fileInfo.setAudit(0);
             fileInfo.setCreator(getUser().getUsername());
             fileInfo.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
-            fileInfoRepository.save(fileInfo);
+            FileInfoEntity infoEntity = fileInfoRepository.save(fileInfo);
+
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setFileId(infoEntity.getId());
+            auditInfo.setApplicant(getUser().getUsername());
+            auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            auditInfo.setFileName(infoEntity.getFileName());
+            auditInfo.setIsAudit(0);
+            auditInfo.setType("UPLOAD");
+            auditInfo.setFileClassify(fileInfo.getFileClassify());
+            auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+
+            auditInfoRepository.save(auditInfo);
+
+
 
             /* 保存基础信息 */
 
@@ -794,6 +810,36 @@ public class DataController {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+
+    @ArchivesLog(operationType = "getFileAuditResult", operationName = "查询审核结果")
+    @RequestMapping(value = "/getFileAuditResult")
+    @ResponseBody
+    String getFileAuditResult(@RequestParam(value = "fileId") Long fileId,
+                              @RequestParam(value = "type") String type) {
+
+        result = new JSONObject();
+        AuditInfo auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileId, getUser().getUsername(),type);
+
+        if (auditInfo == null){
+
+            FileInfoEntity fileInfo = fileInfoRepository.findById(fileId);
+            auditInfo = new AuditInfo();
+            auditInfo.setFileId(fileInfo.getId());
+            auditInfo.setApplicant(getUser().getUsername());
+            auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            auditInfo.setFileName(fileInfo.getFileName());
+            auditInfo.setIsAudit(0);
+            auditInfo.setType("DOWNLOAD");
+            auditInfo.setFileClassify(fileInfo.getFileClassify());
+            auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+
+            auditInfoRepository.save(auditInfo);
+        }
+        result.put("auditResult",auditInfo.getIsAudit());
+        result.put("type",auditInfo.getType());
+        return result.toString();
     }
 
 

@@ -231,10 +231,10 @@
             exportDataType: "basic",
 
             columns: [
-//                {
-//                    field: 'id',
-//                    title: '文件编号',
-//                },
+               {
+                   field: 'type',
+                   title: '操作类别',
+               },
                 {
                     field: 'fileClassify',
                     title: '文件类别',
@@ -274,15 +274,15 @@
                         }
                     }
                 },  {
-                    field: 'createTime',
-                    title: '上传日期',
+                    field: 'applicationTime',
+                    title: '申请时间',
                     sortable: true,
                 }, {
-                    field: 'creator',
-                    title: '上传人',
+                    field: 'applicant',
+                    title: '申请人',
                     sortable: true,
                 }, {
-                    field: 'audit',
+                    field: 'isAudit',
                     title: '审核结果',
                     formatter: function (value, row, index) {
 

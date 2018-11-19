@@ -97,7 +97,6 @@
         
         function login() {
             $.post("sign_in",$("#loginForm").serialize(),function(result){
-                debugger
                 result = JSON.parse(result);
                 if(result && (result.msg == 'success'||result.msg[0] == 'success')){
                     window.location.href = "index";

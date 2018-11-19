@@ -37,16 +37,6 @@ public class FileInfoEntity implements Serializable{
      * 4 专家库文件
      */
     private Integer fileClassify;
-    private Integer audit;
-
-
-    public Integer getAudit() {
-        return audit;
-    }
-
-    public void setAudit(Integer audit) {
-        this.audit = audit;
-    }
 
     public Integer getFileClassify() {
         return fileClassify;

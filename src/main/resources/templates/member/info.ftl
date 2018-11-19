@@ -174,8 +174,6 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    debugger
-                    console.log(data)
                     data = JSON.parse(data);
                     if (data.msg == 'success'){
                         layer.msg("密码修改成功");

@@ -89,7 +89,7 @@
 
     <form class="form-horizontal" id="dataForm">
         <div class="form-group">
-            <input type="hidden" id="typeId" name="typeId"/>
+            <input type="hidden" id="typeId" name="typeId" value="${info.typeId}"/>
             <input type="hidden" name="id" id="id" value="${info.id!}"/>
             <input type="hidden" id="keywordTid" name="keywordTid" value="${info.id!}"/>
             <input type="hidden" id="keywordMid" name="keywordMid" value="2">
@@ -123,7 +123,7 @@
                 <span class="form-control">
 
                 <#if info.author??>
-                ${info.author!}
+                    ${info.author!}
                 <#else>
                     <@shiro.principal property="realName"/>
                 </#if>
@@ -155,7 +155,7 @@
             <label for="ziliaoFrom" class="col-sm-2 control-label">来源</label>
             <div class="col-sm-4">
                 <select name="ziliaoFrom" id="ziliaoFrom" class="form-control">
-                    <#--<option value="-1">请选择来源</option>-->
+                <#--<option value="-1">请选择来源</option>-->
                     <option value="互联网">互联网</option>
                     <option value="投稿">投稿</option>
                     <option value="原创">原创</option>
@@ -170,7 +170,7 @@
             <label for="isShare" class="col-sm-2 control-label">共享</label>
             <div class="col-sm-4">
                 <select name="isShare" id="isShare" class="form-control">
-                    <#--<option value="-1">请选择是否共享</option>-->
+                <#--<option value="-1">请选择是否共享</option>-->
                     <option value="0">否</option>
                     <option value="1">是</option>
                 </select>
@@ -623,6 +623,26 @@
 </script>
 
 <script type="text/javascript">
+
+    function qryFileAuitResult(fileId) {
+        $.ajax({
+            type: "post",
+            url: "getFileAuditResult",
+            data: {fileId: fileId,type:'DOWNLOAD'},
+            async: false,
+            success: function (result) {
+                result = JSON.parse(result);
+                if (result.auditResult == 0){
+                    layer.alert("下载请求已提交审核,请稍后。")
+                }else {
+                    // window.location.href=";
+                    window.open("getFile?mid="+fileId,'_blank')
+
+                }
+            }
+        });
+    }
+
     var classificlevelId = '${info.classificlevelId!}';
 
     if (classificlevelId != '') {
@@ -664,36 +684,48 @@
             data: {zid: '${info.id!}', type: 'DT'},
             async: false,
             success: function (data) {
-
-                debugger
-
                 data = JSON.parse(data)
                 $.each(data, function () {
                     var fileName = this.fileName;
                     var audit = this.audit;
-                    debugger
                     $.ajax({
                         type: "post",
                         url: "findModuleFileByFileCode",
                         data: {fileCode: this.fileCode},
                         async: false,
                         success: function (result) {
-                            debugger
                             result = JSON.parse(result);
+                            debugger
+                            var fileId = result.id;
                             var fileType = result.fileType;
                             var viewDiv = '<span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>';
-                            if (fileType == 1) {
-                                viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
-                            } else {
-                                viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
-                            }
+                            $.ajax({
+                                type: "post",
+                                url: "getFileAuditResult",
+                                data: {fileId: fileId,type:'UPLOAD'},
+                                async: false,
+                                success: function (result) {
+                                    debugger
+                                    result = JSON.parse(result);
+                                    if (result.auditResult == -1) {
+                                        viewDiv = '<label style="margin-left: 20px;color: red;">审核未通过</label>'
+                                    }else if(result.auditResult == 0){
+                                        viewDiv = '<label style="margin-left: 20px;color: grey;">审核中</label>'
+                                    }else {
+
+                                        if (fileType == 1) {
+                                            // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
+                                        } else {
+                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
+                                        }
+
+                                    }
 
 
-                            if(fileType == 1 && audit == -1){
-                                viewDiv += '<label style="margin-left: 20px;color: red;">审核未通过</label>'
-                            }else if(fileType == 1 && audit == 0){
-                                viewDiv = '<label style="margin-left: 20px;color: grey;">审核中</label>'
-                            }
+
+                                }
+                            });
 
                             var childInput = '<div><input style="margin-top: 5px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
                             $("#attachment").append(childInput)
@@ -704,6 +736,7 @@
             }
         });
     }
+
 
 
 </script>

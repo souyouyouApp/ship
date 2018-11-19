@@ -1,10 +1,7 @@
 package com.song.archives.controller;
 
 import com.song.archives.aspect.ArchivesLog;
-import com.song.archives.dao.AnliRepository;
-import com.song.archives.dao.FileInfoRepository;
-import com.song.archives.dao.ModuleFileRespository;
-import com.song.archives.dao.NotifyRepository;
+import com.song.archives.dao.*;
 import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
 import com.song.archives.utils.ImageUploadUtil;
@@ -33,6 +30,7 @@ import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +55,9 @@ public class ReviewController {
     @Autowired
     private NotifyRepository notifyRepository;
 
+    @Autowired
+    private AuditInfoRepository auditInfoRepository;
+
 
 
     @ArchivesLog(operationType = "auditFileById", operationName = "审核文件")
@@ -71,10 +72,10 @@ public class ReviewController {
         String fileName = "";
 
         try{
-            FileInfoEntity fileInfoEntity = fileInfoRepository.findOne(fileId);
-            fileInfoEntity.setAudit(auditResult);
 
-            fileName = fileInfoEntity.getFileName();
+            AuditInfo auditInfo = auditInfoRepository.findOne(fileId);
+
+            fileName = auditInfo.getFileName();
 
             if (null == content || content.equals("")){
                 content = "审核通过";
@@ -84,18 +85,22 @@ public class ReviewController {
             notify.setContent(content);
             notify.setOperateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
             notify.setApprover(getUser().getRealName());
-            notify.setPersonal(fileInfoEntity.getCreator());
+            notify.setPersonal(auditInfo.getAuditUser());
             notify.setFileClassify(fileClassify);
             notify.setFileId(fileId);
-            notify.setFileName(fileInfoEntity.getFileName());
+            notify.setFileName(fileName);
             notifyRepository.save(notify);
 
-            fileInfoRepository.save(fileInfoEntity);
+            auditInfo.setAuditContent(content);
+            auditInfo.setIsAudit(auditResult);
+            auditInfo.setAuditTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            auditInfo.setAuditUser(getUser().getRealName());
+            auditInfoRepository.save(auditInfo);
             msg = SUCCESS;
 
         }catch (Exception e){
             logger.error(e.getMessage());
-            msg = "delete anli failed";
+            msg = "auditFileById failed";
 
         }
 
@@ -216,15 +221,17 @@ public class ReviewController {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(criteriaBuilder.equal(root.get("fileClassify"),fileClassify));
-            predicates.add(criteriaBuilder.notEqual(root.get("audit"),1));
-            predicates.add(criteriaBuilder.like(root.get("fileName"),"%"+searchValue+"%"));
+//            predicates.add(criteriaBuilder.notEqual(root.get("audit"),1));
+            if (null != searchValue && !searchValue.equals("")){
+                predicates.add(criteriaBuilder.like(root.get("fileName"),"%"+searchValue+"%"));
+            }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };
 
-        List<FileInfoEntity> datas = null;
+        List<AuditInfo> datas = null;
         try {
-            datas = fileInfoRepository.findAll(specification, pageable);
+            datas = auditInfoRepository.findAll(specification, pageable);
             msg = SUCCESS;
         } catch (Exception e) {
             logger.error("案例列表数据:" + e.getMessage());
@@ -238,9 +245,7 @@ public class ReviewController {
 
         JSONArray json = JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询文件列表操作";
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         result.put("result", json);
         return result.toString();
     }

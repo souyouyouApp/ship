@@ -37,4 +37,6 @@ public interface FileInfoRepository extends CrudRepository<FileInfoEntity, Long>
 
     void deleteByIdIsIn(String[] fids);
 
+    FileInfoEntity findById(Long fid);
+
 }
