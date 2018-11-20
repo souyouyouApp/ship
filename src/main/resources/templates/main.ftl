@@ -23,6 +23,7 @@
     </div>
 </div>
 <!-- /.row -->
+<@shiro.lacksRole name = "commonUser">
 <div class="row">
     <div class="col-lg-3 col-md-6">
         <div class="panel panel-primary">
@@ -133,7 +134,7 @@
     <!-- /.col-lg-4 -->
 </div>
 <!-- /.row -->
-
+</@shiro.lacksRole>
 <div class="row">
 
     <#--<div class="col-lg-8">-->
