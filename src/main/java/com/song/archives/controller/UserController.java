@@ -5,6 +5,7 @@ import com.song.archives.dao.OperationRepository;
 import com.song.archives.dao.UserRepository;
 import com.song.archives.model.OperationLog;
 import com.song.archives.model.User;
+import com.song.archives.utils.MySQLDatabaseBackup;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -13,6 +14,7 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +29,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +58,10 @@ public class UserController {
     @Autowired
     private OperationRepository operationRepository;
 
+    @Value("${backup.path}")
+    private String savePath;
+
+    private String backUpFileName = "";
 
     /**
      * 视图跳转
@@ -92,6 +100,28 @@ public class UserController {
         User userInfo = userRepository.findOne(uId);
         mav.addObject("userInfo",userInfo);
         return mav;
+    }
+
+
+
+    @ResponseBody
+    @RequestMapping(value = "/backupLog")
+    public String exportMysql(){
+        result = new JSONObject();
+        boolean backFlag = false;
+        try {
+            backUpFileName = new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".sql";
+            backFlag = MySQLDatabaseBackup.exportDatabaseTool("localhost","root","root",savePath,backUpFileName,"zscq");
+            msg = SUCCESS;
+            result.put("path",savePath+"/"+backUpFileName);
+        } catch (InterruptedException e) {
+            msg = "Error";
+            e.printStackTrace();
+        }
+
+        result.put("msg",msg);
+        result.put("result",backFlag);
+        return result.toString();
     }
 
     /**

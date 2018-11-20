@@ -24,32 +24,43 @@
                     <span>姓名: </span>
                     <input name="operationUsername" class="form-control w70" type="text" placeholder="操作人员"/>
                 </div>
-                &nbsp;&nbsp;
+                &nbsp;
                 <div class="form-group">
                     <span>操作信息: </span>
                     <input name="operationDetail" class="form-control w70" type="text" placeholder="操作信息"/>
                 </div>
-                &nbsp;&nbsp;
+                &nbsp;
                 <div class="form-group">
                     <span>起始时间: </span>
                     <input name="startDate" class="form-control w70" type="date" placeholder="起始时间"/>
                 </div>
-                &nbsp;&nbsp;
+                &nbsp;
                 <div class="form-group">
                     <span>结束时间: </span>
                     <input name="endDate" class="form-control w70" type="date" placeholder="结束时间"/>
                 </div>
-                &nbsp;&nbsp;
+                &nbsp;
                 <div class="form-group">
                     <button class="btn btn-default" type="button" onclick="search()">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
-                &nbsp;&nbsp;
+                &nbsp;
                 <div class="form-group">
-                    <button class="btn btn-default" type="button" onclick="expert()">
-                        导出
-                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">导出
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="javascript:void(0)" onclick="expert()">列表数据</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" onclick="backUp()">数据备份</a>
+
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,5 +174,16 @@
             $('#table').bootstrapTable('refresh', {url: 'logs'});
         }
     })
+    
+    function backUp() {
+        $.post('backupLog', {}, function (result) {
+            result = JSON.parse(result)
+            if (result && result.msg != 'success') {
+                return layer.alert("备份失败,请联系管理员")
+            }else {
+                return layer.alert("备份成功,文件名称【"+result.path+"】")
+            }
+        });
+    }
 
 </script>
