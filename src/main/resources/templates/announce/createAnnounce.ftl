@@ -639,7 +639,7 @@
 
 <script type="text/javascript">
 
-    function qryFileAuitResult(fileId,fileName) {
+    function qryFileAuitResult(fileId,fileName,mid) {
         $.ajax({
             type: "post",
             url: "getFileAuditResult",
@@ -698,6 +698,7 @@
                 data = JSON.parse(data)
                 $.each(data, function () {
                     var fileName = this.fileName;
+                    var fileId = this.id;
                     $.ajax({
                         type: "post",
                         url: "findModuleFileByFileCode",
@@ -706,7 +707,6 @@
                         success: function (result) {
                             result = JSON.parse(result);
                             debugger
-                            var fileId = result.id;
                             var fileType = result.fileType;
                             var viewDiv = '<span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>';
                             $.ajax({
@@ -725,7 +725,7 @@
 
                                         if (fileType == 1) {
                                             // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
-                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
                                         } else {
                                             viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                                         }

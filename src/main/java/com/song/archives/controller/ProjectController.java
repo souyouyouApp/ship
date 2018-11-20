@@ -2153,7 +2153,6 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") double amount) {
 
 
     @RequestMapping(value = "GetStorageInfo")
-    @ResponseBody
     public ModelAndView GetStorageInfo(){
 
         ModelAndView modelAndView = new ModelAndView();
