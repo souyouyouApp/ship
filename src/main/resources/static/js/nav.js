@@ -47,7 +47,7 @@ function tab(val) {
     }
 
     if (val == 17) {
-        $("#page-wrapper").load("storageList")
+        $("#page-wrapper").load("GetStorageInfo")
     }
 
 

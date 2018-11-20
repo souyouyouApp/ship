@@ -3,6 +3,7 @@ package com.song.archives.dao;
 import com.song.archives.model.FileInfoEntity;
 import com.song.archives.model.ModuleFileEntity;
 import com.song.archives.model.ProjectInfoEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +19,7 @@ import java.util.List;
 public interface FileInfoRepository extends CrudRepository<FileInfoEntity, Long> {
     List<FileInfoEntity> findByIdIsInAndClassificlevelIdLessThanEqual(Specification specification, Pageable pageable);
 
-    List<FileInfoEntity> findAll(Specification specification, Pageable pageable);
+    Page<FileInfoEntity> findAll(Specification specification, Pageable pageable);
 
     @Query(value = "select * from file_info where file_code in (select file_code from module_file where t_id =:tId and type =:type) and classificlevel_id <=:permissionLevel", nativeQuery = true)
     List<FileInfoEntity> findByTidAndType(@Param(value = "tId")Long tId ,@Param(value = "type") String type,@Param(value = "permissionLevel") Integer permissionLevel);

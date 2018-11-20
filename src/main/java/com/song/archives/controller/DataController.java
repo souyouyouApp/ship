@@ -843,4 +843,33 @@ public class DataController {
     }
 
 
+    @ArchivesLog(operationType = "ReqFileDownLoad", operationName = "请求下载项目文件")
+    @RequestMapping(value = "/ReqFileDownLoad")
+    @ResponseBody
+    String ReqFileDownLoad(@RequestParam(value = "fileId") String fileIds,
+                              @RequestParam(value = "type") String type) {
+
+        result = new JSONObject();
+
+        String[] fileIdArr=fileIds.split(",");
+        AuditInfo auditInfo = new AuditInfo();
+        for(String fileId:fileIdArr){
+
+            FileInfoEntity fileInfo = fileInfoRepository.findById(Long.parseLong(fileId));
+            auditInfo.setFileId(fileInfo.getId());
+            auditInfo.setApplicant(getUser().getUsername());
+            auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            auditInfo.setFileName(fileInfo.getFileName());
+            auditInfo.setIsAudit(0);
+            auditInfo.setType("DOWNLOAD");
+            auditInfo.setFileClassify(fileInfo.getFileClassify());
+            auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+
+            auditInfoRepository.save(auditInfo);
+        }
+        result.put("auditResult",auditInfo.getIsAudit());
+        result.put("type",auditInfo.getType());
+        return result.toString();
+    }
+
 }

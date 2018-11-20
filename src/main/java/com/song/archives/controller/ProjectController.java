@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -81,6 +82,12 @@ public class ProjectController {
     private HuoJiangRepository huoJiangRepository;
     @Autowired
     private ModuleFileRespository moduleFileRespository;
+
+    @Autowired
+    private AuditInfoRepository auditInfoRepository;
+
+    @Autowired
+    private StorageRepository storageRepository;
 
     @Value("${projectFilePath}")
     private String projectFilePath;
@@ -1616,7 +1623,7 @@ public class ProjectController {
         result = new JSONObject();
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne((long) proid);
         operationLogInfo = "用户【" + getUser().getUsername() + "】进行查询项目附件列表操作";
-        List<FileInfoEntity> filelist = new ArrayList<>();
+        Page<FileInfoEntity> filelist = null;
         int classiclevel = getUser().getPermissionLevel() == null ? 1 : getUser().getPermissionLevel();
 
         String targetFids = "";
@@ -1666,12 +1673,44 @@ public class ProjectController {
 
                     predicates.add(predicate1);
 
+                    Path<Integer> audit=root.get("audit");
+
+                    Predicate predicate2=criteriaBuilder.equal(audit,1);
+
+                    predicates.add(predicate2);
+
                     return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
                     // return criteriaBuilder.and(predicate1);
                 }
             };
 
             filelist = fileInfoRepository.findAll(specification, pageable);
+
+            //audit,1:可下载，-1：上传审核未通过，-2：下载审核未通过，2：上传审核中，3：下载审核中 4：下载审核通过
+            for(FileInfoEntity fileInfoEntity:filelist){
+                AuditInfo auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileInfoEntity.getId(), getUser().getUsername(),"UPLOAD");
+
+                if(auditInfo!=null){
+                    if(auditInfo.getIsAudit()==0)
+                        fileInfoEntity.setAudit(2);
+                    if(auditInfo.getIsAudit()==1)
+                        fileInfoEntity.setAudit(1);
+                    if(auditInfo.getIsAudit()==-1)
+                        fileInfoEntity.setAudit(-1);
+                }else{
+
+                    auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileInfoEntity.getId(), getUser().getUsername(),"DOWNLOAD");
+                    if(auditInfo!=null){
+                        if(auditInfo.getIsAudit()==0)
+                            fileInfoEntity.setAudit(3);
+                        if(auditInfo.getIsAudit()==1)
+                            fileInfoEntity.setAudit(4);
+                        if(auditInfo.getIsAudit()==-1)
+                            fileInfoEntity.setAudit(-2);
+                    }
+                }
+
+            }
 
             result.put("result", JSONArray.fromObject(filelist));
 
@@ -2094,6 +2133,57 @@ public class ProjectController {
         result.put("success", "success");
         return result.toString();
     }
+//
+@RequestMapping(value = "UpdateSpaceAmount")
+@ResponseBody
+public String UpdateSpaceAmount(@RequestParam(value = "amount") double amount) {
+    String res = "ok";
+
+    try {
+        StorageEntity storageEntity = storageRepository.findOne(1L);
+
+        storageEntity.setTotalAmount(amount);
+        storageRepository.save(storageEntity);
+    } catch (Exception ex) {
+        res = "no";
+    }
+
+    return res;
+}
+
+
+    @RequestMapping(value = "GetStorageInfo")
+    @ResponseBody
+    public ModelAndView GetStorageInfo(){
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        StorageEntity storageEntity=storageRepository.findOne(1L);
+
+        if(storageEntity==null) {
+
+            storageEntity = new StorageEntity();
+            storageEntity.setId(1);
+            storageEntity.setTotalAmount(10000);
+        }
+            storageEntity.setDbAmount(storageRepository.GetDataBaseSpace());
+
+            storageEntity.setProjectAmount(storageRepository.GetFileSpaceByType(1));
+            storageEntity.setAnliAmount(storageRepository.GetFileSpaceByType(2));
+            storageEntity.setZiliaoAmount(storageRepository.GetFileSpaceByType(3));
+            storageEntity.setExpertAmount(storageRepository.GetFileSpaceByType(4));
+            storageEntity.setGongaoAmount(storageRepository.GetFileSpaceByType(5));
+
+            storageEntity.setCurrentUsed((storageEntity.getDbAmount() + storageEntity.getProjectAmount() + storageEntity.getAnliAmount()
+                    + storageEntity.getZiliaoAmount() + storageEntity.getExpertAmount() + storageEntity.getGongaoAmount()));
+
+            storageRepository.save(storageEntity);
+
+
+        modelAndView.addObject("storageinfo",storageEntity);
+        modelAndView.setViewName("/project/storagelist");
+        return modelAndView;
+    }
 
     @RequestMapping(value = "UpLoadProjectFiles")
     @ResponseBody
@@ -2130,6 +2220,7 @@ public class ProjectController {
                     fileInfoEntity.setCreateTime(myFmt2.format(new Date()));
                     //fileInfoEntity.setFileClassify(1);
                     fileInfoEntity.setFileClassify(1);
+                    fileInfoEntity.setAudit(1);
 
                     File file = new File(projectFilePath + savFilePath);
                     if (!file.getParentFile().exists()) {
@@ -2143,6 +2234,18 @@ public class ProjectController {
                     projectfiles[i].transferTo(file);
 
                     FileInfoEntity addedFile = fileInfoRepository.save(fileInfoEntity);
+
+                    AuditInfo auditInfo = new AuditInfo();
+                    auditInfo.setFileId(addedFile.getId());
+                    auditInfo.setApplicant(getUser().getUsername());
+                    auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                    auditInfo.setFileName(addedFile.getFileName());
+                    auditInfo.setIsAudit(0);
+                    auditInfo.setType("UPLOAD");
+                    auditInfo.setFileClassify(addedFile.getFileClassify());
+                    auditInfo.setClassificlevelId(addedFile.getClassificlevelId());
+
+                    auditInfoRepository.save(auditInfo);
 
                     ModuleFileEntity moduleFileEntity=new ModuleFileEntity();
                     moduleFileEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));

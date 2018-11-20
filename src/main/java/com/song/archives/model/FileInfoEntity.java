@@ -25,6 +25,7 @@ public class FileInfoEntity implements Serializable{
     private String fileType;
     private Integer status;
     private String creator;
+    private Integer audit;
     @CreatedDate
     private String createTime;
     private String remark;
@@ -35,6 +36,7 @@ public class FileInfoEntity implements Serializable{
      * 2 案例库文件
      * 3 资料库文件
      * 4 专家库文件
+     * 5 公告
      */
     private Integer fileClassify;
 
@@ -148,5 +150,13 @@ public class FileInfoEntity implements Serializable{
 
     public void setClassificlevelId(Integer classificlevelId) {
         this.classificlevelId = classificlevelId;
+    }
+
+    public Integer getAudit() {
+        return audit;
+    }
+
+    public void setAudit(Integer audit) {
+        this.audit = audit;
     }
 }

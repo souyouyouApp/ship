@@ -2,8 +2,10 @@ package com.song.archives.controller;
 
 import com.song.archives.aspect.ArchivesLog;
 import com.song.archives.dao.OperationRepository;
+import com.song.archives.dao.StorageRepository;
 import com.song.archives.dao.UserRepository;
 import com.song.archives.model.OperationLog;
+import com.song.archives.model.StorageEntity;
 import com.song.archives.model.User;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -53,6 +55,8 @@ public class UserController {
 
     @Autowired
     private OperationRepository operationRepository;
+    @Autowired
+    private StorageRepository storageRepository;
 
 
     /**
@@ -431,6 +435,30 @@ public class UserController {
 
 
         try {
+            StorageEntity storageEntity=new StorageEntity();
+
+            storageEntity=storageRepository.findOne(1L);
+
+            if(storageEntity==null) {
+                storageEntity=new StorageEntity();
+                storageEntity.setId(1);
+                storageEntity.setTotalAmount(10000);
+            }
+
+            storageEntity.setDbAmount(storageRepository.GetDataBaseSpace());
+
+            storageEntity.setProjectAmount(storageRepository.GetFileSpaceByType(1));
+            storageEntity.setAnliAmount(storageRepository.GetFileSpaceByType(2));
+            storageEntity.setZiliaoAmount(storageRepository.GetFileSpaceByType(3));
+            storageEntity.setExpertAmount(storageRepository.GetFileSpaceByType(4));
+            storageEntity.setGongaoAmount(storageRepository.GetFileSpaceByType(5));
+
+            storageEntity.setCurrentUsed(storageEntity.getTotalAmount()-(storageEntity.getDbAmount()+storageEntity.getProjectAmount()+storageEntity.getAnliAmount()
+                    +storageEntity.getZiliaoAmount()+storageEntity.getExpertAmount()+storageEntity.getGongaoAmount()));
+
+            storageRepository.save(storageEntity);
+
+
             currentUser.login(token);
             User user = (User) currentUser.getPrincipal();
 //            SecurityUtils.getSubject().getSession().setTimeout(1000);

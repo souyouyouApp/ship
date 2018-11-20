@@ -91,6 +91,10 @@ public class ReviewController {
             notify.setFileName(fileName);
             notifyRepository.save(notify);
 
+            FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
+            fileInfo.setAudit(1);
+            fileInfoRepository.save(fileInfo);
+
             auditInfo.setAuditContent(content);
             auditInfo.setIsAudit(auditResult);
             auditInfo.setAuditTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));

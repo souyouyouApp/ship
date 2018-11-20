@@ -73,6 +73,10 @@
                 <span class="glyphicon glyphicon-download" aria-hidden="true"></span>下载文件
             </button>
         </@shiro.hasPermission>
+                <button id="btn_reqdownloadfile" type="button" class="btn btn-primary"
+                        style="margin-left: 20px;" onclick="ReqDownLoadAttachFile()">
+                    <span class="glyphicon glyphicon-registration-mark" aria-hidden="true"></span>提交下载请求
+                </button>
         <@shiro.hasPermission name="project:deleteattach">
             <button id="btn_delete" type="button" class="btn btn-danger"
                     style="margin-left: 20px;" onclick="DeleteAttachFile()">

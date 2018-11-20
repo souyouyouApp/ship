@@ -52,14 +52,16 @@ $(document).ready(function () {
                 title: '文件名称',
                 sortable: true,
                 formatter: function (value, row, index) {
-                    if (row.fileType == 1&&row.audit==1) {
-                        //return "<a href='" + $("#basePath").val() + row.filePath + "' target='_blank' download='dd.pdf'>" + value + "</a>";
+                    // if (row.fileType == 1&&row.audit==1) {
+                    //     //return "<a href='" + $("#basePath").val() + row.filePath + "' target='_blank' download='dd.pdf'>" + value + "</a>";
+                    //
+                    //     return "<a href='javascript:void(0)' target='_blank' onclick='ReviewFiles(" + row.id + ")'>" + value + "</a>"
+                    //
+                    // } else {
+                    //     return value;
+                    // }
 
-                        return "<a href='javascript:void(0)' target='_blank' onclick='ReviewFiles(" + row.id + ")'>" + value + "</a>"
-
-                    } else {
-                        return value;
-                    }
+                    return value;
                 }
 
             }, {
@@ -104,17 +106,26 @@ $(document).ready(function () {
             },
             {
                 field: 'audit',
-                title: '审核状态',
+                title: '文件状态',
                 sortable: true,
                 formatter: function (value, row, index) {
-                    if (value == 0) {
-                        return "审核中";
-                    } else if (value == -1) {
-                        return "审核未通过";
-                    } else if (value == 1) {
-                        return "审核通过";
-                    }  else {
-                        return "审核未通过";
+                    ////audit,1:正常，-1：上传审核未通过，-2：下载审核未通过，2：上传审核中，3：下载审核中 4：下载审核通过
+                    if (value == 2) {
+                        return "上传审核中";
+                    } else if (value == 3) {
+                        return "下载审核中";
+                    }else if(value==4){
+                        return "下载审核通过";
+                    }
+                    else if (value == -1) {
+                        return "上传审核未通过";
+                    } else if (value == -2) {
+                        return "下载审核未通过";
+                    }
+                    else if (value == 1) {
+                        return "可下载";//正常
+                    } else {
+                        return "";
                     }
 
                 }
@@ -419,14 +430,70 @@ function EditAttachFile() {
 
 
     }
+}
+
+
+function ReqDownLoadAttachFile() {
+    var selectedObjs = $("#filetable").bootstrapTable('getSelections');
+    var ids = [];
+    if (selectedObjs == null || selectedObjs.length <= 0) {
+        layer.msg("请选择要提交下载请求的文件!");
+        return;
+    }
+    debugger;
+    var downloadok = [], downloadno = [];
+
+    for (var i = 0; i < selectedObjs.length; i++) {
+        if (selectedObjs[i].audit != 1) {
+            downloadno.push(selectedObjs[i].id);
+        } else {
+            downloadok.push(selectedObjs[i].id);
+        }
+    }
+
+    if (downloadno != null && downloadno.length > 0) {
+        layer.msg("请选择【可下载】状态的文件提交申请，已通过下载请求的文件不需要重复提交！");
+        return;
+    }
+
+    $.ajax({
+        type: "post",
+        url: "ReqFileDownLoad",
+        data: {fileId: downloadok.join(","), type: 'DOWNLOAD'},
+        async: false,
+        success: function (result) {
+            result = JSON.parse(result);
+            if (result.auditResult == 0) {
+                layer.alert("下载请求已提交审核,请稍后！")
+
+                refreshFileTable();
+            } else {
+                layer.alert("提交审核失败,请稍后重试！")
+            }
+        }
+    });
+
 
 }
 
 function DownLoadAttachFile() {
+    //audit,1:可下载，-1：上传审核未通过，-2：下载审核未通过，2：上传审核中，3：下载审核中 4：下载审核通过
     var selectedObjs = $("#filetable").bootstrapTable('getSelections');
     var ids = [];
     if (selectedObjs == null || selectedObjs.length <= 0) {
         layer.msg("请选择要下载的文件!");
+        return;
+    }
+    var downloadno=[];
+
+    for(i=0;i<selectedObjs.length;i++){
+        if(selectedObjs[i].audit!=4) {
+            downloadno.push(selectedObjs[i].id);
+        }
+    }
+    debugger;
+    if(downloadno!=null&&downloadno.length>0){
+        layer.msg("请选择下载审核通过的文件进行下载！");
         return;
     }
 
