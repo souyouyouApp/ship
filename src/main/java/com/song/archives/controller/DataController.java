@@ -820,7 +820,13 @@ public class DataController {
                               @RequestParam(value = "type") String type) {
 
         result = new JSONObject();
-        AuditInfo auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileId, getUser().getUsername(),type);
+        AuditInfo auditInfo;
+        if (type.equals("UPLOAD")){
+            auditInfo = auditInfoRepository.findByFileIdAndType(fileId, type);
+        }else {
+            auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileId, getUser().getUsername(),type);
+        }
+
 
         if (auditInfo == null){
 

@@ -167,10 +167,11 @@
                 </ul>
             </li>
             </@shiro.hasPermission>
-
+            <@shiro.hasAnyRoles name="administrator,superadmin">
             <li>
                 <a href="javascript:void(0)" onclick="tab(17)"><i class="fa fa-space-shuttle fa-fw"></i> 存储空间管理</a>
             </li>
+            </@shiro.hasAnyRoles>
         </ul>
     </div>
     <!-- /.sidebar-collapse -->

@@ -17,6 +17,8 @@ public interface AuditInfoRepository extends CrudRepository<AuditInfo, Long> {
 
     AuditInfo findByFileIdAndApplicantAndType(Long fileId,String userName,String type);
 
+    AuditInfo findByFileIdAndType(Long fileId,String type);
+
     List<AuditInfo> findAll(Specification specification, Pageable pageable);
 
 }
