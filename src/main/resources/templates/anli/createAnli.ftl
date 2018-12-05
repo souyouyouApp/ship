@@ -788,7 +788,7 @@
 
 
     if ('${info.id!}' != '') {
-
+        var finalResult;
         $.ajax({
             type: "post",
             url: "findFileByZid",
@@ -809,6 +809,7 @@
                             result = JSON.parse(result);
                             debugger
                             var fileType = result.fileType;
+                            var mid = result.id;
                             var viewDiv = '<span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>';
                             $.ajax({
                                 type: "post",
@@ -817,7 +818,9 @@
                                 async: false,
                                 success: function (result) {
                                     debugger
+
                                     result = JSON.parse(result);
+                                    finalResult = result.finalResult
                                     if (result.auditResult == -1) {
                                         viewDiv = '<label style="margin-left: 20px;color: red;">审核未通过</label>'
                                     }else if(result.auditResult == 0){
@@ -839,7 +842,9 @@
                             });
 
                             var childInput = '<div><input style="margin-top: 5px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
-                            $("#attachment").append(childInput)
+                            if (finalResult != -1){
+                                $("#attachment").append(childInput);
+                            }
                         }
                     });
                 })

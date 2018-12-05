@@ -694,7 +694,7 @@
     }
 
     if ('${info.id!}' != '') {
-
+        var finalResult;
 
         $.ajax({
             type: "post",
@@ -725,6 +725,7 @@
                                 success: function (result) {
                                     debugger
                                     result = JSON.parse(result);
+                                    finalResult = result.finalResult
                                     if (result.auditResult == -1) {
                                         viewDiv = '<label style="margin-left: 20px;color: red;">审核未通过</label>'
                                     }else if(result.auditResult == 0){
@@ -746,7 +747,10 @@
                             });
 
                             var childInput = '<div><input style="margin-top: 5px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
-                            $("#attachment").append(childInput)
+                            if (finalResult != -1){
+                                $("#attachment").append(childInput)
+                            }
+
                         }
                     });
                 })

@@ -843,6 +843,10 @@ public class DataController {
 
             auditInfoRepository.save(auditInfo);
         }
+        if (!auditInfo.getApplicant().equals(getUser().getUsername()) && auditInfo.getIsAudit() != 1){
+            result.put("finalResult",-1);
+        }
+
         result.put("auditResult",auditInfo.getIsAudit());
         result.put("type",auditInfo.getType());
         return result.toString();
