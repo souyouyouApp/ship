@@ -134,7 +134,7 @@
                 <select id="relatedUsers" name="relatedUsers" class="selectpicker form-control" multiple required data-live-search="true">
                     <#--<option value="-1">请选择相关人员</option>-->
                 <#foreach user in users>
-                    <option value="${user.id}" selected="${uids?seq_contains(user.id)?string("selected", "")}">${user.realName!}</option>
+                    <option value="${user.id}" >${user.realName!}</option>
                 </#foreach>
                 </select>
             </div>
@@ -236,7 +236,7 @@
                     <input id="fileClassify" name="fileClassify" type="hidden" value="5"/>
                     <div class="form-group">
                         <select name="classificlevel" id="classificlevel" class="form-control">
-                        <#--<option value="-1">请选择</option>-->
+                        <option value="-1">请选择密级</option>
                             <#if (levelId >= 4)> <option value="4">机密</option></#if>
                             <#if (levelId >= 3)> <option value="3">秘密</option></#if>
                             <#if (levelId >= 2)> <option value="2">内部</option></#if>
@@ -324,7 +324,7 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/></div><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/></div><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
         $("#savePaperFile").removeAttr("disabled");
 

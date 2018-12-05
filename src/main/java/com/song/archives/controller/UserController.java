@@ -176,7 +176,7 @@ public class UserController {
             }
 
             //系统管理员只能查看普通用户及安全审计员日志
-            if (getUser().getUsername().equals("administrator")){
+            if (getUser().getUsername().equals("securitor")){
                 predicates.add(criteriaBuilder.notEqual(root.get("operationUserName"),"securitor"));
                 predicates.add(criteriaBuilder.notEqual(root.get("operationUserName"),"administrator"));
 

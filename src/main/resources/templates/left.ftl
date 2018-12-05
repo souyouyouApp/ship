@@ -118,7 +118,7 @@
         <#--</li>-->
         <#--</ul>-->
         <#--</li>-->
-        <@shiro.hasAnyRoles name="comptroller,superadmin,administrator">
+        <@shiro.hasAnyRoles name="comptroller,superadmin,securitor">
             <li>
                 <a href="javascript:void(0)" onclick="tab(16)"><i class="fa fa-file fa-fw"></i> 日志管理<#--<span
                         class="fa arrow"></span>--></a>

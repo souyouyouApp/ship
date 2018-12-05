@@ -194,14 +194,17 @@ public class AnnounceController {
     @ArchivesLog(operationType = "createAnnoucePage",operationName = "新建公告页面")
     @RequestMapping(value = "/createAnnoucePage")
     public ModelAndView createAnliPage(@RequestParam(value = "aid",required = false) Long aid){
-
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("announce/createAnnounce");
         AnnounceInfoEntity announceInfoEntity;
 
         if(null == aid){
             announceInfoEntity = new AnnounceInfoEntity();
+            modelAndView.addObject("uids",null);
             announceInfoEntity.setSponsorDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
         }else {
             announceInfoEntity = announceRepository.findOne(aid);
+            modelAndView.addObject("uids",announceInfoEntity.getRelatedUserIds().split(","));
         }
 
 
@@ -220,13 +223,13 @@ public class AnnounceController {
 
         List<User> users = userRepository.findAll(specification);
 
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("announce/createAnnounce");
+
         modelAndView.addObject("info",announceInfoEntity);
         modelAndView.addObject("proentity",announceInfoEntity);
         modelAndView.addObject("mid",3);
         modelAndView.addObject("users",users);
         modelAndView.addObject("levelId",getUser().getPermissionLevel());
+
 
         return modelAndView;
     }

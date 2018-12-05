@@ -124,7 +124,7 @@
             <label for="classificlevelId" class="col-sm-2 control-label">密级</label>
             <div class="col-sm-4">
                 <select name="classificlevelId" id="classificlevelId" class="form-control">
-                <#--<option value="-1">请选择</option>-->
+                <option value="-1">请选择密级</option>
                     <option value="4">机密</option>
                     <option value="3">秘密</option>
                     <option value="2">内部</option>
