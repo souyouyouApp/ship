@@ -173,3 +173,20 @@
 <!-- /.modal -->
 
 
+<script language="JavaScript">
+
+    if($("#hidowner").val()=="1") {
+        $("#btn_addele").show();
+        $("#btn_addpaper").show();
+        $("#btn_editfile").show();
+        $("#btn_delete").show();
+    }else
+    {
+        $("#btn_addele").hide();
+        $("#btn_addpaper").hide();
+        $("#btn_editfile").hide();
+        $("#btn_delete").hide();
+    }
+    $("#phaselist").removeAttr("disabled")
+    $("#attachlist").removeAttr("disabled")
+    </script>

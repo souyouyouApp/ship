@@ -123,7 +123,7 @@ $(document).ready(function () {
                         return "下载审核未通过";
                     }
                     else if (value == 1) {
-                        return "可下载";//正常
+                        return "正常";//可下载
                     } else {
                         return "";
                     }

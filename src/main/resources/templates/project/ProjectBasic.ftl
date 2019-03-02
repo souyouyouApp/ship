@@ -11,6 +11,7 @@
                     <div class="panel-body">
 
                         <input type="hidden" id="id" name="id" value="${proentity.id}">
+
                         <div class="form-group col-md-6">
                             <label>项目名称</label>
                             <input class="form-control" id="proName" name="proName"
@@ -260,12 +261,14 @@
             </script>
                     <@shiro.hasPermission name="project:save">
                      <script language="JavaScript" type="text/javascript">
-                         $('input').removeAttr("readonly")
-                         $('select').removeAttr("disabled")
-                         $('textarea').removeAttr("readonly")
-                         $('#proJoiners').removeAttr("disabled")
+                         if($("#hidowner").val()=="1") {
+                             $('input').removeAttr("readonly")
+                             $('select').removeAttr("disabled")
+                             $('textarea').removeAttr("readonly")
+                             $('#proJoiners').removeAttr("disabled")
+                         }
                      </script>
-            <a class="btn btn-primary" onclick="UdpateProjectForm()">
+            <a class="btn btn-primary" onclick="UdpateProjectForm()" id="btnupdatepro">
                 <i class="fa fa-save"></i> 修改
             </a>
                     </@shiro.hasPermission>
@@ -456,6 +459,14 @@
 
         LoadUsers();
         InitData();
+
+        if($("#hidowner").val()=="1") {
+            $("#btnupdatepro").show();
+        }else
+        {
+            $("#btnupdatepro").hide();
+        }
+
     })
 
 

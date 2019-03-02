@@ -35,7 +35,7 @@
             <#--</button>-->
             <#--</@shiro.hasPermission>-->
             <#--<@shiro.hasPermission name="bjjd:delete">-->
-                <button id="btn_deleteyfee" type="button" onclick="DeleteJdByIds()" class="btn btn-danger"
+                <button id="btn_deleteJd" type="button" onclick="DeleteJdByIds()" class="btn btn-danger"
                         style="margin-left: 20px;">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                 </button>
@@ -627,6 +627,28 @@
                     rows: result[0].content //行数据，前面的key要与之前设置的dataField的值一致.
                 };
             };
+
+            if($("#hidowner").val()=="1") {
+                $("#btn_addjd").show();
+                $("#btn_deleteJd").show();
+
+                $("#btn_addnbj").show();
+                $("#btn_deletenbj").show();
+
+                $("#btn_addhj").show();
+                $("#btn_deletehj").show();
+            }else
+            {
+                $("#btn_addjd").hide();
+                $("#btn_deleteJd").hide();
+
+                $("#btn_addnbj").hide();
+                $("#btn_deletenbj").hide();
+
+                $("#btn_addhj").hide();
+                $("#btn_deletehj").hide();
+            }
+            $("#bjtypelist").removeAttr("disabled")
         });
 
 

@@ -37,6 +37,7 @@
     </div>
     <input type="hidden" id="basePath" value="${basePath}">
     <input type="hidden" id="levelId" value="${levelId}">
+    <input type="hidden" id="hidowner" name="hidowner" value="${isowner}">
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">

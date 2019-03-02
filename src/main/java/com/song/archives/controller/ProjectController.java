@@ -693,13 +693,20 @@ public class ProjectController {
     public ModelAndView ProjectDetail(@RequestParam(value = "pid", required = false) Long pid, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         model.setViewName("/project/ProjectDetail");
-        model.addObject("proentity", projectRepository.findOne(pid));
+        ProjectInfoEntity projectInfoEntity=projectRepository.findOne(pid);
+        int isowner=0;
+        if(Integer.parseInt(getUser().getId().toString()) == projectInfoEntity.getCreater()){
+            isowner=1;
+        }
+        model.addObject("isowner", isowner);
+        model.addObject("proentity", projectInfoEntity);
         model.addObject("mid", 1);
         String path = request.getContextPath();
 //      获得本项目的地址(例如: http://localhost:8080/MyApp/)赋值给basePath变量
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
         model.addObject("basePath", basePath);
         model.addObject("levelId", getUser().getPermissionLevel());
+
         Specification<User> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
             // List<Predicate> predicates = new ArrayList<>();

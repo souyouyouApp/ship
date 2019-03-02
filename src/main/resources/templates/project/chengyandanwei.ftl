@@ -20,19 +20,19 @@
     <div class="table-responsive"  id="danweidiv">
         <div id="danweitabletoolbar" class="btn-group">
         <#--<@shiro.hasPermission name="cydanwei:add">-->
-            <button id="btn_cydanwei" type="button" class="btn btn-primary"
+            <button id="btn_cydanweiA" type="button" class="btn btn-primary"
                     style="" onclick="AddCyDanwei()">
                 <span class="glyphicon glyphicon-book" aria-hidden="true"></span>添加
             </button>
         <#--</@shiro.hasPermission>-->
         <#--<@shiro.hasPermission name="cydanwei:edit">-->
-            <button id="btn_cydanwei" onclick="EditCyDanwei()" type="button" class="btn btn-primary"
+            <button id="btn_cydanweiE" onclick="EditCyDanwei()" type="button" class="btn btn-primary"
                     style="margin-left: 20px;">
                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
             </button>
         <#--</@shiro.hasPermission>-->
         <#--<@shiro.hasPermission name="cydanwei:delete">-->
-            <button id="btn_cydanwei" type="button" onclick="DeleteDanwei()" class="btn btn-danger"
+            <button id="btn_cydanweiD" type="button" onclick="DeleteDanwei()" class="btn btn-danger"
                     style="margin-left: 20px;" onclick="">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
             </button>
@@ -345,6 +345,19 @@
                 rows: result[0].content //行数据，前面的key要与之前设置的dataField的值一致.
             };
         };
+
+
+
+        if($("#hidowner").val()=="1") {
+            $("#btn_cydanweiA").show();
+            $("#btn_cydanweiD").show();
+            $("#btn_cydanweiE").show();
+        }else
+        {
+            $("#btn_cydanweiA").hide();
+            $("#btn_cydanweiD").hide();
+            $("#btn_cydanweiE").hide();
+        }
     });
     
     function refreshCyDanweiTable() {
