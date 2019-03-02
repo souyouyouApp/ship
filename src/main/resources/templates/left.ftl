@@ -162,7 +162,7 @@
                         <a href="javascript:void(0)" onclick="review(3)">资料库文件</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" onclick="review(5)">公告文件</a>
+                        <a href="javascript:void(0)" onclick="review(4)">公告文件</a>
                     </li>
                 </ul>
             </li>

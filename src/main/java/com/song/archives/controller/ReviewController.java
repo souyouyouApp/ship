@@ -78,22 +78,27 @@ public class ReviewController {
             fileName = auditInfo.getFileName();
 
             if (null == content || content.equals("")){
-                content = "审核通过";
+                content = "您提交的【"+fileName+"】审核申请已通过";
+            }else {
+                content = "您提交的【"+fileName+"】审核申请未通过,未通过理由【"+content+"】";
             }
 
             NotifyEntity notify = new NotifyEntity();
             notify.setContent(content);
             notify.setOperateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
             notify.setApprover(getUser().getRealName());
-            notify.setPersonal(auditInfo.getAuditUser());
+            notify.setPersonal(auditInfo.getApplicant());
             notify.setFileClassify(fileClassify);
             notify.setFileId(fileId);
             notify.setFileName(fileName);
             notifyRepository.save(notify);
 
-            FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
-            fileInfo.setAudit(1);
-            fileInfoRepository.save(fileInfo);
+            if (null != fileClassify && fileClassify.equals(1)){
+                FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
+                fileInfo.setAudit(1);
+                fileInfoRepository.save(fileInfo);
+            }
+
 
             auditInfo.setAuditContent(content);
             auditInfo.setIsAudit(auditResult);
@@ -224,6 +229,7 @@ public class ReviewController {
 
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(criteriaBuilder.equal(root.get("isAudit"),0));
             predicates.add(criteriaBuilder.equal(root.get("fileClassify"),fileClassify));
 //            predicates.add(criteriaBuilder.notEqual(root.get("audit"),1));
             if (null != searchValue && !searchValue.equals("")){

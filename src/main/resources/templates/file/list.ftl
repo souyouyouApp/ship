@@ -153,9 +153,10 @@
                     result = JSON.parse(result)
                     layer.close(load);
                     if (result && result.msg != 'success') {
+                        debugger
                         return layer.msg(result, so.default), !1;
                     }
-                    layer.msg('审核成功。');
+                    layer.msg('操作成功。');
                     $('#table').bootstrapTable('refresh');
                 });
             });
@@ -169,7 +170,7 @@
                     if (result && result.msg != 'success') {
                         return layer.msg(result, so.default), !1;
                     }
-                    layer.msg('审核成功。');
+                    layer.msg('操作成功。');
                     $('#table').bootstrapTable('refresh');
                 });
             });
@@ -237,7 +238,30 @@
                     title: '文件名称',
                     sortable: true,
                     formatter: function (value, row, index) {
-                        return '<a href="downLoadFile?fileId=' + row.fileId + '" download="'+row.fileName+'">' + value + '</a>'
+                        /**
+                         * 1 项目文件
+                         * 2 案例库文件
+                         * 3 资料库文件
+                         * 4 公告库文件
+                         */
+                        var fileType;
+                        //AL：案例；GG：公告；PJ：项目 DT:资料
+
+                        if (row.type == 'ATTACHMENT'){
+                            if (row.fileClassify == 1)
+                                fileType = 'PJ'
+                            if (row.fileClassify == 4)
+                                fileType = 'GG'
+                            if (row.fileClassify == 3)
+                                fileType = 'DT'
+                            if (row.fileClassify == 2)
+                                fileType = 'AL'
+
+                            return '<a href="downLoadAttach?ids=' + row.fileId + '&type='+fileType+'" download="'+value+'">' + value + '</a>'
+
+                        } else {
+                            return '<a href="downLoadFile?fileId=' + row.fileId + '" download="'+row.fileName+'">' + value + '</a>'
+                        }
                     }
                 },
                 {
@@ -265,7 +289,8 @@
                             return '下载';
                         if (value == "UPLOAD")
                             return '上传';
-
+                        if (value == "ATTACHMENT")
+                            return '附件';
                     }
                 },
                 {

@@ -88,6 +88,9 @@ public class DataController {
     @Autowired
     private AuditInfoRepository auditInfoRepository;
 
+    @Autowired
+    private ExpertRepository expertRepository;
+
     @Value("${data.templatePath}")
     private String dataTemplatePath;
 
@@ -731,7 +734,7 @@ public class DataController {
 
             predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
 
-            Predicate whereEquals = criteriaBuilder.or(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
+            Predicate whereEquals = criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
 
 
             if (StringUtils.isNotEmpty(searchValue)) {
@@ -817,7 +820,8 @@ public class DataController {
     @RequestMapping(value = "/getFileAuditResult")
     @ResponseBody
     String getFileAuditResult(@RequestParam(value = "fileId") Long fileId,
-                              @RequestParam(value = "type") String type) {
+                              @RequestParam(value = "type") String type,
+                              @RequestParam(value = "classificlevelId",required = false) Integer classificlevelId) {
 
         result = new JSONObject();
         AuditInfo auditInfo;
@@ -830,16 +834,41 @@ public class DataController {
 
         if (auditInfo == null){
 
-            FileInfoEntity fileInfo = fileInfoRepository.findById(fileId);
             auditInfo = new AuditInfo();
-            auditInfo.setFileId(fileInfo.getId());
+            //下载单个文件
+            if (null == classificlevelId || classificlevelId.equals(0)){
+                FileInfoEntity fileInfo = fileInfoRepository.findById(fileId);
+                auditInfo.setFileId(fileInfo.getId());
+                auditInfo.setFileName(fileInfo.getFileName());
+                auditInfo.setFileClassify(fileInfo.getFileClassify());
+                auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+            //下载整个附件
+            }else {
+                auditInfo.setClassificlevelId(classificlevelId);
+                /**
+                 * 1 项目文件
+                 * 2 案例库文件
+                 * 3 资料库文件
+                 * 4 专家库文件
+                 */
+                auditInfo.setFileId(fileId);
+                if (classificlevelId.equals(2)){
+                    auditInfo.setFileName(anliRepository.findOne(fileId).getTitle());
+                    auditInfo.setFileClassify(2);
+                }else if (classificlevelId.equals(3)){
+                    auditInfo.setFileName(dataRepository.findOne(fileId).getTitle());
+                    auditInfo.setFileClassify(3);
+                }else if (classificlevelId.equals(4)){
+                    auditInfo.setFileName(expertRepository.findOne(fileId).getName());
+                    auditInfo.setFileClassify(4);
+                }
+
+            }
+
             auditInfo.setApplicant(getUser().getUsername());
             auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            auditInfo.setFileName(fileInfo.getFileName());
             auditInfo.setIsAudit(0);
-            auditInfo.setType("DOWNLOAD");
-            auditInfo.setFileClassify(fileInfo.getFileClassify());
-            auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+            auditInfo.setType(type);
 
             auditInfoRepository.save(auditInfo);
         }

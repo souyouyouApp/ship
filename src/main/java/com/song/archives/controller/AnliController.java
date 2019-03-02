@@ -257,7 +257,7 @@ public class AnliController {
                 predicatesWhereArr.add(criteriaBuilder.equal(root.get("typeId"), typeId));
             }
             predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
-            Predicate whereEquals = criteriaBuilder.or(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
+            Predicate whereEquals = criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
 
 
             if (StringUtils.isNotEmpty(searchValue)) {

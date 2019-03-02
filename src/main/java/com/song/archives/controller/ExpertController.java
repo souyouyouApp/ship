@@ -267,9 +267,9 @@ public class ExpertController {
             if (null != typeId) {
                 predicatesWhereArr.add(criteriaBuilder.equal(root.get("typeId"), typeId));
             }
-            predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
+//            predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classiclevelId"),getUser().getPermissionLevel()));
 
-            Predicate whereEquals = criteriaBuilder.or(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
+            Predicate whereEquals = criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
 
 
             if (StringUtils.isNotEmpty(searchValue)) {

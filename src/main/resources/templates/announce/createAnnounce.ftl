@@ -324,51 +324,51 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/></div><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="4"/></div><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
         $("#savePaperFile").removeAttr("disabled");
 
         $(".paper-body").html(paperContent);
 
-//        $('#paperForm').bootstrapValidator({
-//            message: 'This value is not valid',
-//            feedbackIcons: {
-//                valid: 'glyphicon glyphicon-ok',
-//                invalid: 'glyphicon glyphicon-remove',
-//                validating: 'glyphicon glyphicon-refresh'
-//            },
-//            fields: {
-//                fileName: {
-//                    validators: {
-//                        notEmpty: {
-//                            message: '文件名不能为空'
-//                        }
-//                    }
-//                },
-//                zrr: {
-//                    validators: {
-//                        notEmpty: {
-//                            message: '责任人不能为空'
-//                        }
-//                    }
-//                },
-//                classificlevel: {
-//                    message: '请选择文件密级',
-//                    validators: {
-//                        message: '请选择文件密级',
-//                        callback: {
-//                            callback: function (value, validator) {
-//                                if (value == -1) {
-//                                    return false;
-//                                } else {
-//                                    return true;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        });
+       $('#paperForm').bootstrapValidator({
+           message: 'This value is not valid',
+           feedbackIcons: {
+               valid: 'glyphicon glyphicon-ok',
+               invalid: 'glyphicon glyphicon-remove',
+               validating: 'glyphicon glyphicon-refresh'
+           },
+           fields: {
+               fileName: {
+                   validators: {
+                       notEmpty: {
+                           message: '文件名不能为空'
+                       }
+                   }
+               },
+               zrr: {
+                   validators: {
+                       notEmpty: {
+                           message: '责任人不能为空'
+                       }
+                   }
+               },
+               classificlevel: {
+                   message: '请选择文件密级',
+                   validators: {
+                       message: '请选择文件密级',
+                       callback: {
+                           callback: function (value, validator) {
+                               if (value == -1) {
+                                   return false;
+                               } else {
+                                   return true;
+                               }
+                           }
+                       }
+                   }
+               }
+           }
+       });
         $('.form_date').datetimepicker({
             language: 'zh-CN',
             weekStart: 1,
@@ -730,7 +730,7 @@
                                             viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
 
                                         } else {
-                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + result.id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + fileId + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                                         }
 
                                     }

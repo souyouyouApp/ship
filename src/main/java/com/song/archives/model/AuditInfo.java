@@ -24,7 +24,7 @@ public class AuditInfo {
      * 1 项目文件
      * 2 案例库文件
      * 3 资料库文件
-     * 4 专家库文件
+     * 4 公告库文件
      */
     private Integer fileClassify;
 

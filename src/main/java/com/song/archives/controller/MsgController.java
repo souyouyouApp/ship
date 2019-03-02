@@ -3,6 +3,7 @@ package com.song.archives.controller;
 import com.song.archives.aspect.ArchivesLog;
 import com.song.archives.dao.MsgGroupRepository;
 import com.song.archives.dao.MsgRepository;
+import com.song.archives.dao.NotifyRepository;
 import com.song.archives.dao.UserRepository;
 import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
@@ -58,6 +59,8 @@ public class MsgController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private NotifyRepository notifyRepository;
 
     @ArchivesLog(operationType = "msgGroupList" , operationName = "发件页面")
     @RequestMapping("msgGroupList")
@@ -111,6 +114,21 @@ public class MsgController {
         result = new JSONObject();
 
         try {
+
+            MsgGroupEntity msgGroup = msgGroupRepository.findOne(msgGroupId);
+            String groupIds = msgGroup.getGroupIds();
+            String[] split = groupIds.split(",");
+            for (String uid:split) {
+                User msgUser = userRepository.findOne(Long.parseLong(uid.substring(1, uid.length() - 1)));
+                NotifyEntity notify = new NotifyEntity();
+                notify.setContent("【"+getUser().getUsername()+"】,在群聊【"+msgGroup.getGroupName()+"】中说:【"+msgContent+"】");
+                notify.setOperateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
+                notify.setPersonal(msgUser.getUsername());
+
+                notifyRepository.save(notify);
+            }
+
+
             MsgInfoEntity entity = new MsgInfoEntity();
             entity.setContent(msgContent);
             entity.setSendTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
@@ -169,6 +187,14 @@ public class MsgController {
         if (null != uids && uids.length > 0){
             for (Long uid:uids){
                 User user = userRepository.findOne(uid);
+
+                NotifyEntity notify = new NotifyEntity();
+                notify.setContent(getUser().getUsername()+",邀请您参与群聊【"+groupName+"】");
+                notify.setOperateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
+                notify.setPersonal(user.getUsername());
+
+                notifyRepository.save(notify);
+
                 groupUers += user.getRealName()+",";
                 groupIds += "["+user.getId()+"],";
             }

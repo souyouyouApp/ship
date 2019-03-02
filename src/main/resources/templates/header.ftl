@@ -51,40 +51,57 @@
 <script src="static/js/bootstrap-table-zh-CN.min.js"></script>
 <script src="static/js/layer.js"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
+    function getNotify(){
         $.post("getNotify", {}, function (result) {
 
             result = JSON.parse(result);
 
             if (result.msg == "success") {
+                debugger
                 var liStr = "";
                 if (result.result.length > 0 ){
                     $('.fa-bell').css('color','red');
+                    $('.fa-bell').text(result.result.length)
                     $.each( result.result, function( index, val ) {
 //                        <span class="pull-right text-muted small">12 minutes ago</span>
-                        liStr += '<div id="'+this.id+'" ><li class="divider"></li> <li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
+                        if(index == 0){
+                            liStr += '<div id="'+this.id+'" ><li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
+                        }else {
+                            liStr += '<div id="'+this.id+'" ><li class="divider"></li> <li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
+                        }
 
                     } );
                     $('.dropdown-alerts').html(liStr);
                 }else {
-                     liStr += '<li class="divider"></li> <li> <a href="#"> <div> <i class="fa fa-twitter fa-fw"></i><b>暂无通知</b> </div></a></li>'
+                    liStr += '<li> <a href="#"> <div> <i class="fa fa-twitter fa-fw"></i><b>暂无通知</b> </div></a></li>'
 
                     $('.dropdown-alerts').html(liStr)
+                    $('.fa-bell').removeAttr("style")
+                    $('.fa-bell').text('')
                 }
             }
         });
+    }
+    $(document).ready(function(){
+        getNotify();
     })
 
 
     function delNotify(id) {
 
-        $.post("delNotify", {nId:id}, function (result) {
-            result = JSON.parse(result);
-            if (result.msg == 'success') {
-                layer.msg('删除成功')
-                $('#'+id).remove()
-            }
+        layer.confirm('你确定删除该消息？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            $.post("delNotify", {nId:id}, function (result) {
+                result = JSON.parse(result);
+                if (result.msg == 'success') {
+                    layer.msg('删除成功')
+                    getNotify()
+                }
+            });
         });
+
+
     }
      function notifyDetail(fileName,fileClassify,content) {
 
@@ -115,30 +132,7 @@
                 break;
         }
 
-//        layer.alert(clssify+'['+fileName+']:'+content, {
-//            skin: 'layui-layer-molv' //样式类名
-//            ,closeBtn: 0
-//        });
-        layer.open({
-            type: 1,
-            skin: 'layui-layer-demo', //样式类名
-            area: ['500px', '500px'],
-            closeBtn: 1, //不显示关闭按钮
-            anim: 2,
-            shadeClose: true, //开启遮罩关闭
-            content: '<div class="content"><form class="form-horizontal"><div class="form-group"><label for="name" class="col-sm-2 control-label">文件类别</label><div class="col-sm-4">'+clssify+'</div></div><div class="form-group"><label for="name" class="col-sm-2 control-label">文件名称</label><div class="col-sm-4">'+fileName+'</div></div><div class="form-group"><label for="name" class="col-sm-2 control-label">审核信息</label><div class="col-sm-4">'+content+'</div></div></form></div>'
-        });
-
-//        $.ajax({
-//            type: "post",
-//            url: "findTidByFileId",
-//            data: {fileId: fileId},
-//            async: false,
-//            success: function (data) {
-//
-//            }
-//        });
-
+        layer.alert(content)
         
     }
 

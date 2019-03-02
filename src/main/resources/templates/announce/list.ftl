@@ -133,9 +133,9 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li>
-                                    <a href="javascript:void(0)" onclick="exportData()">列表数据</a>
-                                </li>
+                                <#--<li>-->
+                                    <#--<a href="javascript:void(0)" onclick="exportData()">列表数据</a>-->
+                                <#--</li>-->
                                 <li>
                                     <a href="javascript:void(0)" onclick="exportAttach()">附件打包</a>
 
@@ -202,13 +202,30 @@
         }
 
 
-        var form = $("<form></form>").attr("action", "downLoadAttach").attr("method", "post");
-        $.each(selectedObjs,function () {
-            form.append($("<input/>").attr("type", "hidden").attr("name", "ids").attr("value", this.id));
+        $.ajax({
+            type: "post",
+            url: "getFileAuditResult",
+            data: {fileId: selectedObjs[0].id,type:'ATTACHMENT','classificlevelId':4},
+            async: false,
+            success: function (result) {
+                result = JSON.parse(result);
+                if (result.auditResult == 0){
+                    layer.alert("下载请求已提交审核,请稍后。")
+                }else if(result.auditResult == -1){
+                    layer.alert("下载请求被拒绝,请联系审核人员。")
+                }else {
+
+                    var form = $("<form></form>").attr("action", "downLoadAttach").attr("method", "post");
+                    $.each(selectedObjs,function () {
+                        form.append($("<input/>").attr("type", "hidden").attr("name", "ids").attr("value", selectedObjs[0].id));
+                    });
+                    form.append($("<input/>").attr("type", "hidden").attr("name", "type").attr("value", "GG"));
+                    form.appendTo('body')
+                    form.submit().remove();
+
+                }
+            }
         });
-        form.append($("<input/>").attr("type", "hidden").attr("name", "type").attr("value", "AL"));
-        form.appendTo('body')
-        form.submit().remove();
     }
 
     function detailView(id) {
