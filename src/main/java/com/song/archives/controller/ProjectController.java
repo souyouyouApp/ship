@@ -2015,7 +2015,7 @@ public class ProjectController {
         try {
             List<String[]> projectDatas = ExcelUtil.excel2List(projectFile[0]);
 
-            //0序号//1研究方向//2项目编号//3项目名称//4项目承研单位//5主管部门//6参研单位//7项目负责人//8研究内容//9项目渠道//10总经费//11研究周期//12备注
+            //0序号//1研究方向//2项目编号//3项目名称//4项目承研单位//5主管部门//6参研单位//7项目负责人//8研究内容//9项目渠道//10总经费//11/密级//12研究周期//13备注
 
             Iterable<User> users = userRepository.findAll();
 
@@ -2036,6 +2036,7 @@ public class ProjectController {
             for (int i = 0; i < projectDatas.size(); i++) {
                 if (projectDatas.get(i)[0] != null && projectDatas.get(i)[2] != null && !projectDatas.get(i)[2].equals("") && !projectDatas.get(i)[3].equals("")) {
                     int finalI = i;
+
                     Specification<ProjectInfoEntity> specification = new Specification<ProjectInfoEntity>() {
                         @Override
                         public Predicate toPredicate(Root<ProjectInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -2064,49 +2065,56 @@ public class ProjectController {
                         failMsgBuilder.append("<br>");
 
                     } else {
-                        ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
-                        projectInfoEntity.setYanjiuFangXiang(projectDatas.get(i)[1]);
-                        projectInfoEntity.setProNo(projectDatas.get(i)[2]);
-                        projectInfoEntity.setProName(projectDatas.get(i)[3]);
-                        String zhuYanDanwei = projectDatas.get(i)[4];
-                        projectInfoEntity.setMainDepartment(projectDatas.get(i)[5]);
-                        String canYanDanwei = projectDatas.get(i)[6];
+                        try {
+                            ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
+                            projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
+                            projectInfoEntity.setYanjiuFangXiang(projectDatas.get(i)[1]);
+                            projectInfoEntity.setProNo(projectDatas.get(i)[2]);
+                            projectInfoEntity.setProName(projectDatas.get(i)[3]);
+                            String zhuYanDanwei = projectDatas.get(i)[4];
+                            projectInfoEntity.setMainDepartment(projectDatas.get(i)[5]);
+                            String canYanDanwei = projectDatas.get(i)[6];
 
-                        for (User user : users) {
-                            if (user.getRealName().equals(projectDatas.get(i)[7])) {
-                                projectInfoEntity.setProLeaders(projectDatas.get(i)[7]);
-                                break;
+                            for (User user : users) {
+                                if (user.getRealName().equals(projectDatas.get(i)[7])) {
+                                    projectInfoEntity.setProLeaders(projectDatas.get(i)[7]);
+                                    break;
+                                }
                             }
-                        }
-                        projectInfoEntity.setProResearchcontent(projectDatas.get(i)[8]);
-                        projectInfoEntity.setProFrom(projectDatas.get(i)[9]);
-                        //projectInfoEntity.setTotalFee(Double.parseDouble(projectDatas.get(i)[10]));
-                        projectInfoEntity.setTotalFee(projectDatas.get(i)[10]);
-                        projectInfoEntity.setClassificlevelId(levelMap.get(projectDatas.get(i)[11]));
-                        projectInfoEntity.setYanjiuZhouQi(Double.parseDouble(projectDatas.get(i)[12]));
-                        projectInfoEntity.setProRemark(projectDatas.get(i)[13]);
+                            projectInfoEntity.setProResearchcontent(projectDatas.get(i)[8]);
+                            projectInfoEntity.setProFrom(projectDatas.get(i)[9]);
+                            //projectInfoEntity.setTotalFee(Double.parseDouble(projectDatas.get(i)[10]));
+                            projectInfoEntity.setTotalFee(projectDatas.get(i)[10]);
+                            projectInfoEntity.setClassificlevelId(levelMap.get(projectDatas.get(i)[11]));
+                            projectInfoEntity.setYanjiuZhouQi(Double.parseDouble(projectDatas.get(i)[12]));
+                            projectInfoEntity.setProRemark(projectDatas.get(i)[13]);
 
-                        ProjectInfoEntity addProject = projectRepository.save(projectInfoEntity);
-                        ChengYanDanWeiEntity chengYanDanWeiEntity = new ChengYanDanWeiEntity();
-                        chengYanDanWeiEntity.setDanweiName(zhuYanDanwei);
-                        //1 主//2联合 //3外协
-                        chengYanDanWeiEntity.setType(1);
-                        chengYanDanWeiEntity.setProid(addProject.getId());
-                        chengYanDanWeiRepository.save(chengYanDanWeiEntity);
+                            ProjectInfoEntity addProject = projectRepository.save(projectInfoEntity);
+                            ChengYanDanWeiEntity chengYanDanWeiEntity = new ChengYanDanWeiEntity();
+                            chengYanDanWeiEntity.setDanweiName(zhuYanDanwei);
+                            //1 主//2联合 //3外协
+                            chengYanDanWeiEntity.setType(1);
+                            chengYanDanWeiEntity.setProid(addProject.getId());
+                            chengYanDanWeiRepository.save(chengYanDanWeiEntity);
 
-                        if (canYanDanwei != null && !canYanDanwei.equals("")) {
-                            String[] danweis = canYanDanwei.split("，");
+                            if (canYanDanwei != null && !canYanDanwei.equals("")) {
+                                String[] danweis = canYanDanwei.split("，");
 
-                            for (int m = 0; m < danweis.length; m++) {
-                                ChengYanDanWeiEntity chengYanDanWeiEntity1 = new ChengYanDanWeiEntity();
-                                chengYanDanWeiEntity1.setDanweiName(danweis[m]);
-                                chengYanDanWeiEntity1.setType(2);
-                                chengYanDanWeiEntity1.setProid(addProject.getId());
-                                chengYanDanWeiRepository.save(chengYanDanWeiEntity1);
+                                for (int m = 0; m < danweis.length; m++) {
+                                    ChengYanDanWeiEntity chengYanDanWeiEntity1 = new ChengYanDanWeiEntity();
+                                    chengYanDanWeiEntity1.setDanweiName(danweis[m]);
+                                    chengYanDanWeiEntity1.setType(2);
+                                    chengYanDanWeiEntity1.setProid(addProject.getId());
+                                    chengYanDanWeiRepository.save(chengYanDanWeiEntity1);
+                                }
                             }
-                        }
 
-                        successCount++;
+                            successCount++;
+                        } catch (Exception ex) {
+                            failCount++;
+                            failMsgBuilder.append("序号" + projectDatas.get(i)[0] + " 项目字段数据类型错误！");
+                            failMsgBuilder.append("<br>");
+                        }
                     }
 
                 } else {
@@ -2134,6 +2142,8 @@ public class ProjectController {
 
             String errorMsg = ex.getMessage();
             ex.printStackTrace();
+            resultBuilder=new StringBuilder();
+            resultBuilder.append("导入失败，请检查数据类型是否正确！");
         }
 
         result.put("msg", resultBuilder.toString());
