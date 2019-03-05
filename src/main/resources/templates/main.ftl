@@ -176,7 +176,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <div class="list-group" id="alertCenterDiv" style="height: 150px;">
+                <div class="list-group" id="alertCenterDiv">
 
                 </div>
                 <!-- /.list-group -->
