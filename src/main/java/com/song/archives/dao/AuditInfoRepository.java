@@ -21,4 +21,5 @@ public interface AuditInfoRepository extends CrudRepository<AuditInfo, Long> {
 
     List<AuditInfo> findAll(Specification specification, Pageable pageable);
 
+    Long countByAuditUserAndIsAuditAndFileClassify(String uId,Integer isAudit,Integer fileClassify);
 }

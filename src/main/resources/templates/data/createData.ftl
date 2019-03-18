@@ -120,14 +120,8 @@
         <div class="form-group">
             <label for="author" class="col-sm-2 control-label">作者</label>
             <div class="col-sm-4">
-                <span class="form-control">
-
-                <#if info.author??>
-                    ${info.author!}
-                <#else>
-                    <@shiro.principal property="realName"/>
-                </#if>
-                </span>
+                <input type="text" class="form-control" id="title" name="title" placeholder="请输入作者"
+                       value="${info.author!}">
             </div>
         </div>
 
@@ -146,7 +140,7 @@
                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
-                   <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                   <#if (levelId >= 1)> <option value="1">公开</option></#if>
                 </select>
             </div>
 
@@ -157,10 +151,12 @@
                 <select name="ziliaoFrom" id="ziliaoFrom" class="form-control">
                 <#--<option value="-1">请选择来源</option>-->
                     <option value="互联网">互联网</option>
-                    <option value="投稿">投稿</option>
                     <option value="原创">原创</option>
-                    <option value="主管部门">主管部门</option>
-                    <option value="其他部门">其他部门</option>
+                    <option value="集团公司">集团公司</option>
+                    <option value="装备发展部">装备发展部</option>
+                    <option value="科工局">科工局</option>
+                    <option value="国家知识产权局">国家知识产权局</option>
+                    <option value="其他单位">其他单位</option>
                 </select>
             </div>
 
@@ -256,7 +252,16 @@
                             <#if (levelId >= 4)> <option value="4">机密</option></#if>
                             <#if (levelId >= 3)> <option value="3">秘密</option></#if>
                             <#if (levelId >= 2)> <option value="2">内部</option></#if>
-                            <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                            <#if (levelId >= 1)> <option value="1">公开</option></#if>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <select name="auditUser" id="auditUser" class="form-control">
+                            <option value="-1">请指定审核人员</option>
+                            <#foreach user in auditUsers>
+                                <option value="${user.id?c}">${user.username!}</option>
+                            </#foreach>
                         </select>
                     </div>
 
@@ -316,7 +321,7 @@
 
     }
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="3"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="DT"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="3"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="DT"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
 
         $("#savePaperFile").removeAttr("disabled");
@@ -342,6 +347,13 @@
                     validators: {
                         notEmpty: {
                             message: '责任人不能为空'
+                        }
+                    }
+                },
+                filingNum: {
+                    validators: {
+                        notEmpty: {
+                            message: '文件归档号不能为空'
                         }
                     }
                 },
@@ -435,9 +447,14 @@
 
 
         var selectVal = $("#classificlevel").find("option:selected").val();
+        var auditUser = $("#auditUser").find("option:selected").val();
 
         if (selectVal == -1) {
             layer.msg("请选择密级");
+            return;
+        }
+        if (auditUser == -1) {
+            layer.msg("请选择审核人员");
             return;
         }
 

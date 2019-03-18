@@ -21,7 +21,16 @@ public class NotifyEntity implements Serializable {
     private Integer fileClassify;
     private Long fileId;
     private String fileName;
+    //0 未读 1 已读
+    private Integer status;
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public String getFileName() {
         return fileName;

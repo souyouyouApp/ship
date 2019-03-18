@@ -116,7 +116,7 @@
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
-                                    <a href="downLoadDataTempate?fileName=专家模板.xlsx" download="专家模板">下载模板</a>
+                                    <a href="downLoadDataTempate?fileName=专家模板.xlsx" download="专家模板.xlsx">下载模板</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" onclick="batchImport()" data-toggle="modal" data-target="#fileuploadModal">批量导入</a>
@@ -229,14 +229,14 @@
                 data = JSON.parse(data)
                 if (data.msg == "success") {
 
-                    layer.msg("专家信息导入成功!");
+                    layer.msg(data.result);
                     $('#table').bootstrapTable('refresh');
                     $('.modal').map(function () {
                         $(this).modal('hide');
                     });
                     $(".modal-backdrop").remove();
                 } else {
-                    layer.msg("专家信息导入失败,请稍后再试!");
+                    layer.msg("专家信息导入失败,请检查数据格式是否正确!");
                 }
 
             },
@@ -322,7 +322,6 @@
 
         $('#fileuploadModal').modal('show')
 
-        alert(111)
 
         $('#dataFile').fileinput({//初始化上传文件框
             showUpload: false,

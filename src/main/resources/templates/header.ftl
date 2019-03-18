@@ -52,37 +52,92 @@
 <script src="static/js/layer.js"></script>
 <script type="text/javascript">
     function getNotify(){
+        debugger
+        $.post("auditCnt", {}, function (result) {
+            res = JSON.parse(result);
+            if (res.totalCnt > 0){
+                $('#totalCnt').text(res.totalCnt)
+            }
+            if (res.proCnt > 0){
+                $('#proCnt').text(res.proCnt)
+            }
+            if (res.dataCnt > 0){
+                $('#dataCnt').text(res.dataCnt)
+            }
+            if (res.anliCnt > 0){
+                $('#anliCnt').text(res.anliCnt)
+            }
+            if (res.ggCnt > 0){
+                $('#ggCnt').text(res.ggCnt)
+            }
+            console.log(result)
+        })
         $.post("getNotify", {}, function (result) {
 
             result = JSON.parse(result);
 
-            if (result.msg == "success") {
-                debugger
-                var liStr = "";
-                if (result.result.length > 0 ){
-                    $('.fa-bell').css('color','red');
-                    $('.fa-bell').text(result.result.length)
-                    $.each( result.result, function( index, val ) {
-//                        <span class="pull-right text-muted small">12 minutes ago</span>
-                        if(index == 0){
-                            liStr += '<div id="'+this.id+'" ><li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
-                        }else {
-                            liStr += '<div id="'+this.id+'" ><li class="divider"></li> <li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
-                        }
+            if (result.msg == "success" && result.result.length > 0) {
+                Messenger().hideAll()
+                $.each(result.result,function (index,val) {
+                    msg = Messenger().post({
+                        message: '<span style="display: none">'+this.id+'</span>'+this.content,
+                        showCloseButton: true
+                        // actions: {
+                        //     cancel: {
+                        //         label:'取消',
+                        //         action: function(){
+                        //             msg.hide()
+                        //         }
+                        //     },
+                        //     delete: {
+                        //         label:'删除',
+                        //         action: function(){
+                        //             msg.hide()
+                        //         }
+                        //     }
+                        // }
+                    })
+                })
+                $('.messenger-close').click(function(){
+                    msgId = $(this).parent().find('span')[0].innerText
+                    $.post("updateNotify",{id:msgId},function (result) {
 
-                    } );
-                    $('.dropdown-alerts').html(liStr);
-                }else {
-                    liStr += '<li> <a href="#"> <div> <i class="fa fa-twitter fa-fw"></i><b>暂无通知</b> </div></a></li>'
-
-                    $('.dropdown-alerts').html(liStr)
-                    $('.fa-bell').removeAttr("style")
-                    $('.fa-bell').text('')
-                }
+                    })
+                })
             }
-        });
+        })
     }
+//         $.post("getNotify", {}, function (result) {
+//
+//             result = JSON.parse(result);
+//
+//             if (result.msg == "success") {
+//                 debugger
+//                 var liStr = "";
+//                 if (result.result.length > 0 ){
+//                     $('.fa-bell').css('color','red');
+//                     $('.fa-bell').text(result.result.length)
+//                     $.each( result.result, function( index, val ) {
+// //                        <span class="pull-right text-muted small">12 minutes ago</span>
+//                         if(index == 0){
+//                             liStr += '<div id="'+this.id+'" ><li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
+//                         }else {
+//                             liStr += '<div id="'+this.id+'" ><li class="divider"></li> <li> <div style="display: inline" onclick="notifyDetail(&quot;'+this.fileName+'&quot;,'+this.fileClassify+',&quot;'+this.content+'&quot;)"> <i class="fa fa-twitter fa-fw"></i><span>'+this.content+'<span> </div>&nbsp;&nbsp;<div style="display: inline;color: red;" onclick="delNotify('+this.id+')">X</div></li></div>'
+//                         }
+//
+//                     } );
+//                     $('.dropdown-alerts').html(liStr);
+//                 }else {
+//                     liStr += '<li> <a href="#"> <div> <i class="fa fa-twitter fa-fw"></i><b>暂无通知</b> </div></a></li>'
+//
+//                     $('.dropdown-alerts').html(liStr)
+//                     $('.fa-bell').removeAttr("style")
+//                     $('.fa-bell').text('')
+//                 }
+//             }
+//         });
     $(document).ready(function(){
+        // setInterval(getNotify, 5000);
         getNotify();
     })
 

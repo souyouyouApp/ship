@@ -150,19 +150,19 @@
         </@shiro.hasAnyRoles>
            <@shiro.hasPermission name="uploadfile:verify">
             <li>
-                <a href="#"><i class="fa fa-chain fa-fw"></i> 审核管理<span class="spc_span fa arrow"></span></a>
+                <a href="#"><i class="fa fa-chain fa-fw"></i> 审核管理 <span id="totalCnt" style="color: red;margin-left: 20px;"></span><span class="spc_span fa arrow"></span></a>
                 <ul class="nav nav-1-level ">
                     <li>
-                        <a href="javascript:void(0)" onclick="review(1)">项目文件</a>
+                        <a href="javascript:void(0)" onclick="review(1)">项目文件<span id="proCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" onclick="review(2)">案例库文件</a>
+                        <a href="javascript:void(0)" onclick="review(2)">案例库文件<span id="anliCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" onclick="review(3)">资料库文件</a>
+                        <a href="javascript:void(0)" onclick="review(3)">资料库文件<span id="dataCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" onclick="review(4)">公告文件</a>
+                        <a href="javascript:void(0)" onclick="review(4)">公告文件<span id="ggCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
                 </ul>
             </li>
@@ -212,22 +212,22 @@
     var anliMenu = new Object();
     var announceMenu = new Object();
     var expertMenu = new Object();
-    var dataTitle = '<a href="javascript:void(0)"><span onclick="tab(2)"><i class="fa fa-folder fa-fw"></i> 资料库</span><span class="spc_span fa arrow"></span></a>';
+    var dataTitle = '<a href="javascript:void(0)" onclick="tab(2)"><span><i class="fa fa-folder fa-fw"></i> 资料库</span><span class="spc_span fa arrow"></span></a>';
     dataMenu.title = dataTitle;
     dataMenu.id = 'data';
     dataMenu.type = '2';
     dataMenu.target = 'dataList';
-    var anliTitle = '<a href="javascript:void(0)"><span onclick="tab(3)"><i class="fa fa-suitcase fa-fw"></i> 案例库</span><span class="spc_span fa arrow"></span></a>';
+    var anliTitle = '<a href="javascript:void(0)" onclick="tab(3)"><span ><i class="fa fa-suitcase fa-fw"></i> 案例库</span><span class="spc_span fa arrow"></span></a>';
     anliMenu.title = anliTitle;
     anliMenu.id = 'anli';
     anliMenu.type = '1';
     anliMenu.target = 'anliList';
-    var announceTitle = '<a href="javascript:void(0)"><span onclick="tab(5)"><i class="fa fa-wechat fa-fw"></i> 内部园地</span><span class="spc_span fa arrow"></span></a>';
+    var announceTitle = '<a href="javascript:void(0)" onclick="tab(5)"><span ><i class="fa fa-wechat fa-fw"></i> 内部园地</span><span class="spc_span fa arrow"></span></a>';
     announceMenu.title = announceTitle;
     announceMenu.id = 'announce';
     announceMenu.type = '4';
     announceMenu.target = 'announceList';
-    var expertTitle = '<a href="javascript:void(0)"><span onclick="tab(4)"><i class="fa fa-user-plus fa-fw"></i> 专家库</span><span class="spc_span fa arrow"></span></a>';
+    var expertTitle = '<a href="javascript:void(0)" onclick="tab(4)"><span ><i class="fa fa-user-plus fa-fw"></i> 专家库</span><span class="spc_span fa arrow"></span></a>';
     expertMenu.title = expertTitle;
     expertMenu.id = 'expert';
     expertMenu.type = '3';
@@ -268,9 +268,10 @@
                     subHtml.push('<ul class="nav nav-' + levels + '-level">');
 
                     $.each(result, function () {
-
+                        console.log(result)
                         subHtml.push('<li>');
-                        subHtml.push('<a href="javascript:void(0)"><span onclick="type(\'' + target + '\',' + this.id + ')">' + this.typeName + '</span><span class="spc_span fa arrow"></span></a>');
+                        strClick = 'type(\''+target+'\','+this.id+')'
+                        subHtml.push('<a href="javascript:'+strClick+'"><span>' + this.typeName + '</span><span class="spc_span fa arrow"></span></a>');
                         subHtml.push(addSubMenu(type, this.id, levels, target));
                         subHtml.push('</li>');
 

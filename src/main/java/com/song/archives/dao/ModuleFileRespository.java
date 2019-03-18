@@ -1,6 +1,7 @@
 package com.song.archives.dao;
 
 import com.song.archives.model.ModuleFileEntity;
+import com.song.archives.model.ZiliaoInfoEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -21,5 +22,7 @@ public interface ModuleFileRespository extends CrudRepository<ModuleFileEntity,L
 
     @Query(value = "select * from module_file where t_id =:tId and type =:type",nativeQuery = true)
     List<ModuleFileEntity> findByT_idAndType(@Param(value = "tId") Long tId, @Param(value = "type") String type);
+
+
 
 }

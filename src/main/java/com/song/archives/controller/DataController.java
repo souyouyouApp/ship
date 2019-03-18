@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,6 +91,9 @@ public class DataController {
 
     @Autowired
     private ExpertRepository expertRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${data.templatePath}")
     private String dataTemplatePath;
@@ -324,7 +328,7 @@ public class DataController {
             if (entity != null) {
                 entity.setAuthor(getUser().getRealName());
                 entity.setPublishDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
-                entity.setCreator(getUser().getRealName());
+                entity.setCreator(getUser().getUsername());
                 entity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
 
                 String content = entity.getZiliaoContent();
@@ -381,7 +385,9 @@ public class DataController {
                                    @RequestParam(value = "fileName", required = false) String fileName,
                                    @RequestParam(value = "zrr", required = false) String zrr,
                                    @RequestParam(value = "fileType") String fileType,
-                                   @RequestParam(value = "fileClassify",required = false) Integer fileClassify) {
+                                   @RequestParam(value = "auditUser") String auditUser,
+                                   @RequestParam(value = "fileClassify",required = false) Integer fileClassify,
+                                   @RequestParam(value = "filingNum",required = false) String filingNum) {
 
         result = new JSONObject();
 
@@ -418,6 +424,7 @@ public class DataController {
                 fileInfo.setZrr(zrr);
                 fileInfo.setFileType(fileType);
                 fileInfo.setStatus(1);
+                fileInfo.setFilingNum(filingNum);
 
                 result.put("fileName", fileName);
             }
@@ -439,6 +446,7 @@ public class DataController {
             auditInfo.setType("UPLOAD");
             auditInfo.setFileClassify(fileInfo.getFileClassify());
             auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+            auditInfo.setAuditUser(auditUser);
 
             auditInfoRepository.save(auditInfo);
 
@@ -586,6 +594,8 @@ public class DataController {
 
         ZiliaoInfoEntity ziliaoInfoEntity;
 
+        List<User> auditUser = userRepository.findAuditUser();
+
         if (null == zid) {
             ziliaoInfoEntity = new ZiliaoInfoEntity();
             ziliaoInfoEntity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
@@ -600,6 +610,7 @@ public class DataController {
         modelAndView.addObject("proentity",ziliaoInfoEntity);
         modelAndView.addObject("mid",5);
         modelAndView.addObject("levelId",getUser().getPermissionLevel());
+        modelAndView.addObject("auditUsers",auditUser);
         return modelAndView;
     }
 
@@ -716,14 +727,29 @@ public class DataController {
         Sort sort = new Sort(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortName);
         Pageable pageable = new PageRequest(page, size, sort);
 
+        List<Long> ziliaoAuditRes = dataRepository.findZiliaoAuditRes();
+
+        List<Long> selfZiliaoIds = dataRepository.findIdByCreator(getUser().getUsername());
+
+        ziliaoAuditRes.addAll(selfZiliaoIds);
+
 
         Specification<ZiliaoInfoEntity> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
             List<Predicate> predicatesWhereArr = new ArrayList<>();
 
+            if (ziliaoAuditRes.size() == 0){
+                predicatesWhereArr.add(criteriaBuilder.equal(root.get("classificlevelId"),"9999"));
+                return criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicates.size()]));
+            }
+
             if (null == typeId && StringUtils.isEmpty(searchValue)) {
                 predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
+                Expression<String> exp = root.<String>get("id");
+                if (ziliaoAuditRes.size() > 0){
+                    predicatesWhereArr.add(exp.in(ziliaoAuditRes));
+                }
                 return criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicates.size()]));
             }
 
@@ -732,7 +758,12 @@ public class DataController {
                 predicatesWhereArr.add(criteriaBuilder.equal(root.get("typeId"), typeId));
             }
 
+            Expression<String> exp = root.<String>get("id");
+            if (ziliaoAuditRes.size() > 0){
+                predicatesWhereArr.add(exp.in(ziliaoAuditRes));
+            }
             predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
+
 
             Predicate whereEquals = criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
 
@@ -756,7 +787,9 @@ public class DataController {
             if (predicates.size() > 0){
                 predicateArr.add(whereLike);
             }
-
+            if (ziliaoAuditRes.size() > 0){
+                predicatesWhereArr.add(exp.in(ziliaoAuditRes));
+            }
 
             return criteriaQuery.where(predicateArr.toArray(new Predicate[predicateArr.size()])).getRestriction();
         };

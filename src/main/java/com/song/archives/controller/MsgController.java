@@ -121,9 +121,10 @@ public class MsgController {
             for (String uid:split) {
                 User msgUser = userRepository.findOne(Long.parseLong(uid.substring(1, uid.length() - 1)));
                 NotifyEntity notify = new NotifyEntity();
-                notify.setContent("【"+getUser().getUsername()+"】,在群聊【"+msgGroup.getGroupName()+"】中说:【"+msgContent+"】");
+                notify.setContent("【"+getUser().getRealName()+"】,在群聊【"+msgGroup.getGroupName()+"】中说:【"+msgContent+"】");
                 notify.setOperateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
                 notify.setPersonal(msgUser.getUsername());
+                notify.setStatus(0);
 
                 notifyRepository.save(notify);
             }
@@ -192,7 +193,7 @@ public class MsgController {
                 notify.setContent(getUser().getUsername()+",邀请您参与群聊【"+groupName+"】");
                 notify.setOperateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
                 notify.setPersonal(user.getUsername());
-
+                notify.setStatus(0);
                 notifyRepository.save(notify);
 
                 groupUers += user.getRealName()+",";

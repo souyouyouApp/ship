@@ -305,12 +305,13 @@ function viewFile(mid) {
             var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm">' +
                 '<div class="form-group"><label>密级</label><input class="form-control"name="fileName" value="'+data.fileName+'" readonly/></div>' +
                 '<div class="form-group"><label>文件名</label><input class="form-control"name="fileName" value="'+data.fileName+'" readonly/></div>' +
+                '<div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum" value="'+data.filingNum+'" readonly/></div>' +
                 '<div class="form-group"><label>责任人</label><input class="form-control"name="zrr" value="'+data.zrr+'" readonly/></div></form></div></div></div>'
 
             layer.open({
                 type: 1,
                 title:'附件信息',
-                area: ['500px', '360px'],
+                area: ['500px', '400px'],
                 btn: ['关闭'],
                 content: paperContent
             });

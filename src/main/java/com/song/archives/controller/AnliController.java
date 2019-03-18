@@ -3,6 +3,7 @@ package com.song.archives.controller;
 import com.song.archives.aspect.ArchivesLog;
 import com.song.archives.dao.AnliRepository;
 import com.song.archives.dao.ModuleFileRespository;
+import com.song.archives.dao.UserRepository;
 import com.song.archives.model.AnliInfoEntity;
 import com.song.archives.model.ModuleFileEntity;
 import com.song.archives.model.User;
@@ -58,6 +59,9 @@ public class AnliController {
 
     @Autowired
     private ModuleFileRespository moduleFileRespository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 创建案例信息
@@ -146,7 +150,7 @@ public class AnliController {
     public ModelAndView createAnliPage(@RequestParam(value = "aid", required = false) Long aid) {
 
         AnliInfoEntity anliInfoEntity;
-
+        List<User> auditUser = userRepository.findAuditUser();
         if (null == aid) {
             anliInfoEntity = new AnliInfoEntity();
 
@@ -160,6 +164,8 @@ public class AnliController {
         modelAndView.addObject("proentity", anliInfoEntity);
         modelAndView.addObject("mid", 3);
         modelAndView.addObject("levelId", getUser().getPermissionLevel());
+        modelAndView.addObject("auditUsers",auditUser);
+
         return modelAndView;
     }
 

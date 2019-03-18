@@ -302,6 +302,11 @@ public class UserController {
     String updateUser(User user) {
 
         try {
+            if (null == user.getPassword() || user.getPassword().equals("")){
+                user.setPassword(userRepository.findOne(user.getId()).getPassword());
+            }else {
+                user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, user.getPassword(), user.getUsername(), 2).toHex());
+            }
             user.setAvailable(true);
             user.setType(0);
             userRepository.save(user);

@@ -17,4 +17,6 @@ public interface ExpertRepository extends CrudRepository<ExpertInfoEntity,Long> 
 
     List<ExpertInfoEntity> findAll(Specification<ExpertInfoEntity> specification);
 
+    ExpertInfoEntity findByName(String name);
+
 }

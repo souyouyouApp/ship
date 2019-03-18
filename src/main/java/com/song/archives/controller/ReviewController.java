@@ -59,6 +59,27 @@ public class ReviewController {
     private AuditInfoRepository auditInfoRepository;
 
 
+    @ArchivesLog(operationType = "auditCnt", operationName = "查询带审核文件")
+    @RequestMapping(value = "/auditCnt")
+    @ResponseBody
+    String auditCnt() {
+
+        Long proCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,1);
+        Long dataCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,3);
+        Long anliCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,2);
+        Long ggCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,4);
+        result = new JSONObject();
+
+        result.put("proCnt",proCnt);
+        result.put("dataCnt",dataCnt);
+        result.put("anliCnt",anliCnt);
+        result.put("ggCnt",ggCnt);
+        result.put("totalCnt",proCnt+dataCnt+anliCnt+ggCnt);
+
+        return result.toString();
+
+    }
+
 
     @ArchivesLog(operationType = "auditFileById", operationName = "审核文件")
     @RequestMapping(value = "/auditFileById")
@@ -91,6 +112,7 @@ public class ReviewController {
             notify.setFileClassify(fileClassify);
             notify.setFileId(fileId);
             notify.setFileName(fileName);
+            notify.setStatus(0);
             notifyRepository.save(notify);
 
             if (null != fileClassify && fileClassify.equals(1)){
@@ -103,7 +125,6 @@ public class ReviewController {
             auditInfo.setAuditContent(content);
             auditInfo.setIsAudit(auditResult);
             auditInfo.setAuditTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            auditInfo.setAuditUser(getUser().getRealName());
             auditInfoRepository.save(auditInfo);
             msg = SUCCESS;
 

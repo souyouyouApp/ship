@@ -160,7 +160,7 @@
         <div class="form-group">
             <label for="deadlineDate" class="col-sm-2 control-label">截止时间</label>
             <div class="col-sm-4">
-                <input type="date" class="form-control" id="deadlineDate" name="deadlineDate" placeholder="请选择公告截止时间"
+                <input type="date" class="form-control" id="deadlineDate" onclick="datePicker()" name="deadlineDate" placeholder="请选择公告截止时间"
                        value="${info.deadlineDate!}">
             </div>
         </div>
@@ -322,9 +322,13 @@
         obj.parentElement.remove();
 
     }
+    
+    function datePicker() {
+        $('#deadlineDate').datetimepicker('show');
+    }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="4"/></div><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="4"/></div><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
         $("#savePaperFile").removeAttr("disabled");
 
@@ -352,6 +356,13 @@
                        }
                    }
                },
+               filingNum: {
+                   validators: {
+                       notEmpty: {
+                           message: '文件归档号不能为空'
+                       }
+                   }
+               },
                classificlevel: {
                    message: '请选择文件密级',
                    validators: {
@@ -369,16 +380,7 @@
                }
            }
        });
-        $('.form_date').datetimepicker({
-            language: 'zh-CN',
-            weekStart: 1,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: 1,
-            startView: 2,
-            minView: 2,
-            forceParse: 0
-        });
+        
     }
 
     function back() {
@@ -576,6 +578,13 @@
     })
 </script>
 <script type="text/javascript">
+
+    $('#deadlineDate').datetimepicker({
+        minView: "month",
+        format : "yyyy-mm-dd",//日期格式
+        autoclose:true,//选中关闭
+        todayBtn: true//今日按钮
+    });
 
     function createAnnouce() {
         var data = CKEDITOR.instances.ckeditor.getData();

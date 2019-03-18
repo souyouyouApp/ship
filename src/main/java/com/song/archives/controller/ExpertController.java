@@ -163,9 +163,13 @@ public class ExpertController {
     public String importExpert(@RequestParam(value = "dataFile") MultipartFile file) throws IOException, InvalidFormatException {
 
         result = new JSONObject();
-
+        String successImport = "导入成功%d条;";
+        String failImport = "导入失败%d条;";
+        int successCnt = 0;
+        int failCnt = 0;
         try {
             List<String[]> experts = ExcelUtil.excel2List(file);
+
 
             if (null == experts || experts.isEmpty()){
                 msg = "文件不能为空";
@@ -174,19 +178,36 @@ public class ExpertController {
             }
 
             for (String[] expertData:experts){
-                ExpertInfoEntity expert = new ExpertInfoEntity();
-                expert.setName(expertData[1]);
-                expert.setGender(expertData[2]);
-                expert.setBirth(expertData[3]);
-                expert.setAddress(expertData[4]);
-                expert.setZhicheng(expertData[5]);
-                expert.setSxzhuanye(expertData[6]);
-                expert.setMobile(expertData[7]);
-                expert.setPhone(expertData[8]);
-                expert.setFaxcode(expertData[9]);
-                expert.setRemark(expertData[10]);
+                try {
+                    ExpertInfoEntity expert = new ExpertInfoEntity();
+                    String name = expertData.length >= 1?expertData[0]:"";
 
-                expertRepository.save(expert);
+                    String gender = expertData.length >= 2?expertData[1]:"";
+                    String birth = expertData.length >= 3?expertData[2]:"";
+                    String addr = expertData.length >= 4?expertData[3]:"";
+                    String zhicheng = expertData.length >= 5?expertData[4]:"";
+                    String szzy = expertData.length >= 6?expertData[5]:"";
+                    String mobile = expertData.length >= 7?expertData[6]:"";
+                    String phone = expertData.length >= 8?expertData[7]:"";
+                    String faxCode = expertData.length >= 9?expertData[8]:"";
+                    String remark = expertData.length >= 10?expertData[9]:"";
+                    expert.setName(name);
+                    expert.setGender(gender);
+                    expert.setBirth(birth);
+                    expert.setAddress(addr);
+                    expert.setZhicheng(zhicheng);
+                    expert.setSxzhuanye(szzy);
+                    expert.setMobile(mobile);
+                    expert.setPhone(phone);
+                    expert.setFaxcode(faxCode);
+                    expert.setRemark(remark);
+
+                    expertRepository.save(expert);
+                    successCnt++;
+                }catch (Exception e){
+                    failCnt++;
+                }
+
             }
 
             msg = SUCCESS;
@@ -196,6 +217,7 @@ public class ExpertController {
             e.printStackTrace();
         }
         result.put("msg", msg);
+        result.put("result",String.format(successImport, successCnt)+""+String.format(failImport,failCnt));
 
         return result.toString();
     }

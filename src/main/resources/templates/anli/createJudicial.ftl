@@ -273,7 +273,7 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="1">公开</option><option value="2">内部</option><option value="4">机密</option><option value="3">秘密</option></select></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="2"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="1">公开</option><option value="2">内部</option><option value="4">机密</option><option value="3">秘密</option></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="2"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
 
         $("#savePaperFile").removeAttr("disabled");
@@ -300,6 +300,13 @@
                     validators: {
                         notEmpty: {
                             message: '责任人不能为空'
+                        }
+                    }
+                },
+                filingNum: {
+                    validators: {
+                        notEmpty: {
+                            message: '文件归档号不能为空'
                         }
                     }
                 },

@@ -286,6 +286,26 @@ public class MenuController {
     @Autowired
     private NotifyRepository notifyRepository;
 
+    @ArchivesLog(operationType = "updateNotify", operationName = "更新用户通知消息")
+    @RequestMapping(value = "/updateNotify")
+    @ResponseBody
+    public String updateNotify(@RequestParam(value = "id")Long id) {
+        result = new JSONObject();
+        try {
+
+            NotifyEntity notifyEntity = notifyRepository.findOne(id);
+            notifyEntity.setStatus(1);
+            notifyRepository.save(notifyEntity);
+            msg = SUCCESS;
+
+        } catch (Exception e) {
+            logger.error("更新用户通知消息:" + e.getMessage());
+            msg = "Exception";
+        }
+//        operationLogInfo = "用户【"+getUser().getUsername()+"】获取用户通知信息";
+        result.put("msg", msg);
+        return result.toString();
+    }
 
     @ArchivesLog(operationType = "getNotify", operationName = "获取用户通知信息")
     @RequestMapping(value = "/getNotify")
@@ -295,7 +315,7 @@ public class MenuController {
         List<NotifyEntity> notifyEntities = null;
         try {
 
-            notifyEntities = notifyRepository.findByPersonal(getUser().getUsername());
+            notifyEntities = notifyRepository.findByPersonalAndStatusOrderByIdDesc(getUser().getUsername(),0);
             msg = SUCCESS;
 
         } catch (Exception e) {

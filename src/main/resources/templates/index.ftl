@@ -17,6 +17,8 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/messenger.min.js"></script>
+    <script src="static/js/messenger-theme-future.js"></script>
 
 
     <!-- MetisMenu CSS -->
@@ -31,6 +33,8 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="static/css/bootstrap.css" rel="stylesheet"/>
+    <link href="static/css/messenger-theme-future.css" rel="stylesheet"/>
+    <link href="static/css/messenger.css" rel="stylesheet"/>
 
 
     <!-- Custom Fonts -->
@@ -110,6 +114,8 @@
         }
 
     })
+
+
 </script>
 
     </body>

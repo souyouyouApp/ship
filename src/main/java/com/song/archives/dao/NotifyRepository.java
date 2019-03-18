@@ -12,6 +12,8 @@ import java.util.List;
 public interface NotifyRepository extends CrudRepository<NotifyEntity,Long>{
 
     List<NotifyEntity> findByPersonal(String personal);
+    List<NotifyEntity> findByPersonalAndStatusOrderByIdDesc(String personal,Integer status);
+
 
 
 }

@@ -179,6 +179,9 @@
                         if (value == '3') {
                             positions = '助理';
                         }
+                        if (value == '4') {
+                            positions = '工程师';
+                        }
 
                         return positions;
                     }
@@ -270,9 +273,9 @@
                         '<input type="hidden" id="id" name="id" value="'+id+'"/> '+
                 '<div class="form-group"><label>用户名</label><input class="form-control" name="username" id="username" value="'+username+'" placeholder="请输入用户名" />' +
                 '</div><div class="form-group"><label>真实姓名</label><input class="form-control" name="realName" id="realName" value="'+realName+'" placeholder="请输入真实姓名" />' +
-                '</div><div class="form-group"><label>密码</label><input class="form-control" name="password" id="password" placeholder="请输入密码" />' +
+                '</div><div class="form-group"><label>密码</label><input class="form-control" type="password" name="password" id="password" placeholder="请输入密码" />' +
                 '</div><div class="form-group"><label for="select">职务</label><select id="positions" name="positions" value="'+positions+'" class="form-control">' +
-                '<option value="-1">请选择职务</option><option value="1">主任</option><option value="2">处长</option><option value="3">助理</option></select></div>' +
+                '<option value="-1">请选择职务</option><option value="1">主任</option><option value="2">处长</option><option value="3">助理</option><option value="4">工程师</option></select></div>' +
                 '<div class="form-group"><label for="permissionLevel">密级</label><select id="permissionLevel" name="permissionLevel" class="form-control">' +
                 '<option value="4">机密</option><option value="3">秘密</option><option value="2">内部</option><option value="1">公开</option></select></div>' +
                 '<div class="form-group"><label>手机号码</label><input class="form-control" name="mobile" id="mobile" value="'+mobile+'" placeholder="请输入手机号码" /></div>' +
@@ -424,7 +427,7 @@
         });
     }
 
-    var content = '<div class="panel-body"><div class="row"><div class="col-lg-10"><form role="form" id="userForm"><div class="form-group"><label>用户名</label><input class="form-control" name="username" placeholder="请输入用户名"></div><div class="form-group"><label>真实姓名</label><input class="form-control" name="realName" placeholder="请输入真实姓名"></div><div class="form-group"><label>密码</label><input class="form-control" name="password" placeholder="请输入密码"></div><div class="form-group"><label for="select">职务</label><select id="select" name="positions" class="form-control"><option value="-1">请选择职务</option><option value="1">主任</option><option value="2">处长</option><option value="3">助理</option></select></div><div class="form-group"><label for="select">密级</label><select id="select" name="permissionLevel" class="form-control"><option value="4">机密</option><option value="3">秘密</option><option value="2">内部</option><option value="1">公开</option></select></div><div class="form-group"><label>手机号码</label><input class="form-control" name="mobile" placeholder="请输入手机号码"></div><div class="form-group"><label>描述信息</label><input class="form-control" name="description" placeholder="请输入描述信息"></div></form></div></div></div>';
+    var content = '<div class="panel-body"><div class="row"><div class="col-lg-10"><form role="form" id="userForm"><div class="form-group"><label>用户名</label><input class="form-control" name="username" placeholder="请输入用户名"></div><div class="form-group"><label>真实姓名</label><input class="form-control" name="realName" placeholder="请输入真实姓名"></div><div class="form-group"><label>密码</label><input class="form-control" type="password" name="password" placeholder="请输入密码"></div><div class="form-group"><label for="select">职务</label><select id="select" name="positions" class="form-control"><option value="-1">请选择职务</option><option value="1">主任</option><option value="2">处长</option><option value="3">助理</option><option value="4">工程师</option></select></div><div class="form-group"><label for="select">密级</label><select id="select" name="permissionLevel" class="form-control"><option value="4">机密</option><option value="3">秘密</option><option value="2">内部</option><option value="1">公开</option></select></div><div class="form-group"><label>手机号码</label><input class="form-control" name="mobile" placeholder="请输入手机号码"></div><div class="form-group"><label>描述信息</label><input class="form-control" name="description" placeholder="请输入描述信息"></div></form></div></div></div>';
 
 
     function createUser() {
