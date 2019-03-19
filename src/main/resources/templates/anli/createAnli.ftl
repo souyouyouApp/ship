@@ -360,7 +360,7 @@
                     </div>
                     <div class="form-group">
                         <select name="auditUser" id="auditUser" class="form-control">
-                            <option value="-1">请指定审核人员</option>
+                            <option value="-1">请选择审核人员</option>
                             <#foreach user in auditUsers>
                                 <option value="${user.id?c}">${user.username!}</option>
                             </#foreach>
@@ -426,7 +426,7 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if>r</select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="fileClassify"value="2"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if>r</select></div><div class="form-group"><label for="select">密级</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="fileClassify"value="2"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
 
         $("#savePaperFile").removeAttr("disabled");
@@ -477,6 +477,21 @@
                             }
                         }
                     }
+                },
+                auditUser: {
+                    message: '请选择审核人员',
+                    validators: {
+                        message: '请选择审核人员',
+                        callback: {
+                            callback: function (value, validator) {
+                                if (value == -1) {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -506,12 +521,12 @@
 
     var modalContent = '';
 
-    $("#classificlevel").change(function () {
-        var selectVal = $("#classificlevel").find("option:selected").val();
-
-        $("#classificlevelId").val(selectVal);
-
-    })
+    // $("#classificlevel").change(function () {
+    //     var selectVal = $("#classificlevel").find("option:selected").val();
+    //
+    //     $("#classificlevelId").val(selectVal);
+    //
+    // })
     function electronicFile() {
 
         $("#saveFile").removeAttr("disabled");
@@ -559,6 +574,21 @@
             return;
         }
 
+        var infoLevel = $("#classificlevelId").find("option:selected").val();
+        var fileLevel = $("#classificlevel").find("option:selected").val();
+
+        if (fileLevel > infoLevel){
+            layer.msg("文件密级不可大于案例密级");
+            return;
+        }
+
+        var auditUser = $("#auditUser").find("option:selected").val();
+
+        if (auditUser == -1) {
+            layer.msg("请选择审核人员");
+            return;
+        }
+
         var options = {
             url: 'uploadAatachment',   //同action
             type: 'post',
@@ -602,6 +632,14 @@
         bootstrapValidator.validate()
         if (!bootstrapValidator.isValid())
             return;
+
+        var infoLevel = $("#classificlevelId").find("option:selected").val();
+        var fileLevel = $("#classificlevel").find("option:selected").val();
+
+        if (fileLevel > infoLevel){
+            layer.msg("文件密级不可大于案例密级");
+            return;
+        }
 
         $.post('uploadAatachment', $("#paperForm").serialize(), function (data) {
             data = JSON.parse(data)
@@ -681,15 +719,9 @@
 
     function createAnli() {
         var selectVal = $("#classificlevelId").find("option:selected").val();
-        var auditUser = $("#auditUser").find("option:selected").val();
 
         if (selectVal == -1) {
             layer.msg("请选择案例密级");
-            return;
-        }
-
-        if (auditUser == -1) {
-            layer.msg("请选择审核人员");
             return;
         }
 
@@ -759,18 +791,43 @@
 
 <script type="text/javascript">
 
-    function qryFileAuitResult(fileId,fileName,mid) {
+    function qryFileAuitResult(fileId,fileName,mid,auditUser) {
+
         $.ajax({
             type: "post",
             url: "getFileAuditResult",
-            data: {fileId: fileId,type:'DOWNLOAD'},
+            data: {fileId: fileId,type:'DOWNLOAD',auditUser:auditUser},
             async: false,
             success: function (result) {
+                var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser1" class="form-control"><option value="-1">请选择审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div></form></div></div></div>'
+
+
                 result = JSON.parse(result);
                 if (result.auditResult == 0){
-                    layer.alert("下载请求已提交审核,请稍后。")
+                    layer.alert("下载请求已提交审核,请稍后再试。")
                 }else if(result.auditResult == -1){
                     layer.alert("下载请求被拒绝,请联系审核人员。")
+                }else if (result.auditResult == 2){
+
+                    layer.open({
+                        type: 1,
+                        title:'文件审核',
+                        area: ['300px', '220px'],
+                        btn: ['确定','关闭'],
+                        content: paperContent,
+                        yes:function () {
+
+                            var auditUser = $("#auditUser1").find("option:selected").val();
+
+                            if (auditUser == -1) {
+                                layer.msg("请选择审核人员");
+                                return;
+                            }
+
+                            layer.closeAll()
+                            qryFileAuitResult(fileId,fileName,mid,auditUser)
+                        }
+                    });
                 }else {
                     // window.location.href=";
                     var link = document.createElement('a');
@@ -784,6 +841,7 @@
             }
         });
     }
+
 
     var classificlevelId = '${info.classificlevelId!}';
 
@@ -803,6 +861,9 @@
             success: function (data) {
                 data = JSON.parse(data)
                 $("#select-title").text(data.typeName);
+                <@shiro.lacksPermission name="anli:save">
+                    $('#dropDown').html('<input type="text" class="form-control" readonly value="'+data.typeName+'"/>')
+                </@shiro.lacksPermission>
             }
         });
     }
@@ -831,7 +892,7 @@
                             debugger
                             var fileType = result.fileType;
                             var mid = result.id;
-                            var viewDiv = '<span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>';
+                            var viewDiv = '<@shiro.hasPermission name="anli:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
                             $.ajax({
                                 type: "post",
                                 url: "getFileAuditResult",
@@ -849,9 +910,9 @@
                                     }else {
 
                                         if (fileType == 1) {
+                                            debugger
                                             // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
-                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
-                                        } else {
+                                            viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\',\''+""+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';                                        } else {
                                             viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + fileId + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                                         }
 

@@ -121,6 +121,12 @@ public class ReviewController {
                 fileInfoRepository.save(fileInfo);
             }
 
+            if (null != auditInfo && auditInfo.getType().equals("UPLOAD")){
+                FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
+                fileInfo.setAudit(1);
+                fileInfoRepository.save(fileInfo);
+            }
+
 
             auditInfo.setAuditContent(content);
             auditInfo.setIsAudit(auditResult);

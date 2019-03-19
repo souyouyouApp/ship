@@ -198,6 +198,8 @@ public class AnnounceController {
         modelAndView.setViewName("announce/createAnnounce");
         AnnounceInfoEntity announceInfoEntity;
 
+        List<User> auditUser = userRepository.findAuditUser();
+
         if(null == aid){
             announceInfoEntity = new AnnounceInfoEntity();
             modelAndView.addObject("uids",null);
@@ -229,6 +231,8 @@ public class AnnounceController {
         modelAndView.addObject("mid",3);
         modelAndView.addObject("users",users);
         modelAndView.addObject("levelId",getUser().getPermissionLevel());
+        modelAndView.addObject("auditUsers",auditUser);
+
 
 
         return modelAndView;

@@ -181,26 +181,44 @@ public class ExpertController {
                 try {
                     ExpertInfoEntity expert = new ExpertInfoEntity();
                     String name = expertData.length >= 1?expertData[0]:"";
-
                     String gender = expertData.length >= 2?expertData[1]:"";
                     String birth = expertData.length >= 3?expertData[2]:"";
-                    String addr = expertData.length >= 4?expertData[3]:"";
+                    String szdanwei = expertData.length >= 4?expertData[3]:"";
                     String zhicheng = expertData.length >= 5?expertData[4]:"";
-                    String szzy = expertData.length >= 6?expertData[5]:"";
+                    String sxzhuanye = expertData.length >= 6?expertData[5]:"";
                     String mobile = expertData.length >= 7?expertData[6]:"";
-                    String phone = expertData.length >= 8?expertData[7]:"";
+                    String idNo = expertData.length >= 8?expertData[7]:"";
                     String faxCode = expertData.length >= 9?expertData[8]:"";
                     String remark = expertData.length >= 10?expertData[9]:"";
+                    String education = expertData.length >= 11?expertData[10]:"";
+                    String zhiwu = expertData.length >= 12?expertData[11]:"";
+                    String profile = expertData.length >= 13?expertData[12]:"";
+                    String szbumen = expertData.length >= 14?expertData[13]:"";
+                    String sslingyu = expertData.length >= 15?expertData[14]:"";
+                    String address = expertData.length >= 16?expertData[15]:"";
+                    String postcode = expertData.length >= 17?expertData[16]:"";
+                    String pycishu = expertData.length >= 18?expertData[17]:"";
+
+
                     expert.setName(name);
                     expert.setGender(gender);
                     expert.setBirth(birth);
-                    expert.setAddress(addr);
+                    expert.setSzdanwei(szdanwei);
                     expert.setZhicheng(zhicheng);
-                    expert.setSxzhuanye(szzy);
+                    expert.setSxzhuanye(sxzhuanye);
                     expert.setMobile(mobile);
-                    expert.setPhone(phone);
+                    expert.setIdNo(idNo);
                     expert.setFaxcode(faxCode);
                     expert.setRemark(remark);
+                    expert.setEducation(education);
+                    expert.setZhiwu(zhiwu);
+                    expert.setProfile(profile);
+                    expert.setSzbumen(szbumen);
+                    expert.setSslingyu(sslingyu);
+                    expert.setAddress(address);
+                    expert.setPostcode(postcode);
+                    expert.setPycishu(Integer.parseInt(pycishu));
+
 
                     expertRepository.save(expert);
                     successCnt++;

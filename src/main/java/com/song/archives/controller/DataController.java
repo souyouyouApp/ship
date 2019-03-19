@@ -326,7 +326,7 @@ public class DataController {
             }
 
             if (entity != null) {
-                entity.setAuthor(getUser().getRealName());
+                entity.setAuthor(entity.getAuthor());
                 entity.setPublishDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
                 entity.setCreator(getUser().getUsername());
                 entity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
@@ -854,6 +854,7 @@ public class DataController {
     @ResponseBody
     String getFileAuditResult(@RequestParam(value = "fileId") Long fileId,
                               @RequestParam(value = "type") String type,
+                              @RequestParam(value = "auditUser",required = false) String auditUser,
                               @RequestParam(value = "classificlevelId",required = false) Integer classificlevelId) {
 
         result = new JSONObject();
@@ -904,6 +905,21 @@ public class DataController {
             auditInfo.setType(type);
 
             auditInfoRepository.save(auditInfo);
+        }
+
+        if (auditInfo.getAuditUser() == null || auditInfo.getAuditUser().equals("")){
+            if (auditUser != null && !auditUser.equals("")){
+                auditInfo.setAuditUser(auditUser);
+                auditInfoRepository.save(auditInfo);
+                result.put("auditResult","0");
+                result.put("type",auditInfo.getType());
+                return result.toString();
+            }else {
+                result.put("auditResult","2");
+                result.put("type",auditInfo.getType());
+                return result.toString();
+            }
+
         }
         if (!auditInfo.getApplicant().equals(getUser().getUsername()) && auditInfo.getIsAudit() != 1){
             result.put("finalResult",-1);

@@ -167,7 +167,7 @@
         <div class="form-group">
             <label for="birth" class="col-sm-2 control-label">出生日期</label>
             <div class="col-sm-4">
-                <input type="date" class="form-control" id="birth" name="birth"  placeholder="出生日期" value="${expert.birth!}">
+                <input type="text" autocomplete="false" class="form-control" id="birth" name="birth" onclick="datePicker()"  placeholder="出生日期" value="${expert.birth!}">
             </div>
         </div>
 
@@ -356,6 +356,17 @@
 
 
 <script type="text/javascript">
+    function datePicker() {
+        $('#deadlineDate').datetimepicker('show');
+    }
+
+    $('#birth').datetimepicker({
+        minView: "month",
+        format : "yyyy-mm-dd",//日期格式
+        autoclose:true,//选中关闭
+        todayBtn: true//今日按钮
+    });
+
     var button = '<a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-white" href="javascript:;"><span id="select-title">选择分类</span> <span class="caret"></span></a>';
 
     var html = '';
@@ -498,6 +509,9 @@
 
                 data = JSON.parse(data)
                 $("#select-title").text(data.typeName);
+                <@shiro.lacksPermission name="expert:save">
+                    $('#dropDown').html('<input type="text" class="form-control" readonly value="'+data.typeName+'"/>')
+                </@shiro.lacksPermission>
             }
         });
     }

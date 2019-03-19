@@ -135,7 +135,11 @@
                     <@shiro.hasPermission name="expert:add">
                         <a href="javascript:void(0)" class="btn btn-info" onclick="expert()">新建</a>
                     </@shiro.hasPermission>
+
+                    <@shiro.hasPermission name="expert:delete">
                         <a href="javascript:void(0)" class="btn btn-danger" onclick="deleteById()">删除</a>
+                    </@shiro.hasPermission>
+
                 </div>
 
 

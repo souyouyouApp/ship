@@ -70,10 +70,10 @@ public class ExcelUtil {
                         cellValue = String.valueOf(cell.getBooleanCellValue());
                         break;
                     case Cell.CELL_TYPE_BLANK: // 空白
-                        cellValue = cell.getStringCellValue();
+                        cellValue = cell.getStringCellValue().equals("")?null:cell.getStringCellValue();
                         break;
                     case Cell.CELL_TYPE_ERROR: // 错误
-                        cellValue = "错误";
+                        cellValue = null;
                         break;
                     case Cell.CELL_TYPE_FORMULA:    // 公式
                         // 得到对应单元格的公式

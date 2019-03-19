@@ -151,9 +151,12 @@
                         <a href="javascript:void(0)" class="btn btn-info" onclick="createAnli()">新建</a>
                     </div>
                 </@shiro.hasPermission>
+                <@shiro.hasPermission name="anli:delete">
                 <div class="form-group">
                     <a href="javascript:void(0)" class="btn btn-danger" onclick="deleteById()">删除</a>
                 </div>
+                </@shiro.hasPermission>
+
 
 
             </form>
