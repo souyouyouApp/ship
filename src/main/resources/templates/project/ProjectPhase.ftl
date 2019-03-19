@@ -74,7 +74,8 @@
             </button>
         </@shiro.hasPermission>
                 <button id="btn_reqdownloadfile" type="button" class="btn btn-primary"
-                        style="margin-left: 20px;" onclick="ReqDownLoadAttachFile()">
+                        style="margin-left: 20px;"  data-toggle="modal"
+                        data-target="#reqdown">
                     <span class="glyphicon glyphicon-registration-mark" aria-hidden="true"></span>提交下载请求
                 </button>
         <@shiro.hasPermission name="project:deleteattach">
@@ -91,6 +92,42 @@
     </div>
 </div>
 
+<div class="modal fade" id="reqdown" role="dialog" aria-labelledby="reqdownlabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="reqdownModalLabel">选择下载审核人</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+
+                    <form role="form" id="reqdownForm" name="reqdownForm">
+
+                        <div class="form-group col-md-12">
+                            <label>选择下载审核人：</label>
+                            <select id="selreqDown" class="form-control">
+                                <#list users as user>
+                                    <option value="${user.username}">${user.username}</option>
+                                </#list>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="ReqDownLoadAttachFile()" id="ReqDownLoadAttachFile">修改</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
 <!-- Modal 上传电子文件-->
 <div class="modal fade" id="fileuploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
@@ -99,14 +136,34 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel">上传文件</h4>
-            </div>
-            <div class="modal-body">
 
+
+            </div>
+
+            <div class="modal-body">
             </div>
 
             <div class="modal-footer">
 
-
+                <form>
+                    <div class="form-group col-md-6">
+                        <select name="eauditUser" id="eauditUser" class="form-control" onchange="SetEauditUser()">
+                            <option value="-1">--请指定审核人员--</option>
+        <#foreach user in auditUsers>
+            <option value="${user.id?c}">${user.username!}</option>
+        </#foreach>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <select class="form-control" id="seldzfile" name="seldzfile">
+                            <option value="-1">--请指选择密级--</option>
+                        <#if (proClassLevel >= 4)> <option value="4">机密</option></#if>
+                   <#if (proClassLevel >= 3)> <option value="3">秘密</option></#if>
+                   <#if (proClassLevel >= 2)> <option value="2">内部</option></#if>
+                   <#if (proClassLevel >= 1)>  <option value="1">公开</option></#if>
+                        </select>
+                    </div>
+                </form>
                 <button type="button" class="btn btn-default" onclick="RefreshFilelist()" data-dismiss="modal">关闭
                 </button>
                 <button type="button" class="btn btn-primary" id="savePic">保存</button>
@@ -140,6 +197,7 @@
                             <label>文件名称</label>
                             <input class="form-control" id="paperFileName" name="paperFileName">
                         </div>
+
                         <div class="form-group col-md-12">
                             <label>保管人</label>
                             <select class="form-control" id="paperzrr" name="paperzrr">
@@ -149,12 +207,25 @@
                             </select>
                         </div>
                         <div class="form-group col-md-12">
+                            <label>指定审核人员</label>
+                            <select name="pauditUser" id="pauditUser" class="form-control">
+                                <option value="-1" selected>请选择</option>
+        <#foreach user in auditUsers>
+            <option value="${user.id?c}">${user.username!}</option>
+        </#foreach>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>文件归档号</label>
+                            <input class="form-control" id="filingNum" name="filingNum" placeholder="请输入文件归档号"/>
+                        </div>
+                        <div class="form-group col-md-12">
                             <label>密级</label>
                             <select class="form-control" id="paperClassicId" name="paperClassicId">
-                              <#if (levelId >= 4)> <option value="4">机密</option></#if>
-                   <#if (levelId >= 3)> <option value="3">秘密</option></#if>
-                   <#if (levelId >= 2)> <option value="2">内部</option></#if>
-                   <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                              <#if (proClassLevel >= 4)> <option value="4">机密</option></#if>
+                   <#if (proClassLevel >= 3)> <option value="3">秘密</option></#if>
+                   <#if (proClassLevel >= 2)> <option value="2">内部</option></#if>
+                   <#if (proClassLevel >= 1)>  <option value="1">公开</option></#if>
                             </select>
                         </div>
                     </form>
@@ -171,10 +242,14 @@
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-
-
+<input type="hidden" id="hidEaudiUser" name="hidEaudiUser" value="-1">
+<input type="hidden" id="hidProClassLevel" name="hidProClassLevel" value="${proClassLevel}">
 <script language="JavaScript">
+    function SetEauditUser() {
 
+        $("#hidEaudiUser").val($("#eauditUser").val());
+
+    }
     if($("#hidowner").val()=="1") {
         $("#btn_addele").show();
         $("#btn_addpaper").show();

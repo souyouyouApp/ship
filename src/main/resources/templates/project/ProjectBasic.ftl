@@ -154,7 +154,7 @@
                             <label>立项提前通知时间</label>
 
                             <div class="input-group">
-                                <input class="form-control" id="cpAlertdays" name="cpAlertdays"
+                                <input class="form-control" id="cpAlertdays" type="number" name="cpAlertdays"
                                        value="${proentity.cpAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -169,7 +169,7 @@
                         <div class="form-group col-md-6">
                             <label>开题提前通知时间</label>
                             <div class="input-group">
-                                <input class="form-control" id="opAlertdays" name="opAlertdays"
+                                <input class="form-control" id="opAlertdays" type="number" name="opAlertdays"
                                        value="${proentity.opAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -188,7 +188,7 @@
                         <div class="form-group col-md-6">
                             <label>中期检查提前通知时间</label>
                             <div class="input-group">
-                                <input class="form-control" id="mpAlertdays" name="mpAlertdays"
+                                <input class="form-control" id="mpAlertdays" type="number" name="mpAlertdays"
                                        value="${proentity.mpAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -205,7 +205,7 @@
                         <div class="form-group col-md-6">
                             <label>结题提前通知时间</label>
                             <div class="input-group">
-                                <input class="form-control" id="closepAlertdays" name="closepAlertdays"
+                                <input class="form-control" id="closepAlertdays" type="number" name="closepAlertdays"
                                        value="${proentity.closepAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -221,7 +221,7 @@
                         <div class="form-group col-md-6">
                             <label>验收管理提前通知时间 </label>
                             <div class="input-group">
-                                <input class="form-control" id="epAlertdays" name="epAlertdays"
+                                <input class="form-control" id="epAlertdays" type="number" name="epAlertdays"
                                        value="${proentity.epAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -455,11 +455,53 @@
         $("#yanjiuFangXiang").val("${proentity.yanjiuFangXiang!}");
     }
 
+    function InitDateBCrt() {
+        $('#createPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn:true
+        });
+        $('#createPhasetime').click(function () {
+            $('#createPhasetime').datetimepicker('show');
+        });
+
+        $('#openPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#openPhasetime').click(function () {
+            $('#openPhasetime').datetimepicker('show');
+        });
+
+        $('#midcheckPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#midcheckPhasetime').click(function () {
+            $('#midcheckPhasetime').datetimepicker('show');
+        });
+
+        $('#closePhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#closePhasetime').click(function () {
+            $('#closePhasetime').datetimepicker('show');
+        });
+
+        $('#endPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#endPhasetime').click(function () {
+            $('#endPhasetime').datetimepicker('show');
+        });
+
+    }
+
     $(document).ready(function () {
 
         LoadUsers();
         InitData();
-
+        InitDateBCrt();
         if($("#hidowner").val()=="1") {
             $("#btnupdatepro").show();
         }else

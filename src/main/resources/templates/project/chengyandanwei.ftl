@@ -245,7 +245,25 @@
     }
 
 
+    function InitDateDwCrt() {
+        $('#contractTime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose: true, todayBtn: true
+        });
+        $('#contractTime').click(function () {
+            $('#contractTime').datetimepicker('show');
+        });
+
+        $('#yanshouTime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose: true, todayBtn: true
+        });
+        $('#yanshouTime').click(function () {
+            $('#yanshouTime').datetimepicker('show');
+        });
+
+    }
+
     $(document).ready(function () {
+        InitDateDwCrt();
         $('#danweitable').bootstrapTable({
             url: 'GetCyDanweiList',         //请求后台的URL（*）
             method: 'get',                      //请求方式（*）

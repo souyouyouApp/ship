@@ -10,23 +10,27 @@ public class StorageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private double totalAmount;
+    private String totalAmount;
 
-    private double currentUsed;
+    private String currentUsed;
 
-    private double projectAmount;
+    private String projectAmount;
 
-    private double anliAmount;
+    private String anliAmount;
 
-    private double ziliaoAmount;
+    private String ziliaoAmount;
 
-    private double gongaoAmount;
+    private String gongaoAmount;
 
-    private double otherAmount;
+    private String otherAmount;
 
-    private double dbAmount;
+    private String dbAmount;
 
-    private double expertAmount;
+    private String expertAmount;
+
+    private String logAmount;
+
+    private String alertAmount;
 
     public long getId() {
         return id;
@@ -37,81 +41,101 @@ public class StorageEntity {
     }
     @Basic
     @Column(name = "totalAmount")
-    public double getTotalAmount() {
+    public String getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(String totalAmount) {
         this.totalAmount = totalAmount;
     }
     @Basic
     @Column(name = "currentUsed")
-    public double getCurrentUsed() {
+    public String getCurrentUsed() {
         return currentUsed;
     }
 
-    public void setCurrentUsed(double currentUsed) {
+    public void setCurrentUsed(String currentUsed) {
         this.currentUsed = currentUsed;
     }
     @Basic
     @Column(name = "projectAmount")
-    public double getProjectAmount() {
+    public String getProjectAmount() {
         return projectAmount;
     }
 
-    public void setProjectAmount(double projectAmount) {
+    public void setProjectAmount(String projectAmount) {
         this.projectAmount = projectAmount;
     }
     @Basic
     @Column(name = "anliAmount")
-    public double getAnliAmount() {
+    public String getAnliAmount() {
         return anliAmount;
     }
 
-    public void setAnliAmount(double anliAmount) {
+    public void setAnliAmount(String anliAmount) {
         this.anliAmount = anliAmount;
     }
     @Basic
     @Column(name = "ziliaoAmount")
-    public double getZiliaoAmount() {
+    public String getZiliaoAmount() {
         return ziliaoAmount;
     }
 
-    public void setZiliaoAmount(double ziliaoAmount) {
+    public void setZiliaoAmount(String ziliaoAmount) {
         this.ziliaoAmount = ziliaoAmount;
     }
     @Basic
     @Column(name = "otherAmount")
-    public double getOtherAmount() {
+    public String getOtherAmount() {
         return otherAmount;
     }
 
-    public void setOtherAmount(double otherAmount) {
+    public void setOtherAmount(String otherAmount) {
         this.otherAmount = otherAmount;
     }
     @Basic
     @Column(name = "gonggaoAmount")
-    public double getGongaoAmount() {
+    public String getGongaoAmount() {
         return gongaoAmount;
     }
 
-    public void setGongaoAmount(double gongaoAmount) {
+    public void setGongaoAmount(String gongaoAmount) {
         this.gongaoAmount = gongaoAmount;
     }
 
-    public double getDbAmount() {
+    public String getDbAmount() {
         return dbAmount;
     }
 
-    public void setDbAmount(double dbAmount) {
+    public void setDbAmount(String dbAmount) {
         this.dbAmount = dbAmount;
     }
 
-    public double getExpertAmount() {
+    public String getExpertAmount() {
         return expertAmount;
     }
 
-    public void setExpertAmount(double expertAmount) {
+    public void setExpertAmount(String expertAmount) {
         this.expertAmount = expertAmount;
+    }
+
+    @Basic
+    @Column(name = "logAmount")
+    public String getLogAmount() {
+        return logAmount;
+    }
+
+    public void setLogAmount(String logAmount) {
+        this.logAmount = logAmount;
+    }
+
+    @Basic
+    @Column(name = "alertAmount")
+    public String getAlertAmount() {
+        return alertAmount;
+    }
+
+    public void setAlertAmount(String alertAmount) {
+        this.alertAmount = alertAmount;
     }
 }

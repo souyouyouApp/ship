@@ -27,4 +27,7 @@ public interface UserRepository extends CrudRepository<User,Long> {
 
     @Query(value = "select * from `user` u JOIN user_role ur ON  u.id = ur.user_id JOIN role_permission rp ON (ur.role_id = rp.role_id AND rp.permission_id = 32)",nativeQuery = true)
     List<User> findAuditUser();
+
+    @Query(value = "select * from user where type=:typeId",nativeQuery = true)
+    List<User> findUsersByTypeId(@Param(value = "typeId") Long roleId);
 }

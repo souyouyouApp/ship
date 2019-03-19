@@ -919,7 +919,8 @@ public class DataController {
     @RequestMapping(value = "/ReqFileDownLoad")
     @ResponseBody
     String ReqFileDownLoad(@RequestParam(value = "fileId") String fileIds,
-                              @RequestParam(value = "type") String type) {
+                              @RequestParam(value = "type") String type,
+                           @RequestParam(value = "daudituser") String auditUser) {
 
         result = new JSONObject();
 
@@ -934,6 +935,7 @@ public class DataController {
             auditInfo.setFileName(fileInfo.getFileName());
             auditInfo.setIsAudit(0);
             auditInfo.setType("DOWNLOAD");
+            auditInfo.setAuditUser(auditUser);
             auditInfo.setFileClassify(fileInfo.getFileClassify());
             auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
 

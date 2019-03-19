@@ -1,10 +1,12 @@
 <#--<link rel="stylesheet" href="static/css/bootstrap-table.min.css">-->
-<link rel="stylesheet" href="static/css/layer.css">
-<link rel="stylesheet" href="static/css/bootstrap-select.css">
+<link rel="stylesheet" href="/static/css/layer.css">
+<link rel="stylesheet" href="/static/css/bootstrap-select.css">
+<link href="static/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
 <#--<script src="static/js/bootstrap-table.min.js"></script>-->
 <#--<script src="static/js/bootstrap-table-zh-CN.min.js"></script>-->
 <script src="static/js/layer.js"></script>
 <script src="static/js/jquery.form.js"></script>
+<script src="static/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="static/js/bootstrap-select.js"></script>
 
 <div class="content">
@@ -117,7 +119,7 @@
                                     <div class="form-group col-md-6">
                                         <label>立项提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="cpAlertdays" name="cpAlertdays">
+                                            <input class="form-control" id="cpAlertdays" type="number" name="cpAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
@@ -130,7 +132,7 @@
                                     <div class="form-group col-md-6">
                                         <label>开题提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="opAlertdays" name="opAlertdays">
+                                            <input class="form-control" id="opAlertdays" type="number" name="opAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
@@ -142,7 +144,7 @@
                                     <div class="form-group col-md-6">
                                         <label>中期检查提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="mpAlertdays" name="mpAlertdays">
+                                            <input class="form-control" id="mpAlertdays" type="number" name="mpAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
@@ -154,7 +156,7 @@
                                     <div class="form-group col-md-6">
                                         <label>结题提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="closepAlertdays" name="closepAlertdays">
+                                            <input class="form-control" id="closepAlertdays" type="number" name="closepAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
@@ -166,7 +168,7 @@
                                     <div class="form-group col-md-6">
                                         <label>验收管理提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="epAlertdays" name="epAlertdays">
+                                            <input class="form-control" id="epAlertdays" type="number" name="epAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
@@ -271,6 +273,48 @@
 
 <script src="static/js/custom/createProjectValidator.js"></script>
 <script language="JavaScript">
+
+    function InitDateCrt() {
+        $('#createPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn:true
+        });
+        $('#createPhasetime').click(function () {
+            $('#createPhasetime').datetimepicker('show');
+        });
+
+        $('#openPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#openPhasetime').click(function () {
+            $('#openPhasetime').datetimepicker('show');
+        });
+
+        $('#midcheckPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#midcheckPhasetime').click(function () {
+            $('#midcheckPhasetime').datetimepicker('show');
+        });
+
+        $('#closePhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#closePhasetime').click(function () {
+            $('#closePhasetime').datetimepicker('show');
+        });
+
+        $('#endPhasetime').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn: true
+        });
+
+        $('#endPhasetime').click(function () {
+            $('#endPhasetime').datetimepicker('show');
+        });
+
+    }
 
     function FilterUsers(tag){
 
@@ -425,6 +469,7 @@
 
     $(document).ready(function () {
         LoadUsers();
+        InitDateCrt();
         $("#classificlevelId").val("");
     })
 </script>

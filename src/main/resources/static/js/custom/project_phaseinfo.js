@@ -10,7 +10,8 @@ function ReviewFiles(fid) {
 $(document).ready(function () {
 
     $("#phaselist").val(1);
-
+    $("#eauditUser").val(-1);
+    $("#pauditUser").val(-1);
     $('#filetable').bootstrapTable({
         url: 'LoadProjectFiles',         //请求后台的URL（*）
         method: 'get',                      //请求方式（*）
@@ -262,35 +263,10 @@ function OnPhaseItemChange() {
 }
 
 
-var modalContent = '<form><div class="form-group">密级：' +
-    '<select id="seldzfile" name="seldzfile">';
-
-    if($("#levelId").val()==4)
-    {
-        modalContent+='<option value="4">机密</option>';
-        modalContent+='<option value="3">秘密</option>';
-        modalContent+='<option value="2">内部</option>';
-        modalContent+='<option value="1">公开</option>';
-    }
-
-    if($("#levelId").val()==3){
-        modalContent+='<option value="3">秘密</option>';
-        modalContent+='<option value="2">内部</option>';
-        modalContent+='<option value="1">公开</option>';
-    }
-
-if($("#levelId").val()==2){
-    modalContent+='<option value="2">内部</option>';
-    modalContent+='<option value="1">公开</option>';
-}
-
-if($("#levelId").val()==1){
-    modalContent+='<option value="1">公开</option>';
-}
 
 
-modalContent+= '</select>' +
-    '</div><div class="form-group" style="height: 300px;">' +
+
+modalContent='<form><div class="form-group" style="height: 300px;">' +
     '<input id="projectfile" name="projectfile" type="file" multiple></div></form>';
 
 
@@ -321,9 +297,8 @@ function AddModalContent() {
     // }
 
     $("#savePic").removeAttr("disabled");
-    $("#fileuploadModal .modal-body").html(modalContent);
 
-    //$("#filediv").html(modalContent);
+    $("#fileuploadModal .modal-body").html(modalContent);
 
     $('#projectfile').fileinput({//初始化上传文件框
         showUpload: false,
@@ -343,7 +318,7 @@ function AddModalContent() {
         msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
         dropZoneTitle: "请通过拖拽文件放到这里",
         dropZoneClickTitle: "或者点击此区域添加文件",
-        uploadExtraData: {"pid": $("#id").val(), "attachid": $("#attachlist").val(), "phaseid": $("#phaselist").val()},//这个是外带数据
+        uploadExtraData: {"pid": $("#id").val(), "attachid": $("#attachlist").val(), "phaseid": $("#phaselist").val(),"eaudituser":$("#hidEaudiUser").val()},//这个是外带数据
         showBrowse: false,
         browseOnZoneClick: true,
         slugCallback: function (filename) {
@@ -351,7 +326,7 @@ function AddModalContent() {
         }
     });
 
-    $("#seldzfile").val("");
+   // $("#seldzfile").val("");
 
     //上传文件成功，回调函数
     $('#projectfile').on("fileuploaded", function (event, data, previewId, index) {
@@ -360,10 +335,11 @@ function AddModalContent() {
             //UpdateFilesClassId
             $.post("UpdateFilesClassId", {
                 "fids": data.response.fid,
-                "classid": $("#seldzfile").val()
+                "classid": $("#seldzfile").val(),
+                "eaudituser":$("#eauditUser").val()
             }, function (result) {
-
-
+                $("#eauditUser").val(-1);
+                $("#seldzfile").val(-1);
             });
             $("#savePic").attr("disabled", "disabled");
             $("#savePic1").trigger("click");
@@ -382,12 +358,17 @@ function AddModalContent() {
 
 $('#savePic').on('click', function () {// 提交图片信息 //
     //先上传文件，然后在回调函数提交表单
-    if(!$("#seldzfile").val()){
+    if($("#seldzfile").val()==-1){
         layer.msg("请选择文件密级!");
-    }else
-    {
-        $('#projectfile').fileinput('upload');
+        return;
     }
+
+    if($("#eauditUser").val()==-1){
+        layer.msg("请指定审核人员!");
+        return;
+    }
+
+    $('#projectfile').fileinput('upload');
 
 });
 
@@ -440,6 +421,10 @@ function ReqDownLoadAttachFile() {
         layer.msg("请选择要提交下载请求的文件!");
         return;
     }
+    if(!$("#selreqDown").val()){
+        layer.msg("请选择下载请求审核人!");
+        return;
+    }
     debugger;
     var downloadok = [], downloadno = [];
 
@@ -452,14 +437,14 @@ function ReqDownLoadAttachFile() {
     }
 
     if (downloadno != null && downloadno.length > 0) {
-        layer.msg("请选择【可下载】状态的文件提交申请，已通过下载请求的文件不需要重复提交！");
+        layer.msg("请选择【正常】状态的文件提交申请，已通过下载请求的文件不需要重复提交！");
         return;
     }
 
     $.ajax({
         type: "post",
         url: "ReqFileDownLoad",
-        data: {fileId: downloadok.join(","), type: 'DOWNLOAD'},
+        data: {fileId: downloadok.join(","), type: 'DOWNLOAD',daudituser:$("#selreqDown").val()},
         async: false,
         success: function (result) {
             result = JSON.parse(result);
@@ -484,15 +469,15 @@ function DownLoadAttachFile() {
         layer.msg("请选择要下载的文件!");
         return;
     }
-    var downloadno=[];
+    var downloadno = [];
 
-    for(i=0;i<selectedObjs.length;i++){
-        if(selectedObjs[i].audit!=4) {
+    for (i = 0; i < selectedObjs.length; i++) {
+        if (selectedObjs[i].audit != 4) {
             downloadno.push(selectedObjs[i].id);
         }
     }
-    debugger;
-    if(downloadno!=null&&downloadno.length>0){
+    //debugger;
+    if (downloadno != null && downloadno.length > 0) {
         layer.msg("请选择下载审核通过的文件进行下载！");
         return;
     }
@@ -508,21 +493,37 @@ function DownLoadAttachFile() {
 
 function UploadPaper() {
 
-    if(!$("#paperClassicId").val()){
+    if (!$("#paperClassicId").val()) {
         layer.msg("请选择文件密级！");
 
-        return ;
+        return;
     }
 
-    if(!$("#paperFileName").val()){
+    if($("#pauditUser").val()==-1) {
+        layer.msg("请指定审核人员！");
+
+        return;
+    }
+
+    // if($("#hidProClassLevel").val()<$("#paperClassicId").val()){
+    //     layer.msg("文件密级需小于或低于项目的密级！");
+    //
+    //     return ;
+    // }
+    if (!$("#paperFileName").val()) {
         layer.msg("请输入文件名称！");
 
-        return ;
+        return;
     }
-    if(!$("#paperzrr").val()){
+    if (!$("#paperzrr").val()) {
         layer.msg("请选择责任人！");
 
-        return ;
+        return;
+    }
+    if (!$("#filingNum").val()) {
+        layer.msg("请输入文件归档号！");
+
+        return;
     }
 
     //find("option:selected").text(),
@@ -532,7 +533,9 @@ function UploadPaper() {
             paperClassicId: $("#paperClassicId").val(),
             zrr: $("#paperzrr").val(),
             paperproid: $("#paperproid").val(),
+            filingNum: $("#filingNum").val(),
             attachid: $("#attachlist").val(),
+            pauditUser:$("#pauditUser").val(),
             editFileId: $("#editFileId").val(),
             phaseid: $("#phaselist").val()
         }
@@ -550,6 +553,7 @@ function UploadPaper() {
             $(".modal-backdrop").remove();
             $("#paperFileName").val('');
             $('#paperClassicId').val('');
+            $("#pauditUser").val(-1),
             //$('#paperClassicId option:first').attr("selected", true);
             $('#paperzrr option:first').attr("selected", true);
         });

@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -684,9 +685,12 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/ProjectList")
-    public String ProjectList() {
+    public ModelAndView ProjectList() {
 
-        return "project/ProjectList";
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("project/ProjectList");
+        return modelAndView;
+        //return "project/ProjectList";
     }
 
     @RequestMapping(value = "/ProjectDetail")
@@ -731,9 +735,15 @@ public class ProjectController {
 
         model.addObject("phases", projectPhaseEntities);
 
+        model.addObject("proClassLevel",projectInfoEntity.getClassificlevelId());
+
         List<PhaseFileTypeEntity> phaseFileTypeEntities = phaseFileTypeRepository.findAllByPhaseId(1);
 
         model.addObject("phasesfiletype", phaseFileTypeEntities);
+
+        List<User> auditUser = userRepository.findAuditUser();
+
+        model.addObject("auditUsers",auditUser);
 
         return model;
     }
@@ -1667,54 +1677,75 @@ public class ProjectController {
                 @Override
                 public Predicate toPredicate(Root<FileInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
-                    List<Predicate> predicates = new ArrayList<Predicate>();
+                    List<Predicate> predicates1 = new ArrayList<Predicate>();
 
                     Predicate predicate = criteriaBuilder.in(root.get("id")).value(fidList);
 
-
-                    predicates.add(predicate);
+                    predicates1.add(predicate);
 
                     Path<Integer> classicfic = root.get("classificlevelId");
 
                     Predicate predicate1 = criteriaBuilder.lessThanOrEqualTo(classicfic, classiclevel);
 
-                    predicates.add(predicate1);
+                    predicates1.add(predicate1);
 
-                    Path<Integer> audit=root.get("audit");
+                    Path<Integer> audit = root.get("audit");
 
-                    Predicate predicate2=criteriaBuilder.equal(audit,1);
+                    Predicate predicate2 = criteriaBuilder.equal(audit, 1);
 
-                    predicates.add(predicate2);
+                    predicates1.add(predicate2);
 
-                    return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-                    // return criteriaBuilder.and(predicate1);
+                    Predicate f1 = criteriaBuilder.and(predicates1.toArray(new Predicate[predicates1.size()]));
+
+
+                    List<Predicate> predicates2 = new ArrayList<>();
+                    Path<String> creator = root.get("creator");
+                    Predicate predicate3 = criteriaBuilder.equal(creator, getUser().getUsername());
+                    Predicate predicate4 = criteriaBuilder.in(root.get("id")).value(fidList);
+                    predicates2.add(predicate3);
+                    predicates2.add(predicate4);
+                    Predicate f2 = criteriaBuilder.and(predicates2.toArray(new Predicate[predicates2.size()]));
+
+                    List<Predicate> listF = new ArrayList<>();
+                    listF.add(f1);
+                    listF.add(f2);
+
+                    return criteriaBuilder.or(listF.toArray(new Predicate[listF.size()]));
+
                 }
             };
 
             filelist = fileInfoRepository.findAll(specification, pageable);
 
             //audit,1:可下载，-1：上传审核未通过，-2：下载审核未通过，2：上传审核中，3：下载审核中 4：下载审核通过
-            for(FileInfoEntity fileInfoEntity:filelist){
-                AuditInfo auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileInfoEntity.getId(), getUser().getUsername(),"UPLOAD");
+            boolean isfound=false;
+            for(FileInfoEntity fileInfoEntity:filelist) {
+                isfound = false;
+                AuditInfo auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileInfoEntity.getId(), getUser().getUsername(), "DOWNLOAD");
 
-                if(auditInfo!=null){
-                    if(auditInfo.getIsAudit()==0)
-                        fileInfoEntity.setAudit(2);
-                    if(auditInfo.getIsAudit()==1)
-                        fileInfoEntity.setAudit(1);
-                    if(auditInfo.getIsAudit()==-1)
-                        fileInfoEntity.setAudit(-1);
-                }else{
-
-                    auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileInfoEntity.getId(), getUser().getUsername(),"DOWNLOAD");
-                    if(auditInfo!=null){
-                        if(auditInfo.getIsAudit()==0)
-                            fileInfoEntity.setAudit(3);
-                        if(auditInfo.getIsAudit()==1)
-                            fileInfoEntity.setAudit(4);
-                        if(auditInfo.getIsAudit()==-1)
-                            fileInfoEntity.setAudit(-2);
+                if (auditInfo != null) {
+                    isfound = true;
+                    if (auditInfo.getIsAudit() == 0)
+                        fileInfoEntity.setAudit(3);
+                    if (auditInfo.getIsAudit() == 1)
+                        fileInfoEntity.setAudit(4);
+                    if (auditInfo.getIsAudit() == -1)
+                        fileInfoEntity.setAudit(-2);
+                } else {
+                    auditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileInfoEntity.getId(), getUser().getUsername(), "UPLOAD");
+                    if (auditInfo != null) {
+                        isfound = true;
+                        if (auditInfo.getIsAudit() == 0)
+                            fileInfoEntity.setAudit(2);
+                        if (auditInfo.getIsAudit() == 1)
+                            fileInfoEntity.setAudit(1);
+                        if (auditInfo.getIsAudit() == -1)
+                            fileInfoEntity.setAudit(-1);
                     }
+                }
+
+                if (!isfound) {
+                    fileInfoEntity.setAudit(1);
                 }
 
             }
@@ -1871,7 +1902,9 @@ public class ProjectController {
 
     @RequestMapping(value = "UpdateFilesClassId")
     @ResponseBody
-    public String UpdateFilesClassId(@RequestParam(value = "fids") String fids, @RequestParam(value = "classid") Integer classid) {
+    public String UpdateFilesClassId(@RequestParam(value = "fids") String fids,
+                                     @RequestParam(value = "classid") Integer classid,
+                                     @RequestParam(value = "eaudituser") Integer eaudituser) {
         result = new JSONObject();
 
         String[] fidArr = fids.split(",");
@@ -1881,6 +1914,9 @@ public class ProjectController {
             FileInfoEntity fileInfoEntity = fileInfoRepository.findOne(Long.parseLong(fidArr[i]));
             if (fileInfoEntity != null) {
                 fileInfoEntity.setClassificlevelId(classid);
+                AuditInfo auditInfo=auditInfoRepository.findByFileIdAndType(fileInfoEntity.getId(),"UPLOAD");
+                auditInfo.setAuditUser(eaudituser.toString());
+                auditInfoRepository.save(auditInfo);
                 fileInfoRepository.save(fileInfoEntity);
             }
         }
@@ -1896,8 +1932,10 @@ public class ProjectController {
     public String UploadPaper(@RequestParam(value = "paperFileName") String paperFileName,
                               @RequestParam(value = "zrr") String zrrName,
                               @RequestParam(value = "paperClassicId") Integer cid,
+                              @RequestParam(value = "pauditUser") Integer auditUser,
                               @RequestParam(value = "paperproid") Long proid,
                               @RequestParam(value = "attachid") Long attachid,
+                              @RequestParam(value = "filingNum") String filingNum,
                               @RequestParam(value = "phaseid") Long phaseid,
                               @RequestParam(value = "editFileId", required = false) Long editFileId) {
         result = new JSONObject();
@@ -1912,14 +1950,18 @@ public class ProjectController {
                     fileInfoEntity = fileInfoRepository.findOne(editFileId);
 
                 } else {
+                    fileInfoEntity.setAudit(0);
                     fileInfoEntity.setCreator(getUser().getUsername());
                     fileInfoEntity.setFileType("2");
 
                 }
                 fileInfoEntity.setCreateTime(myFmt2.format(new Date()));
                 fileInfoEntity.setClassificlevelId(cid);
-                fileInfoEntity.setZrr(zrrName);
+                User user=userRepository.findOne(Long.parseLong(zrrName));
+                fileInfoEntity.setZrr(user!=null?user.getRealName():"");
                 fileInfoEntity.setFileName(paperFileName);
+                fileInfoEntity.setFilingNum(filingNum);
+                fileInfoEntity.setFileClassify(1);
                 FileInfoEntity addedFile = fileInfoRepository.save(fileInfoEntity);
                 if (editFileId <= 0) {
                     //SetProjectFileId(projectInfoEntity, attachid, ((Long) addedFile.getId()).toString(), false);
@@ -1930,6 +1972,20 @@ public class ProjectController {
                     projectFilesEntity.setFileTypeId(attachid);
                     projectFilesEntity.setFileId(addedFile.getId());
                     projectFilesRepository.save(projectFilesEntity);
+
+                    AuditInfo auditInfo = new AuditInfo();
+                    auditInfo.setFileId(addedFile.getId());
+                    auditInfo.setApplicant(getUser().getUsername());
+                    auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                    auditInfo.setFileName(addedFile.getFileName());
+                    auditInfo.setIsAudit(0);
+                    auditInfo.setType("UPLOAD");
+                    auditInfo.setFileClassify(1);
+                    auditInfo.setAuditUser(auditUser.toString());
+                    auditInfo.setClassificlevelId(addedFile.getClassificlevelId());
+
+                    auditInfoRepository.save(auditInfo);
+
                 } else {
                     // ProjectFilesEntity projectFilesEntity=projectFilesRepository.findFirstByProjectIdAndPhaseIdAndFileTypeId(proid,phaseid,attachid);
 
@@ -2015,8 +2071,6 @@ public class ProjectController {
         try {
             List<String[]> projectDatas = ExcelUtil.excel2List(projectFile[0]);
 
-            //0序号//1研究方向//2项目编号//3项目名称//4项目承研单位//5主管部门//6参研单位//7项目负责人//8研究内容//9项目渠道//10总经费//11/密级//12研究周期//13备注
-
             Iterable<User> users = userRepository.findAll();
 
             String successImport = "导入成功%d条;";
@@ -2065,29 +2119,49 @@ public class ProjectController {
                         failMsgBuilder.append("<br>");
 
                     } else {
+
+
+                        //0序号//1研究方向//2项目编号//3项目名称//4/密级//
+                        //5立项时间(YYYY-MM-DD)//6立项提取通知时间(天)//7开题时间(YYYY-MM-DD)//8开题提取通知时间(天)
+                        //9中期检查时间(YYYY-MM-DD)//10中期检查提前通知时间（天）//11结题时间(YYYY-MM-DD)//12结题提前通知时间（天）
+                        //13验收时间(YYYY-MM-DD)//14验收提前通知时间（天）
+                        //15项目承研单位//16主管部门//17参研单位//18项目负责人//19研究内容//20项目渠道//21总经费//22研究周期//23备注
                         try {
                             ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
                             projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
                             projectInfoEntity.setYanjiuFangXiang(projectDatas.get(i)[1]);
                             projectInfoEntity.setProNo(projectDatas.get(i)[2]);
                             projectInfoEntity.setProName(projectDatas.get(i)[3]);
-                            String zhuYanDanwei = projectDatas.get(i)[4];
-                            projectInfoEntity.setMainDepartment(projectDatas.get(i)[5]);
-                            String canYanDanwei = projectDatas.get(i)[6];
+                            projectInfoEntity.setClassificlevelId(levelMap.get(projectDatas.get(i)[4]));
+
+                            projectInfoEntity.setCreatePhasetime(projectDatas.get(i)[5]);
+                            projectInfoEntity.setCpAlertdays(Integer.parseInt(projectDatas.get(i)[6]));
+                            projectInfoEntity.setOpenPhasetime(projectDatas.get(i)[7]);
+                            projectInfoEntity.setOpAlertdays(Integer.parseInt(projectDatas.get(i)[8]));
+                            projectInfoEntity.setMidcheckPhasetime(projectDatas.get(i)[9]);
+                            projectInfoEntity.setMpAlertdays(Integer.parseInt(projectDatas.get(i)[10]));
+                            projectInfoEntity.setClosePhasetime(projectDatas.get(i)[11]);
+                            projectInfoEntity.setClosepAlertdays(Integer.parseInt(projectDatas.get(i)[12]));
+                            projectInfoEntity.setEndPhasetime(projectDatas.get(i)[13]);
+                            projectInfoEntity.setEpAlertdays(Integer.parseInt(projectDatas.get(i)[14]));
+
+                            String zhuYanDanwei = projectDatas.get(i)[15];
+                            projectInfoEntity.setMainDepartment(projectDatas.get(i)[16]);
+                            String canYanDanwei = projectDatas.get(i)[17];
 
                             for (User user : users) {
-                                if (user.getRealName().equals(projectDatas.get(i)[7])) {
-                                    projectInfoEntity.setProLeaders(projectDatas.get(i)[7]);
+                                if (user.getRealName().equals(projectDatas.get(i)[18])) {
+                                    projectInfoEntity.setProLeaders(projectDatas.get(i)[18]);
                                     break;
                                 }
                             }
-                            projectInfoEntity.setProResearchcontent(projectDatas.get(i)[8]);
-                            projectInfoEntity.setProFrom(projectDatas.get(i)[9]);
+                            projectInfoEntity.setProResearchcontent(projectDatas.get(i)[19]);
+                            projectInfoEntity.setProFrom(projectDatas.get(i)[20]);
                             //projectInfoEntity.setTotalFee(Double.parseDouble(projectDatas.get(i)[10]));
-                            projectInfoEntity.setTotalFee(projectDatas.get(i)[10]);
-                            projectInfoEntity.setClassificlevelId(levelMap.get(projectDatas.get(i)[11]));
-                            projectInfoEntity.setYanjiuZhouQi(Double.parseDouble(projectDatas.get(i)[12]));
-                            projectInfoEntity.setProRemark(projectDatas.get(i)[13]);
+                            projectInfoEntity.setTotalFee(projectDatas.get(i)[21]);
+
+                            projectInfoEntity.setYanjiuZhouQi(Double.parseDouble(projectDatas.get(i)[22]));
+                            projectInfoEntity.setProRemark(projectDatas.get(i)[23]);
 
                             ProjectInfoEntity addProject = projectRepository.save(projectInfoEntity);
                             ChengYanDanWeiEntity chengYanDanWeiEntity = new ChengYanDanWeiEntity();
@@ -2153,13 +2227,13 @@ public class ProjectController {
 //
 @RequestMapping(value = "UpdateSpaceAmount")
 @ResponseBody
-public String UpdateSpaceAmount(@RequestParam(value = "amount") double amount) {
+public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@RequestParam(value = "danwei") String danwei) {
     String res = "ok";
 
     try {
         StorageEntity storageEntity = storageRepository.findOne(1L);
 
-        storageEntity.setTotalAmount(amount);
+        storageEntity.setTotalAmount(amount+danwei);
         storageRepository.save(storageEntity);
     } catch (Exception ex) {
         res = "no";
@@ -2168,44 +2242,102 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") double amount) {
     return res;
 }
 
+    @RequestMapping(value = "UpdateAlertAmount")
+    @ResponseBody
+    public String UpdateAlertAmount(@RequestParam(value = "amount") String amount,@RequestParam(value = "danwei") String danwei) {
+        String res = "ok";
+
+        try {
+
+            StorageEntity storageEntity = new StorageEntity();
+
+            List<StorageEntity> storageEntityList= (List<StorageEntity>) storageRepository.findAll();
+
+            if(storageEntityList==null||storageEntityList.size()<=0) {
+                storageEntity=new StorageEntity();
+                storageEntity.setId(1);
+                storageEntity.setTotalAmount("1TB");
+                storageEntity.setAlertAmount("900GB");
+            }else
+            {
+                storageEntity=storageEntityList.get(0);
+            }
+
+            storageEntity.setAlertAmount(amount + danwei);
+            storageRepository.save(storageEntity);
+        } catch (Exception ex) {
+            res = "no";
+        }
+
+        return res;
+    }
 
     @RequestMapping(value = "GetStorageInfo")
-    public ModelAndView GetStorageInfo(){
+    public ModelAndView GetStorageInfo() {
 
         ModelAndView modelAndView = new ModelAndView();
 
-        StorageEntity storageEntity=storageRepository.findOne(1L);
+        StorageEntity storageEntity=new StorageEntity();
 
-        if(storageEntity==null) {
+        List<StorageEntity> storageEntityList= (List<StorageEntity>) storageRepository.findAll();
 
-            storageEntity = new StorageEntity();
+        if(storageEntityList==null||storageEntityList.size()<=0) {
+            storageEntity=new StorageEntity();
             storageEntity.setId(1);
-            storageEntity.setTotalAmount(10000);
+            storageEntity.setTotalAmount("1TB");
+            storageEntity.setAlertAmount("900GB");
+        }else
+        {
+            storageEntity=storageEntityList.get(0);
         }
-            storageEntity.setDbAmount(storageRepository.GetDataBaseSpace());
 
-            storageEntity.setProjectAmount(storageRepository.GetFileSpaceByType(1));
-            storageEntity.setAnliAmount(storageRepository.GetFileSpaceByType(2));
-            storageEntity.setZiliaoAmount(storageRepository.GetFileSpaceByType(3));
-            storageEntity.setExpertAmount(storageRepository.GetFileSpaceByType(4));
-            storageEntity.setGongaoAmount(storageRepository.GetFileSpaceByType(5));
+        double d0 = storageRepository.GetDataBaseSpace();
+        double d1 = storageRepository.GetFileSpaceByType(1);
+        double d2 = storageRepository.GetFileSpaceByType(2);
+        double d3 = storageRepository.GetFileSpaceByType(3);
+        double d4 = storageRepository.GetFileSpaceByType(4);
+        double d5 = storageRepository.GetFileSpaceByType(5);
+        double d6=storageRepository.GetLogSpace();
 
-            storageEntity.setCurrentUsed((storageEntity.getDbAmount() + storageEntity.getProjectAmount() + storageEntity.getAnliAmount()
-                    + storageEntity.getZiliaoAmount() + storageEntity.getExpertAmount() + storageEntity.getGongaoAmount()));
+        storageEntity.setDbAmount(GetStorageDesc(d0));
 
-            storageRepository.save(storageEntity);
+        storageEntity.setProjectAmount(GetStorageDesc(d1));
+        storageEntity.setAnliAmount(GetStorageDesc(d2));
+        storageEntity.setZiliaoAmount(GetStorageDesc(d3));
+        storageEntity.setExpertAmount(GetStorageDesc(d4));
+        storageEntity.setGongaoAmount(GetStorageDesc(d5));
+        storageEntity.setLogAmount(GetStorageDesc(d6));
+
+        storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5+d6));
+
+        storageRepository.save(storageEntity);
 
 
-        modelAndView.addObject("storageinfo",storageEntity);
+        modelAndView.addObject("storageinfo", storageEntity);
         modelAndView.setViewName("/project/storagelist");
         return modelAndView;
     }
 
+    private String GetStorageDesc(double amounts) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        if (amounts < 1000) {
+            return df.format(amounts) + "Bytes";
+        } else if (amounts > 1000 && amounts < 1000000) {
+            return df.format(amounts / 1000) + "KB";
+        } else if (amounts >= 1000000 && amounts < 1000000000) {
+            return df.format(amounts / 1000000) + "MB";
+        } else if (amounts >= 1000000000 && amounts < 1000000000000d) {
+            return df.format(amounts / 1000000000) + "GB";
+        } else {
+            return df.format(amounts / 1000000000000d) + "TB";
+        }
+    }
     @RequestMapping(value = "UpLoadProjectFiles")
     @ResponseBody
     public synchronized String UpLoadProjectFiles(@RequestParam(value = "projectfile") MultipartFile[] projectfiles,
                                                   @RequestParam(value = "attachid") String attachid,
                                                   @RequestParam(value = "phaseid") String phaseid,
+                                                  @RequestParam(value = "eaudituser") String auituserid,
                                                   @RequestParam(value = "pid") long pid) throws IOException {
 
         result = new JSONObject();
@@ -2236,7 +2368,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") double amount) {
                     fileInfoEntity.setCreateTime(myFmt2.format(new Date()));
                     //fileInfoEntity.setFileClassify(1);
                     fileInfoEntity.setFileClassify(1);
-                    fileInfoEntity.setAudit(1);
+                    fileInfoEntity.setAudit(0);
 
                     File file = new File(projectFilePath + savFilePath);
                     if (!file.getParentFile().exists()) {
@@ -2258,6 +2390,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") double amount) {
                     auditInfo.setFileName(addedFile.getFileName());
                     auditInfo.setIsAudit(0);
                     auditInfo.setType("UPLOAD");
+                    auditInfo.setAuditUser(auituserid);
                     auditInfo.setFileClassify(addedFile.getFileClassify());
                     auditInfo.setClassificlevelId(addedFile.getClassificlevelId());
 

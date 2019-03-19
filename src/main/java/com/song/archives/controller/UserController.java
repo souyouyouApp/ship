@@ -1,12 +1,15 @@
 package com.song.archives.controller;
 
 import com.song.archives.aspect.ArchivesLog;
+import com.song.archives.dao.NotifyRepository;
 import com.song.archives.dao.OperationRepository;
 import com.song.archives.dao.StorageRepository;
 import com.song.archives.dao.UserRepository;
+import com.song.archives.model.NotifyEntity;
 import com.song.archives.model.OperationLog;
 import com.song.archives.model.StorageEntity;
 import com.song.archives.model.User;
+import com.song.archives.utils.DateUtil;
 import com.song.archives.utils.MySQLDatabaseBackup;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -31,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpSession;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +65,8 @@ public class UserController {
     private OperationRepository operationRepository;
     @Autowired
     private StorageRepository storageRepository;
-
+    @Autowired
+    private NotifyRepository notifyRepository;
     @Value("${backup.path}")
     private String savePath;
 
@@ -472,25 +477,37 @@ public class UserController {
         try {
             StorageEntity storageEntity=new StorageEntity();
 
-            storageEntity=storageRepository.findOne(1L);
+            List<StorageEntity> storageEntityList= (List<StorageEntity>) storageRepository.findAll();
 
-            if(storageEntity==null) {
+            if(storageEntityList==null||storageEntityList.size()<=0) {
                 storageEntity=new StorageEntity();
                 storageEntity.setId(1);
-                storageEntity.setTotalAmount(10000);
+                storageEntity.setTotalAmount("1TB");
+                storageEntity.setAlertAmount("900GB");
+            }else
+            {
+                storageEntity=storageEntityList.get(0);
             }
 
-            storageEntity.setDbAmount(storageRepository.GetDataBaseSpace());
+            double d0 = storageRepository.GetDataBaseSpace();
+            double d1 = storageRepository.GetFileSpaceByType(1);
+            double d2 = storageRepository.GetFileSpaceByType(2);
+            double d3 = storageRepository.GetFileSpaceByType(3);
+            double d4 = storageRepository.GetFileSpaceByType(4);
+            double d5 = storageRepository.GetFileSpaceByType(5);
+            double d6=storageRepository.GetLogSpace();
 
-            storageEntity.setProjectAmount(storageRepository.GetFileSpaceByType(1));
-            storageEntity.setAnliAmount(storageRepository.GetFileSpaceByType(2));
-            storageEntity.setZiliaoAmount(storageRepository.GetFileSpaceByType(3));
-            storageEntity.setExpertAmount(storageRepository.GetFileSpaceByType(4));
-            storageEntity.setGongaoAmount(storageRepository.GetFileSpaceByType(5));
+            storageEntity.setDbAmount(GetStorageDesc(d0));
 
-            storageEntity.setCurrentUsed(storageEntity.getTotalAmount()-(storageEntity.getDbAmount()+storageEntity.getProjectAmount()+storageEntity.getAnliAmount()
-                    +storageEntity.getZiliaoAmount()+storageEntity.getExpertAmount()+storageEntity.getGongaoAmount()));
+            storageEntity.setProjectAmount(GetStorageDesc(d1));
+            storageEntity.setAnliAmount(GetStorageDesc(d2));
+            storageEntity.setZiliaoAmount(GetStorageDesc(d3));
+            storageEntity.setExpertAmount(GetStorageDesc(d4));
+            storageEntity.setGongaoAmount(GetStorageDesc(d5));
+            storageEntity.setLogAmount(GetStorageDesc(d6));
 
+            storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5+d6));
+//
             storageRepository.save(storageEntity);
 
 
@@ -498,6 +515,22 @@ public class UserController {
             User user = (User) currentUser.getPrincipal();
 //            SecurityUtils.getSubject().getSession().setTimeout(1000);
             session.setAttribute("user", user);
+
+            if(storageEntity.getCurrentUsed().equals(storageEntity.getAlertAmount())){
+
+               List<User>  userList=userRepository.findUsersByTypeId(1L);
+                for(User user1:userList) {
+
+                    NotifyEntity notify = new NotifyEntity();
+                    notify.setContent("存储空间已经达到预警值：" + storageEntity.getAlertAmount());
+                    notify.setOperateTime(DateUtil.parseDateToStr(new Date(), DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
+                    notify.setApprover(user1.getUsername());
+                    notify.setPersonal(user1.getUsername());
+                    notify.setStatus(0);
+                    notifyRepository.save(notify);
+                }
+
+            }
             msg = SUCCESS;
         } catch (UnknownAccountException e) {
             msg = "账户不存在!";
@@ -517,7 +550,20 @@ public class UserController {
         return JSONObject.fromObject(result).toString();
 
     }
-
+    private String GetStorageDesc(double amounts) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        if (amounts < 1000) {
+            return df.format(amounts) + "Bytes";
+        } else if (amounts > 1000 && amounts < 1000000) {
+            return df.format(amounts / 1000) + "KB";
+        } else if (amounts >= 1000000 && amounts < 1000000000) {
+            return df.format(amounts / 1000000) + "MB";
+        } else if (amounts >= 1000000000 && amounts < 1000000000000d) {
+            return df.format(amounts / 1000000000) + "GB";
+        } else {
+            return df.format(amounts / 1000000000000d) + "TB";
+        }
+    }
 
     @RequestMapping(value = "/sign_out")
     @ArchivesLog(operationType = "sign_out", operationName = "登出")

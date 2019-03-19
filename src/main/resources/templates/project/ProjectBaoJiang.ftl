@@ -426,7 +426,32 @@
                     });
         }
 
+        function InitDateBjCrt() {
+            $('#bjtime').datetimepicker({
+                minView: "month", format: "yyyy-mm-dd", autoclose: true, todayBtn: true
+            });
+            $('#bjtime').click(function () {
+                $('#bjtime').datetimepicker('show');
+            });
+
+            $('#hjtime').datetimepicker({
+                minView: "month", format: "yyyy-mm-dd", autoclose: true, todayBtn: true
+            });
+            $('#hjtime').click(function () {
+                $('#hjtime').datetimepicker('show');
+            });
+
+            $('#jianDingTime').datetimepicker({
+                minView: "month", format: "yyyy-mm-dd", autoclose: true, todayBtn: true
+            });
+            $('#jianDingTime').click(function () {
+                $('#jianDingTime').datetimepicker('show');
+            });
+
+        }
+
         $(document).ready(function () {
+            InitDateBjCrt();
             $('#jdtable').bootstrapTable({
                 url: 'LoadJianDingList',         //请求后台的URL（*）
                 method: 'get',                      //请求方式（*）
