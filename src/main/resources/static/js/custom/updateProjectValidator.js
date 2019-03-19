@@ -124,10 +124,10 @@ $(document).ready(function () {
                 }
             },
             epAlertdays: {
-                message: '后期管理提前通知时间校验失败',
+                message: '验收提前通知时间校验失败',
                 validators: {
                     notEmpty: {
-                        message: '后期管理提前通知时间不能为空'
+                        message: '验收提前通知时间不能为空'
                     }
                 }
             },

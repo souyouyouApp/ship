@@ -152,23 +152,23 @@ public class ProjectController {
 
                     Path<String> proLeaders = root.get("proLeaders");
 
-                    Predicate predicate = criteriaBuilder.equal(proLeaders, user.getRealName().toString());
+                    Predicate predicate = criteriaBuilder.equal(proLeaders, user.getUsername().toString());
 
                     predicates.add(predicate);
 
-                    Predicate predicate0 = criteriaBuilder.equal(root.get("proJoiners"), user.getRealName().toString());
+                    Predicate predicate0 = criteriaBuilder.equal(root.get("proJoiners"), user.getUsername().toString());
 
                     predicates.add(predicate0);
 
                     Path<String> proJoiners = root.get("proJoiners");
 
-                    Predicate predicate1 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getRealName().toString() + ",%");
+                    Predicate predicate1 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getUsername().toString() + ",%");
 
                     predicates.add(predicate1);
 
-                    Predicate predicate2 = criteriaBuilder.like(proJoiners.as(String.class), user.getRealName().toString() + ",%");
+                    Predicate predicate2 = criteriaBuilder.like(proJoiners.as(String.class), user.getUsername().toString() + ",%");
                     predicates.add(predicate2);
-                    Predicate predicate3 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getRealName().toString());
+                    Predicate predicate3 = criteriaBuilder.like(proJoiners.as(String.class), "%," + user.getUsername().toString());
                     predicates.add(predicate3);
 
                     return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));

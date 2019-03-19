@@ -72,7 +72,7 @@
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label>主管部门</label>
+                            <label>乘研单位</label>
                             <input class="form-control" id="mainDepartment" name="mainDepartment"
                                    value="${proentity.mainDepartment!}">
                         </div>
@@ -89,7 +89,7 @@
                         <div class="form-group col-md-6">
                             <label>总经费</label>
                             <div class="input-group">
-                                <input class="form-control" id="totalFee" type="text" name="totalFee"
+                                <input class="form-control" id="totalFee" type="number" name="totalFee"
                                        value="${proentity.totalFee!}">
                                 <span class="input-group-addon">万元</span>
                             </div>
@@ -144,7 +144,7 @@
                         <div class="form-group col-md-6">
                             <label for="dtp_input2">立项时间</label>
 
-                            <input class="form-control" type="date" value="${proentity.createPhasetime!}"
+                            <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入立项时间" value="${proentity.createPhasetime!}"
                                    id="createPhasetime"
                                    name="createPhasetime">
 
@@ -154,14 +154,14 @@
                             <label>立项提前通知时间</label>
 
                             <div class="input-group">
-                                <input class="form-control" id="cpAlertdays" type="number" name="cpAlertdays"
+                                <input class="form-control" id="cpAlertdays" placeholder="请输入立项通知时间" type="number" name="cpAlertdays"
                                        value="${proentity.cpAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="dtp_input3">开题时间</label>
-                            <input class="form-control" type="date" value="${proentity.openPhasetime!}"
+                            <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入开题时间" value="${proentity.openPhasetime!}"
                                    id="openPhasetime"
                                    name="openPhasetime">
                         </div>
@@ -169,7 +169,7 @@
                         <div class="form-group col-md-6">
                             <label>开题提前通知时间</label>
                             <div class="input-group">
-                                <input class="form-control" id="opAlertdays" type="number" name="opAlertdays"
+                                <input class="form-control" id="opAlertdays" placeholder="请输入开题通知时间" type="number" name="opAlertdays"
                                        value="${proentity.opAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -178,7 +178,7 @@
 
                         <div class="form-group col-md-6">
                             <label for="dtp_input4">中期检查时间</label>
-                            <input class="form-control" type="date"
+                            <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入中期检查时间"
                                    value="${proentity.midcheckPhasetime!}"
                                    id="midcheckPhasetime"
                                    name="midcheckPhasetime">
@@ -188,7 +188,7 @@
                         <div class="form-group col-md-6">
                             <label>中期检查提前通知时间</label>
                             <div class="input-group">
-                                <input class="form-control" id="mpAlertdays" type="number" name="mpAlertdays"
+                                <input class="form-control" id="mpAlertdays" placeholder="请输入中期检查通知时间" type="number" name="mpAlertdays"
                                        value="${proentity.mpAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -197,7 +197,7 @@
                         <div class="form-group col-md-6">
                             <label for="dtp_input4">结题时间</label>
 
-                            <input class="form-control" type="date" value="${proentity.closePhasetime!}"
+                            <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入结题时间" value="${proentity.closePhasetime!}"
                                    id="closePhasetime"
                                    name="closePhasetime">
                         <#--<input class="form-control" id="createPhasetime" name="createPhasetime">-->
@@ -205,7 +205,7 @@
                         <div class="form-group col-md-6">
                             <label>结题提前通知时间</label>
                             <div class="input-group">
-                                <input class="form-control" id="closepAlertdays" type="number" name="closepAlertdays"
+                                <input class="form-control" id="closepAlertdays" placeholder="请输入结题通知时间" type="number" name="closepAlertdays"
                                        value="${proentity.closepAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -213,7 +213,7 @@
 
                         <div class="form-group col-md-6">
                             <label for="dtp_input4">验收时间</label>
-                            <input class="form-control" type="date" value="${proentity.endPhasetime!}"
+                            <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入验收时间" value="${proentity.endPhasetime!}"
                                    id="endPhasetime"
                                    name="endPhasetime">
                         <#--<input class="form-control" id="createPhasetime" name="createPhasetime">-->
@@ -221,7 +221,7 @@
                         <div class="form-group col-md-6">
                             <label>验收管理提前通知时间 </label>
                             <div class="input-group">
-                                <input class="form-control" id="epAlertdays" type="number" name="epAlertdays"
+                                <input class="form-control" id="epAlertdays"  type="number" name="epAlertdays"
                                        value="${proentity.epAlertdays!}">
                                 <span class="input-group-addon">天</span>
                             </div>
@@ -282,7 +282,7 @@
     </form>
 </div>
 
-<script src="static/js/custom/updateProjectValidator.js"></script>
+<script src="static/js/custom/projectValidateNew.js"></script>
 <script language="JavaScript" type="text/javascript">
 
     function FilterUsers(tag) {
@@ -424,15 +424,18 @@
     //提交更新项目表单
     function UdpateProjectForm() {
 
-        var bootstrapValidator = $("#updateprojectForm").data('bootstrapValidator');
-        bootstrapValidator.validate()
-        if (!bootstrapValidator.isValid())
+        // var bootstrapValidator = $("#updateprojectForm").data('bootstrapValidator');
+        // bootstrapValidator.validate()
+        // if (!bootstrapValidator.isValid())
+        //     return;
+
+        if(!ProjectValid()){
             return;
+        }
 
         $.post("UpdateProject", $("#updateprojectForm").serialize(), function (result) {
             result = JSON.parse(result);
-
-            debugger;
+            //debugger;
             if (result.msg == 'success') {
                 layer.msg("修改项目成功！");
                 $("#page-wrapper").load("ProjectList")

@@ -99,7 +99,7 @@
                                     </div>
 
                                     <div class="form-group col-md-6">
-                                        <label>主管部门</label>
+                                        <label>乘研单位</label>
                                         <input class="form-control" id="mainDepartment" name="mainDepartment">
                                     </div>
 
@@ -113,62 +113,62 @@
 
                                     <div class="form-group col-md-6">
                                         <label for="dtp_input2">立项时间</label>
-                                        <input class="form-control" type="date" id="createPhasetime"
+                                        <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入立项时间" id="createPhasetime"
                                                name="createPhasetime">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>立项提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="cpAlertdays" type="number" name="cpAlertdays">
+                                            <input class="form-control" id="cpAlertdays" placeholder="请输入立项提前通知时间" type="number" name="cpAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="dtp_input3">开题时间</label>
-                                        <input class="form-control" type="date" id="openPhasetime"
+                                        <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入开题时间" id="openPhasetime"
                                                name="openPhasetime">
                                     </div>
 
                                     <div class="form-group col-md-6">
                                         <label>开题提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="opAlertdays" type="number" name="opAlertdays">
+                                            <input class="form-control" id="opAlertdays" placeholder="请输入开题提前通知时间" type="number" name="opAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="dtp_input4">中期检查时间</label>
-                                        <input class="form-control" type="date" id="midcheckPhasetime"
+                                        <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入中期检查时间" id="midcheckPhasetime"
                                                name="midcheckPhasetime">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>中期检查提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="mpAlertdays" type="number" name="mpAlertdays">
+                                            <input class="form-control" id="mpAlertdays" placeholder="请输入中期提前通知时间" type="number" name="mpAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="dtp_input4">结题时间</label>
-                                        <input class="form-control" type="date" id="closePhasetime"
+                                        <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入结题时间" id="closePhasetime"
                                                name="closePhasetime">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>结题提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="closepAlertdays" type="number" name="closepAlertdays">
+                                            <input class="form-control" id="closepAlertdays" placeholder="请输入结题提前通知时间" type="number" name="closepAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="dtp_input4">验收时间</label>
-                                        <input class="form-control" type="date" id="endPhasetime"
+                                        <input class="form-control" AUTOCOMPLETE="off" placeholder="请输入验收时间" id="endPhasetime"
                                                name="endPhasetime">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label>验收管理提前通知时间</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="epAlertdays" type="number" name="epAlertdays">
+                                            <input class="form-control" id="epAlertdays" placeholder="请输入验收提前通知时间" type="number" name="epAlertdays">
                                             <span class="input-group-addon">天</span>
                                         </div>
                                     </div>
@@ -194,7 +194,7 @@
                                     <div class="form-group col-md-6">
                                         <label>总经费</label>
                                         <div class="input-group">
-                                            <input class="form-control" id="totalFee" name="totalFee">
+                                            <input class="form-control" id="totalFee" type="number" name="totalFee">
                                             <span class="input-group-addon">万元</span>
                                         </div>
                                     </div>
@@ -271,7 +271,7 @@
     </div>
 </div>
 
-<script src="static/js/custom/createProjectValidator.js"></script>
+<script src="static/js/custom/projectValidateNew.js"></script>
 <script language="JavaScript">
 
     function InitDateCrt() {
@@ -449,10 +449,13 @@
 
     function SaveProjectForm() {
 
-        var bootstrapValidator = $("#projectForm").data('bootstrapValidator');
-        bootstrapValidator.validate()
-        if (!bootstrapValidator.isValid())
+        //var bootstrapValidator = $("#projectForm").data('bootstrapValidator');
+        //bootstrapValidator.validate()
+        //if (!bootstrapValidator.isValid())
+        //    return;
+        if(!ProjectValid()){
             return;
+        }
 
         $.post("SaveProject", $("#projectForm").serialize(), function (result) {
             result = JSON.parse(result);

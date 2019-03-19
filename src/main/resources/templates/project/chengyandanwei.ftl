@@ -92,11 +92,11 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>合同签订时间</label>
-                            <input class="form-control" type="date" id="contractTime" name="contractTime">
+                            <input class="form-control" AUTOCOMPLETE="off" id="contractTime" name="contractTime">
                         </div>
                         <div class="form-group col-md-6">
                             <label>验收时间</label>
-                            <input class="form-control" type="date" id="yanshouTime" name="yanshouTime">
+                            <input class="form-control" AUTOCOMPLETE="off" id="yanshouTime" name="yanshouTime">
                         </div>
                         <div class="form-group col-md-6">
                             <label>联系人</label>

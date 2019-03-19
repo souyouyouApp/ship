@@ -110,7 +110,7 @@
 
                         <div class="form-group col-md-12">
                             <label>收款时间</label>
-                            <input class="form-control" type="date"
+                            <input class="form-control" AUTOCOMPLETE="off"
                                    id="receiveTime"
                                    name="receiveTime">
                         </div>
@@ -153,13 +153,13 @@
                         </div>
                         <div class="form-group col-md-12">
                             <label>催收时间</label>
-                            <input class="form-control" type="date" value=""
+                            <input class="form-control" AUTOCOMPLETE="off" value=""
                                    id="cuishouTime"
                                    name="cuishouTime">
                         </div>
                         <div class="form-group col-md-12">
                             <label>预提醒天数</label>
-                            <input class="form-control" id="cuishouAlertDays" name="cuishouAlertDays">
+                            <input class="form-control" type="number" placeholder="请输入预提醒天数" id="cuishouAlertDays" name="cuishouAlertDays">
                         </div>
                         <div class="form-group col-md-12">
                             <label>答复</label>

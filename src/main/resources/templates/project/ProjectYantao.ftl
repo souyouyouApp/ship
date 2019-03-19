@@ -76,7 +76,7 @@
                         <div class="form-group col-lg-12">
                             <label>研讨时间</label>
 
-                            <input class="form-control" type="date" value=""
+                            <input class="form-control" AUTOCOMPLETE="off" value=""
                                    id="yantaoTime"
                                    name="yantaoTime">
 
