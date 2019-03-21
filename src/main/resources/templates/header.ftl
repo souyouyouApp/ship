@@ -79,23 +79,10 @@
             if (result.msg == "success" && result.result.length > 0) {
                 Messenger().hideAll()
                 $.each(result.result,function (index,val) {
-                    msg = Messenger().post({
+                    msg = Messenger({parentLocations: ['.messagener']}).post({
                         message: '<span style="display: none">'+this.id+'</span>'+this.content,
                         showCloseButton: true
-                        // actions: {
-                        //     cancel: {
-                        //         label:'取消',
-                        //         action: function(){
-                        //             msg.hide()
-                        //         }
-                        //     },
-                        //     delete: {
-                        //         label:'删除',
-                        //         action: function(){
-                        //             msg.hide()
-                        //         }
-                        //     }
-                        // }
+
                     })
                 })
                 $('.messenger-close').click(function(){
@@ -137,7 +124,7 @@
 //             }
 //         });
     $(document).ready(function(){
-        // setInterval(getNotify, 5000);
+         // setInterval(getNotify, 5000);
         getNotify();
     })
 

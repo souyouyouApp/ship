@@ -186,7 +186,9 @@
     </div>
 
 </div>
-
+<div style="margin: 0 auto; width: 80%; position: absolute; bottom: 5px; height: 100px;float: left; line-height: 0; z-index: 100; text-align: right;">
+    <div class="messagener"></div>
+</div>
 <script>
 
     var proData = "";
