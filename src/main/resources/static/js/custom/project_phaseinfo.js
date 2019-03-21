@@ -437,7 +437,7 @@ function ReqDownLoadAttachFile() {
     }
 
     if (downloadno != null && downloadno.length > 0) {
-        layer.msg("请选择【正常】状态的文件提交申请，已通过下载请求的文件不需要重复提交！");
+        layer.msg("请选择【正常】状态的文件提交申请，已通过下载审核的文件不需要重复提交！");
         return;
     }
 
@@ -478,7 +478,7 @@ function DownLoadAttachFile() {
     }
     //debugger;
     if (downloadno != null && downloadno.length > 0) {
-        layer.msg("请选择下载审核通过的文件进行下载！");
+        layer.msg("请选择【下载审核通过】的文件进行下载！");
         return;
     }
 

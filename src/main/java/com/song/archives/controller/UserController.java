@@ -18,6 +18,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.hibernate.annotations.Synchronize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -71,6 +72,8 @@ public class UserController {
     private String savePath;
 
     private String backUpFileName = "";
+
+    private static Object spaceAlertLock=new Object();
 
     /**
      * 视图跳转
@@ -518,18 +521,22 @@ public class UserController {
 
             if(storageEntity.getCurrentUsed().equals(storageEntity.getAlertAmount())){
 
-               List<User>  userList=userRepository.findUsersByTypeId(1L);
-                for(User user1:userList) {
+               //List<User>  userList=userRepository.findUsersByTypeId(1L);
+                //for(User user1:userList) {
 
-                    NotifyEntity notify = new NotifyEntity();
-                    notify.setContent("存储空间已经达到预警值：" + storageEntity.getAlertAmount());
-                    notify.setOperateTime(DateUtil.parseDateToStr(new Date(), DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
-                    notify.setApprover(user1.getUsername());
-                    notify.setPersonal(user1.getUsername());
-                    notify.setStatus(0);
-                    notifyRepository.save(notify);
+                synchronized(spaceAlertLock) {
+                    if (user.getType() == 1 && session.getAttribute("spacealert" + user.getUsername()) == null) {
+
+                        NotifyEntity notify = new NotifyEntity();
+                        notify.setContent("存储空间已经达到预警值：" + storageEntity.getAlertAmount());
+                        notify.setOperateTime(DateUtil.parseDateToStr(new Date(), DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
+                        notify.setApprover(user.getUsername());
+                        notify.setPersonal(user.getUsername());
+                        notify.setStatus(0);
+                        notifyRepository.save(notify);
+                        session.setAttribute("spacealert" + user.getUsername(), "1");
+                    }
                 }
-
             }
             msg = SUCCESS;
         } catch (UnknownAccountException e) {
@@ -550,6 +557,7 @@ public class UserController {
         return JSONObject.fromObject(result).toString();
 
     }
+
     private String GetStorageDesc(double amounts) {
         DecimalFormat df = new DecimalFormat("0.00");
         if (amounts < 1000) {

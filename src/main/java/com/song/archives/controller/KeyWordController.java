@@ -93,7 +93,7 @@ public class KeyWordController {
     @ResponseBody
     public String LoadKeyWord(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                               @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
-                              @RequestParam(value = "isprivate") Integer isprivate) {
+                              @RequestParam(value = "isprivate") Integer p_isprivate) {
         result = new JSONObject();
 
         Sort sort = new Sort(Sort.Direction.ASC, "id");
@@ -101,22 +101,22 @@ public class KeyWordController {
         Pageable pageable = new PageRequest(currentpage, size, sort);
         Page keywordInfoEntityPage = null;
         try {
-            if (isprivate != 1) {
-                keywordInfoEntityPage = keyWordRepository.findAll(pageable);
-            } else {
+//            if (isprivate != 1) {
+//                keywordInfoEntityPage = keyWordRepository.findAll(pageable);
+//            } else {
 
-                Specification<KeywordInfoEntity> specification = new Specification<KeywordInfoEntity>() {
-                    @Override
-                    public Predicate toPredicate(Root<KeywordInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+            Specification<KeywordInfoEntity> specification = new Specification<KeywordInfoEntity>() {
+                @Override
+                public Predicate toPredicate(Root<KeywordInfoEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 
-                        Path<Integer> isPrivate = root.get("isPrivate");
+                    Path<Integer> isPrivate = root.get("isPrivate");
 
-                        return criteriaBuilder.equal(isPrivate, 1);
-                    }
-                };
+                    return criteriaBuilder.equal(isPrivate, p_isprivate);
+                }
+            };
 
-                keywordInfoEntityPage = keyWordRepository.findAll(specification, pageable);
-            }
+            keywordInfoEntityPage = keyWordRepository.findAll(specification, pageable);
+            // }
 
             JsonConfig jsonConfig = new JsonConfig();
 
