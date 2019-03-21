@@ -80,6 +80,8 @@
                 Messenger().hideAll()
                 $.each(result.result,function (index,val) {
                     msg = Messenger({parentLocations: ['.messagener']}).post({
+                        maxMessages: 20,
+                        hideAfter: 30,
                         message: '<span style="display: none">'+this.id+'</span>'+this.content,
                         showCloseButton: true
 
