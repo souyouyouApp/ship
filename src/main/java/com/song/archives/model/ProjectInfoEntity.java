@@ -58,7 +58,9 @@ public class ProjectInfoEntity implements Serializable{
 
     private Integer creater;
 
-    private Double yanjiuZhouQi;
+    private String yanjiuZhouQi;
+
+    private String yanjiuZhouQi1;
     private String yanjiuFangXiang;
 
 
@@ -492,11 +494,11 @@ public class ProjectInfoEntity implements Serializable{
 
     @Basic
     @Column(name = "yanjiu_zhou_qi")
-    public Double getYanjiuZhouQi() {
+    public String getYanjiuZhouQi() {
         return yanjiuZhouQi;
     }
 
-    public void setYanjiuZhouQi(Double yanjiuZhouQi) {
+    public void setYanjiuZhouQi(String yanjiuZhouQi) {
         this.yanjiuZhouQi = yanjiuZhouQi;
     }
 
@@ -508,5 +510,15 @@ public class ProjectInfoEntity implements Serializable{
 
     public void setYanjiuFangXiang(String yanjiuFangXiang) {
         this.yanjiuFangXiang = yanjiuFangXiang;
+    }
+
+    @Basic
+    @Column(name = "yanjiu_zhou_qi1")
+    public String getYanjiuZhouQi1() {
+        return yanjiuZhouQi1;
+    }
+
+    public void setYanjiuZhouQi1(String yanjiuZhouQi1) {
+        this.yanjiuZhouQi1 = yanjiuZhouQi1;
     }
 }

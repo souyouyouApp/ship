@@ -64,7 +64,7 @@
                             </li>
                             <li><a href="#danweiinfo" data-toggle="tab">承研单位</a>
                             </li>
-                            <li><a href="#phaseinfo" data-toggle="tab">阶段信息</a>
+                            <li><a href="#phaseinfo" data-toggle="tab">阶段成果</a>
                             </li>
                             <li><a href="#baojianginfo" data-toggle="tab">报奖信息</a>
                             </li>

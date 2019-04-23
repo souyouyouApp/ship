@@ -38,7 +38,7 @@
             </button>
         <#--</@shiro.hasPermission>-->
             <div>
-                <label>研究周期：${proentity.yanjiuZhouQi!}个月</label>
+                <label>研究周期：${proentity.yanjiuZhouQi!}  至  ${proentity.yanjiuZhouQi1!}</label>
             </div>
         </div>
 

@@ -105,10 +105,23 @@
 
                                     <div class="form-group col-md-6">
                                         <label>研究周期</label>
-                                        <div class="input-group">
-                                        <input class="form-control" id="yanjiuZhouQi" name="yanjiuZhouQi">
-                                        <span class="input-group-addon">月</span>
-                                        </div>
+                                        <#--<div class="row">-->
+                                           <table width="100%">
+                                               <tr width="100%">
+                                                   <td width="40%">
+                                            <input class="form-control" width="100%" AUTOCOMPLETE="off" placeholder="请输入开始时间" id="yanjiuZhouQi"
+                                                   name="yanjiuZhouQi"></td>
+
+                                               <td width="20%">
+                                                <span style="margin-left: 40%"> 至</span>
+                                               </td>
+                                           <td width="40%">
+                                        <input class="form-control" width="100%" AUTOCOMPLETE="off" placeholder="请输入结束时间" id="yanjiuZhouQi1"
+                                               name="yanjiuZhouQi1">
+                                           </td>
+                                    </tr>
+                                    </table>
+                                        <#--</div>-->
                                     </div>
 
                                     <div class="form-group col-md-6">
@@ -275,6 +288,13 @@
 <script language="JavaScript">
 
     function InitDateCrt() {
+
+        $('#yanjiuZhouQi').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn:true
+        });
+        $('#yanjiuZhouQi1').datetimepicker({
+            minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn:true
+        });
         $('#createPhasetime').datetimepicker({
             minView: "month", format: "yyyy-mm-dd", autoclose:true,todayBtn:true
         });

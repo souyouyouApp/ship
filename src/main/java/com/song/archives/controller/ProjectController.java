@@ -2160,7 +2160,7 @@ public class ProjectController {
                             //projectInfoEntity.setTotalFee(Double.parseDouble(projectDatas.get(i)[10]));
                             projectInfoEntity.setTotalFee(projectDatas.get(i)[21]);
 
-                            projectInfoEntity.setYanjiuZhouQi(Double.parseDouble(projectDatas.get(i)[22]));
+                            projectInfoEntity.setYanjiuZhouQi(projectDatas.get(i)[22]);
                             projectInfoEntity.setProRemark(projectDatas.get(i)[23]);
 
                             ProjectInfoEntity addProject = projectRepository.save(projectInfoEntity);
