@@ -223,17 +223,17 @@
     });
     $(document).ready(function () {
 
-        var users =
-
-                $.post("getlallusers", {}, function (result) {
-                    users = JSON.parse(result);
-//            $.each(result, function (i, item) {
-//                if (parseInt(item.id) == value) {
-//                    uname=item.username;
-//                }
-//            })
-//            return uname;
-                });
+//         var users =
+//
+//                 $.post("getlallusers", {}, function (result) {
+//                     users = JSON.parse(result);
+// //            $.each(result, function (i, item) {
+// //                if (parseInt(item.id) == value) {
+// //                    uname=item.username;
+// //                }
+// //            })
+// //            return uname;
+//                 });
 
         $('#table').bootstrapTable({
             url: 'LoadProjectList',         //请求后台的URL（*）
@@ -279,8 +279,34 @@
                     formatter: function (value, row, index) {
                         //
 //                    <i class="glyphicon glyphicon-eye-open"></i>&nbsp;
-                        return '<a href="javascript:void(0)" target="_blank" onclick="gotodetail(' + row.id + ')">' + row.proName + '</a>'
+                        if (row.proAuditState != 1) {
+                            return value;
+                        } else {
+                            return '<a href="javascript:void(0)" target="_blank" onclick="gotodetail(' + row.id + ')">' + row.proName + '</a>'
+                        }
                     }
+                },
+                {
+                    field: 'proAuditState',
+                    title: '审核状态',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        //
+//                    <i class="glyphicon glyphicon-eye-open"></i>&nbsp;
+                        if (row.proAuditState == 0) {
+                            return "审核中";
+                        } else if (row.proAuditState == -1) {
+                            return "审核未通过"
+                        } else {
+                            return "审核通过";
+                        }
+                        // return '<a href="javascript:void(0)" target="_blank" onclick="gotodetail(' + row.id + ')">' + row.proName + '</a>'
+                    }
+                },
+                {
+                    field: 'proAuditUserName',
+                    title: '审核人',
+                    sortable: true
                 },
                 {
                     field: 'proNo',
@@ -310,8 +336,12 @@
                     //     })
                     //     return uname;
                     // }
-                }
-                ,
+                },
+                {
+                    field: 'createrName',
+                    title: '创建人',
+                    sortable: true
+                },
                 {
                     field: 'proPhase',
                     title: '项目立项',
@@ -420,7 +450,11 @@
                     formatter: function (value, row, index) {
                         //
 //                    <i class="glyphicon glyphicon-eye-open"></i>&nbsp;
-                        return '<a href="javascript:void(0)" onclick="gotodetail(' + row.id + ')">详细</a>'
+                        if (row.proAuditState != 1) {
+                            return "";
+                        } else {
+                            return '<a href="javascript:void(0)" onclick="gotodetail(' + row.id + ')">详细</a>';
+                        }
                     }
                 }
             ]

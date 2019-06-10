@@ -17,6 +17,8 @@ public class HuoJiangEntity implements Serializable {
     private Date huojiangDate;
     private Long proId;
 
+    private String huojiangInfo;
+
     public Long getId() {
         return id;
     }
@@ -55,5 +57,13 @@ public class HuoJiangEntity implements Serializable {
 
     public void setProId(Long proId) {
         this.proId = proId;
+    }
+
+    public String getHuojiangInfo() {
+        return huojiangInfo;
+    }
+
+    public void setHuojiangInfo(String huojiangInfo) {
+        this.huojiangInfo = huojiangInfo;
     }
 }

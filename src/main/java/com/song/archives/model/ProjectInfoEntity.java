@@ -58,11 +58,34 @@ public class ProjectInfoEntity implements Serializable{
 
     private Integer creater;
 
+    private String createrName;
+
     private String yanjiuZhouQi;
 
     private String yanjiuZhouQi1;
     private String yanjiuFangXiang;
 
+    private Integer proauditUser;
+
+    private String proAuditUserName;
+
+    //0未审核，1审核通过 -1审核拒绝
+    private Integer proAuditState;
+
+    private String financeNo;
+
+    private String firstFee;
+
+    @Column(name = "end_fee")
+    public String getEndFee() {
+        return endFee;
+    }
+
+    public void setEndFee(String endFee) {
+        this.endFee = endFee;
+    }
+
+    private String endFee;
 
     public Long getId() {
         return id;
@@ -520,5 +543,58 @@ public class ProjectInfoEntity implements Serializable{
 
     public void setYanjiuZhouQi1(String yanjiuZhouQi1) {
         this.yanjiuZhouQi1 = yanjiuZhouQi1;
+    }
+
+    @Column(name = "pro_audituser")
+    public Integer getProauditUser() {
+        return proauditUser;
+    }
+
+    public void setProauditUser(Integer proauditUser) {
+        this.proauditUser = proauditUser;
+    }
+
+    @Column(name = "pro_auditstate")
+    public Integer getProAuditState() {
+        return proAuditState;
+    }
+
+    public void setProAuditState(Integer proAuditState) {
+        this.proAuditState = proAuditState;
+    }
+
+    @Column(name = "pro_auditusername")
+    public String getProAuditUserName() {
+        return proAuditUserName;
+    }
+
+    public void setProAuditUserName(String proAuditUserName) {
+        this.proAuditUserName = proAuditUserName;
+    }
+
+    @Column(name = "finance_no")
+    public String getFinanceNo() {
+        return financeNo;
+    }
+
+    public void setFinanceNo(String financeNo) {
+        this.financeNo = financeNo;
+    }
+
+    @Column(name = "end_fee")
+    public String getFirstFee() {
+        return firstFee;
+    }
+
+    public void setFirstFee(String firstFee) {
+        this.firstFee = firstFee;
+    }
+    @Column(name = "creater_name")
+    public String getCreaterName() {
+        return createrName;
+    }
+
+    public void setCreaterName(String createrName) {
+        this.createrName = createrName;
     }
 }

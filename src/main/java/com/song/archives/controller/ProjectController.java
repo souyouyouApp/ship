@@ -678,12 +678,43 @@ public class ProjectController {
     @RequestMapping(value = "CreateProject")
     public ModelAndView CreateProject() {
 
+        List<User> auditUser = userRepository.findAuditUser();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("project/CreateProject");
         modelAndView.addObject("levelId", getUser().getPermissionLevel());
+        modelAndView.addObject("auditUsers",auditUser);
         return modelAndView;
     }
 
+    @RequestMapping(value = "ReviewProject")
+    public ModelAndView ReviewProject(@RequestParam(value = "pid", required = false) Long pid, HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("project/ReviewProjectBasicMain");
+        modelAndView.addObject("levelId", getUser().getPermissionLevel());
+        ProjectInfoEntity projectInfoEntity=projectRepository.findOne(pid);
+        Specification<User> specification = (root, criteriaQuery, criteriaBuilder) -> {
+
+            // List<Predicate> predicates = new ArrayList<>();
+
+            Path<Integer> usertype = root.get("type");
+
+
+            Predicate predicate = criteriaBuilder.equal(usertype.as(Integer.class), 0);
+
+
+            //return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            return predicate;
+        };
+
+
+        List<User> users = userRepository.findAll(specification);
+
+        modelAndView.addObject("users", users);
+
+        modelAndView.addObject("proentity", projectInfoEntity);
+
+        return modelAndView;
+    }
     @RequestMapping(value = "/ProjectList")
     public ModelAndView ProjectList() {
 
@@ -807,7 +838,8 @@ public class ProjectController {
     public String SaveHuojiang(@RequestParam(value = "hjproid") Long proid,
                                @RequestParam(value = "hjjltype") String hjjltype,
                                @RequestParam(value = "hjdjtype") String hjdjtype,
-                               @RequestParam(value = "hjtime") String hjtime) throws ParseException {
+                               @RequestParam(value = "hjtime") String hjtime,
+                               @RequestParam(value = "hjinfo") String hjinfo) throws ParseException {
         result = new JSONObject();
         msg = "success";
         if (proid > 0) {
@@ -817,6 +849,7 @@ public class ProjectController {
             huoJiangEntity.setHuojiangDengji(hjdjtype);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             huoJiangEntity.setHuojiangDate(sdf.parse(hjtime));
+            huoJiangEntity.setHuojiangInfo(hjinfo);
             huoJiangRepository.save(huoJiangEntity);
         } else {
             msg = "failed";
@@ -1545,7 +1578,26 @@ public class ProjectController {
         result = new JSONObject();
         try {
             projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
+            projectInfoEntity.setCreaterName(getUser().getRealName());
+            projectInfoEntity.setProAuditState(0);
+            projectInfoEntity.setProAuditUserName(userRepository.findOne(Long.parseLong(projectInfoEntity.getProauditUser().toString())).getUsername());
             projectRepository.save(projectInfoEntity);
+
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setFileId(projectInfoEntity.getId());
+            auditInfo.setApplicant(getUser().getUsername());
+            auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            auditInfo.setFileName(projectInfoEntity.getProName());
+            auditInfo.setIsAudit(0);
+            auditInfo.setType("CREATE");
+            auditInfo.setAuditUser(projectInfoEntity.getProauditUser().toString());
+
+            auditInfo.setFileClassify(6);
+            auditInfo.setClassificlevelId(projectInfoEntity.getClassificlevelId());
+
+            auditInfoRepository.save(auditInfo);
+
+
             operationLogInfo = "用户[" + getUser().getUsername() + "]新建项目成功（项目名称：" + projectInfoEntity.getProName() + ")";
             msg = "success";
         } catch (Exception ex) {

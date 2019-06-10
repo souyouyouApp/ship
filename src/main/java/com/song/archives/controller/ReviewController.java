@@ -53,6 +53,9 @@ public class ReviewController {
     private FileInfoRepository fileInfoRepository;
 
     @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
     private NotifyRepository notifyRepository;
 
     @Autowired
@@ -125,6 +128,13 @@ public class ReviewController {
                 FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
                 fileInfo.setAudit(1);
                 fileInfoRepository.save(fileInfo);
+            }
+
+
+            if(null!=fileClassify&&fileClassify.equals(6)){
+                ProjectInfoEntity projectInfoEntity=projectRepository.findOne(auditInfo.getFileId());
+                projectInfoEntity.setProAuditState(auditResult);
+                projectRepository.save(projectInfoEntity);
             }
 
 

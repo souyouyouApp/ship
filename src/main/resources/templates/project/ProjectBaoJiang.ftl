@@ -214,10 +214,11 @@
                             <div class="form-group col-md-12">
                                 <label>奖励类别</label>
                                 <select id="hjjltype" name="hjjltype" class="form-control">
+                                    <option value="国防奖">国家奖</option>
                                     <option value="国防奖">国防奖</option>
                                     <option value="集团奖">集团奖</option>
-                                    <option value="学会奖">学会奖</option>
-                                    <option value="其他奖">其他奖</option>
+                                    <option value="学会奖">院奖</option>
+                                    <option value="其他奖">地方奖</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-12">
@@ -232,6 +233,12 @@
                                 <label>获奖时间</label>
                                 <input class="form-control" type="date" id="hjtime" name="hjtime">
                             </div>
+                            <div class="form-group col-md-12">
+                                <label>获奖成员信息</label>
+                                <textarea class="form-control" rows="3" id="hjinfo"
+                                          name="hjinfo"></textarea>
+                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -355,7 +362,8 @@
                         hjproid: $("#hjproid").val(),
                         hjjltype: $("#hjjltype").val(),
                         hjdjtype: $("#hjdjtype").val(),
-                        hjtime: $("#hjtime").val()
+                        hjtime: $("#hjtime").val(),
+                        hjinfo:$("#hjinfo").val()
                     }
                     , function (result) {
                         result = JSON.parse(result)
@@ -616,6 +624,12 @@
                         field: 'huojiangDengji',
                         title: '获奖等级',
                         width: '300px',
+                        sortable: true
+                    },
+                    {
+                        field: 'huojiangInfo',
+                        title: '获奖成员信息',
+                        //width: '300px',
                         sortable: true
                     },
                     {

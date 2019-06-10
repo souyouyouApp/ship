@@ -278,6 +278,8 @@
                             return '专家库文件';
                         if (value == 5)
                             return '公告文件';
+                        if (value==6)
+                            return '新建项目';
                     }
 
                 },
@@ -291,6 +293,8 @@
                             return '上传';
                         if (value == "ATTACHMENT")
                             return '附件';
+                        if (value=="CREATE")
+                            return '新建';
                     }
                 },
                 {
@@ -333,9 +337,16 @@
                     field: 'operate',
                     title: '操作',
                     formatter: function (value, row, index) {
-                        return '<a href="javascript:void(0)" onclick="auditById(' + row.id+','+1+','+row.fileClassify+')" style="color: green;">通过</a>&nbsp;&nbsp;' +
-                                '<a href="javascript:void(0)" onclick="auditById('+row.id+','+-1+','+row.fileClassify+')" style="color: red">拒绝</a>&nbsp;'
+                        if (row.fileClassify == 6) {
+                            return '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + 1 + ',' + row.fileClassify + ')" style="color: green;">通过</a>&nbsp;&nbsp;' +
+                                    '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;&nbsp;' +
+                                    '<a href="ReviewProject?pid='+row.fileId+'" target="_blank" style="color: purple">查看</a>'
+
+                        } else {
+                            return '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + 1 + ',' + row.fileClassify + ')" style="color: green;">通过</a>&nbsp;&nbsp;' +
+                                    '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;'
 //                                '<a href="javascript:void(0)" onclick="deleteById('+row.id+')" style="color: brown;">删除</a>'
+                        }
                     }
 
                 }]
@@ -371,6 +382,11 @@
         $('#table').bootstrapTable('refresh', {url: 'users'});
     }
     })
+
+
+    function ReviewgotoProdetail(prid) {
+        $("#page-wrapper").load("ReviewProject?pid=" + prid);
+    }
 
 </script>
 

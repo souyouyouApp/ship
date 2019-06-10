@@ -43,7 +43,7 @@
                                 <div class="panel-body">
                                     <div class="form-group col-md-6">
                                         <label>项目名称</label>
-                                        <input class="form-control" id="proName" readonly="readonly" name="proName">
+                                        <input class="form-control" id="proName"  name="proName">
                                     </div>
 
                                     <div class="form-group col-md-6">
@@ -203,11 +203,31 @@
                                             <option value="4">国家</option>
                                         </select>
                                     </div>
+                                    <div class="form-group col-md-6">
+                                        <label>财务编号</label>
 
+                                        <input class="form-control" id="financeNo"  name="financeNo">
+
+                                    </div>
                                     <div class="form-group col-md-6">
                                         <label>总经费</label>
                                         <div class="input-group">
                                             <input class="form-control" id="totalFee" type="number" name="totalFee">
+                                            <span class="input-group-addon">万元</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>首款</label>
+                                        <div class="input-group">
+                                        <input class="form-control" id="firstFee" type="number"  name="firstFee">
+                                            <span class="input-group-addon">万元</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-md-6">
+                                        <label>尾款</label>
+                                        <div class="input-group">
+                                        <input class="form-control" id="endFee"  type="number"  name="endFee">
                                             <span class="input-group-addon">万元</span>
                                         </div>
                                     </div>
@@ -230,7 +250,15 @@
                                         <textarea class="form-control" rows="3" id="proRemark"
                                                   name="proRemark"></textarea>
                                     </div>
-
+                                    <div class="form-group col-md-4">
+                                        <label>项目审核人</label>
+                                        <select name="proauditUser" id="proauditUser" class="form-control">
+                                            <option value="-1">请选择审核人员</option>
+                                              <#foreach user in auditUsers>
+                                <option value="${user.id?c}">${user.username!}</option>
+                                              </#foreach>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -266,6 +294,12 @@
                          $('textarea').removeAttr("readonly")
                          $('#proJoiners').removeAttr("disabled")
                      </script>
+                      <#--<select name="auditUser" id="auditUser" class="form-control">-->
+                          <#--<option value="-1">请选择审核人员</option>-->
+                            <#--&lt;#&ndash;<#foreach user in auditUsers>&ndash;&gt;-->
+                                <#--&lt;#&ndash;<option value="${user.id?c}">${user.username!}</option>&ndash;&gt;-->
+                            <#--&lt;#&ndash;</#foreach>&ndash;&gt;-->
+                      <#--</select>-->
                         <a class="btn btn-primary" onclick="SaveProjectForm()">
                             <i class="fa fa-save"></i> 保存
                         </a>
@@ -473,9 +507,13 @@
         //bootstrapValidator.validate()
         //if (!bootstrapValidator.isValid())
         //    return;
+
+
         if(!ProjectValid()){
             return;
         }
+
+
 
         $.post("SaveProject", $("#projectForm").serialize(), function (result) {
             result = JSON.parse(result);
