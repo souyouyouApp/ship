@@ -104,7 +104,7 @@
                     <input type="text" id="searchContent" class="form-control" placeholder="请输入查询信息">
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-default" type="button" onclick="conditionSearch()">
+                    <button class="btn btn-default" id="searchBtn" type="button" onclick="conditionSearch()">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>

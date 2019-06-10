@@ -41,7 +41,7 @@
                 </div>
                 &nbsp;
                 <div class="form-group">
-                    <button class="btn btn-default" type="button" onclick="search()">
+                    <button class="btn btn-default" id="searchBtn" type="button" onclick="search()">
                         <i class="fa fa-search"></i>
                     </button>
                 </div>

@@ -196,6 +196,12 @@
     var proData = "";
     var proNames = [];
     $(document).ready(function () {
+        $(window).keydown(function (event) {
+            if(event.keyCode ==13){
+                $('#searchBtn').click();
+                return false;
+            }
+        });
         //LoadProjectProcess();
         LoadAlertList();
         LoadProjectList();
