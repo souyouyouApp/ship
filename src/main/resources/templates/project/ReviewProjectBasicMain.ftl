@@ -143,17 +143,24 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label>主要完成人</label>
-                                <select class="selectpicker form-control" onchange="FilterUsers(3)" multiple id="proCompleteors"
-                                        title='选择参与者 (必选、可多选)' name="proCompleteors">
-                                </select>
+                                <#--<select class="selectpicker form-control" onchange="FilterUsers(3)" multiple id="proCompleteors"-->
+                                        <#--title='选择参与者 (必选、可多选)' name="proCompleteors">-->
+                                <#--</select>-->
+
+                                <input class="form-control" id="proCompleteors" name="proCompleteors"
+                                       value="${proentity.proCompleteors}">
+
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label>项目参与者</label>
-                                <select name="proJoiners" id="proJoiners" onchange="FilterUsers(2)" multiple
-                                        class="selectpicker form-control"
-                                        title='选择参与者(非必选)'>
-                                </select>
+                                <#--<select name="proJoiners" id="proJoiners" onchange="FilterUsers(2)" multiple-->
+                                        <#--class="selectpicker form-control"-->
+                                        <#--title='选择参与者(非必选)'>-->
+                                <#--</select>-->
+
+                                <input class="form-control" id="proJoiners" name="proJoiners"
+                                       value="${proentity.proJoiners}">
                             </div>
 
                             <div class="form-group col-md-6">
@@ -186,10 +193,33 @@
                             </div>
 
                             <div class="form-group col-md-6">
+                                <label>财务编号</label>
+
+                                <input class="form-control" id="financeNo"  value="${proentity.financeNo!}" name="financeNo">
+
+                            </div>
+
+                            <div class="form-group col-md-6">
                                 <label>总经费</label>
                                 <div class="input-group">
                                     <input class="form-control" id="totalFee" type="number" name="totalFee"
                                            value="${proentity.totalFee!}">
+                                    <span class="input-group-addon">万元</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label>首款</label>
+                                <div class="input-group">
+                                    <input class="form-control" id="firstFee" type="number" value="${proentity.firstFee!}"  name="firstFee">
+                                    <span class="input-group-addon">万元</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label>尾款</label>
+                                <div class="input-group">
+                                    <input class="form-control" id="endFee"  type="number" value="${proentity.endFee!}"  name="endFee">
                                     <span class="input-group-addon">万元</span>
                                 </div>
                             </div>
@@ -402,22 +432,22 @@
                 debugger;
                 $("#proLeaders").append(htmlstr);
                 $("#proLeaders").val('${proentity.proLeaders!}');
-                $("#proJoiners").append(htmlstr);
-                $("#proCompleteors").append(htmlstr);
-                $('#proJoiners').selectpicker();
-                $('#proCompleteors').selectpicker();
+                // $("#proJoiners").append(htmlstr);
+                // $("#proCompleteors").append(htmlstr);
+                // $('#proJoiners').selectpicker();
+                // $('#proCompleteors').selectpicker();
 
 
                 var proJoiners = "${proentity.proJoiners!}";
                 var proCompleteors = "${proentity.proCompleteors!}";
 
-                alert(proJoiners);
+                //alert(proJoiners);
 
-                $('#proJoiners').selectpicker("val", proJoiners.split(","));
-                $('#proJoiners').selectpicker("refresh");
-
-                $('#proCompleteors').selectpicker("val", proCompleteors.split(","));
-                $('#proCompleteors').selectpicker("refresh");
+                // $('#proJoiners').selectpicker("val", proJoiners.split(","));
+                // $('#proJoiners').selectpicker("refresh");
+                //
+                // $('#proCompleteors').selectpicker("val", proCompleteors.split(","));
+                // $('#proCompleteors').selectpicker("refresh");
 
             }
         })

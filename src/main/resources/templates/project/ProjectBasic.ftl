@@ -101,6 +101,13 @@
                         </div>
 
                         <div class="form-group col-md-6">
+                            <label>财务编号</label>
+
+                            <input class="form-control" id="financeNo"  value="${proentity.financeNo!}" name="financeNo">
+
+                        </div>
+
+                        <div class="form-group col-md-6">
                             <label>总经费</label>
                             <div class="input-group">
                                 <input class="form-control" id="totalFee" type="number" name="totalFee"
@@ -108,6 +115,23 @@
                                 <span class="input-group-addon">万元</span>
                             </div>
                         </div>
+
+                        <div class="form-group col-md-6">
+                            <label>首款</label>
+                            <div class="input-group">
+                                <input class="form-control" id="firstFee" type="number" value="${proentity.firstFee!}"  name="firstFee">
+                                <span class="input-group-addon">万元</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label>尾款</label>
+                            <div class="input-group">
+                                <input class="form-control" id="endFee"  type="number" value="${proentity.endFee!}"  name="endFee">
+                                <span class="input-group-addon">万元</span>
+                            </div>
+                        </div>
+
 
                         <div class="form-group col-md-12">
                             <label>项目研究内容</label>

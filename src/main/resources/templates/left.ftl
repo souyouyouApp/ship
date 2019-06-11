@@ -153,11 +153,12 @@
                 <a href="#"><i class="fa fa-chain fa-fw"></i> 审核管理 <span id="totalCnt" style="color: red;margin-left: 20px;"></span><span class="spc_span fa arrow"></span></a>
                 <ul class="nav nav-1-level ">
                     <li>
-                        <a href="javascript:void(0)" onclick="review(1)">项目文件<span id="proCnt" style="color: red;margin-left: 20px;"></span></a>
-                    </li>
-                    <li>
                         <a href="javascript:void(0)" onclick="review(6)">项目审核<span id="proCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
+                    <li>
+                        <a href="javascript:void(0)" onclick="review(1)">项目文件<span id="proCnt" style="color: red;margin-left: 20px;"></span></a>
+                    </li>
+
                     <li>
                         <a href="javascript:void(0)" onclick="review(2)">案例库文件<span id="anliCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
