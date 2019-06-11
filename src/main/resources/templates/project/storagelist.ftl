@@ -177,7 +177,7 @@
             data: {amount:$("#newalert").val(),danwei:$("#seldalertanwei").val()},
             async: false,
             success: function (result) {
-                if (result == "ok") {
+                if (result.msg == "success") {
                     layer.alert("修改成功！");
                     $('.modal').map(function () {
                         $(this).modal('hide');
@@ -199,7 +199,8 @@
             data: {amount:$("#newspace").val(),danwei:$("#seldanwei").val()},
             async: false,
             success: function (result) {
-                if (result == "ok") {
+                result=eval(result);
+                if (result.msg == "success") {
                     layer.alert("修改成功！");
                     $('.modal').map(function () {
                         $(this).modal('hide');
