@@ -111,10 +111,10 @@ function ProjectValid() {
         return false;
     }
 
-    if(!$("#proauditUser").val()||$("#proauditUser").val()==-1){
-        layer.msg("请选择此项目的审核人员！");
-        return false;
-    }
+    // if(!$("#proauditUser").val()||$("#proauditUser").val()==-1){
+    //     layer.msg("请选择此项目的审核人员！");
+    //     return false;
+    // }
 
     return true;
 }

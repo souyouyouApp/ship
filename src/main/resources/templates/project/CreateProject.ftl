@@ -513,7 +513,10 @@
             return;
         }
 
-
+        if(!$("#proauditUser").val()||$("#proauditUser").val()==-1){
+            layer.msg("请选择此项目的审核人员！");
+            return;
+        }
 
         $.post("SaveProject", $("#projectForm").serialize(), function (result) {
             result = JSON.parse(result);

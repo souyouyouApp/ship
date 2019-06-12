@@ -49,14 +49,17 @@
             </button>
         </@shiro.hasPermission>
 
+        <@shiro.hasPermission name="project:importproject">
             <button id="btn_importProject" type="button" data-toggle="modal" data-target="#importProjModal"
                     onclick="ImportProject()" class="btn btn-primary" style="margin-left: 20px;">
                 <span class="glyphicon glyphicon-import" aria-hidden="true"></span>导入项目
             </button>
+        </@shiro.hasPermission>
+<@shiro.hasPermission name="project:downloadtemplate">
             <a id="btn_downloadTemplate" href="downLoadDataTempate?fileName=项目模板.xlsx" download="项目模板.xlsx" class="btn btn-primary" style="margin-left: 20px;">
                 <span class="glyphicon glyphicon-download" aria-hidden="true"></span> 下载模板
             </a>
-
+</@shiro.hasPermission>
         </div>
 
         <table width="100%" class="table table-striped table-bordered table-hover text-nowrap" id="table"
