@@ -198,7 +198,7 @@ public class MenuController {
             msg = "save AnliTypeMenu failed";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】新建菜单【"+entity.getTypeName()+"】,操作结果【"+msg+"】";
+        operationLogInfo = "用户【"+getUser().getUsername()+"】新建菜单【"+entity.getTypeName()+"】";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         return result.toString();
@@ -228,7 +228,7 @@ public class MenuController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】删除菜单:"+menu.getTypeName()+",操作结果【"+msg+"】";
+        operationLogInfo = "用户【"+getUser().getUsername()+"】删除菜单【"+menu.getTypeName()+"】";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         return result.toString();
@@ -264,7 +264,7 @@ public class MenuController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询子菜单操作"+",操作结果【"+msg+"】";
+        operationLogInfo = "用户【"+getUser().getUsername()+"】查询子菜单"+"】";
 
         result.put("childrenNames",childrenNames);
         result.put("msg",msg);

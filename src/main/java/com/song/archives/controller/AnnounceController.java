@@ -132,7 +132,7 @@ public class AnnounceController {
                 operationType = "新建公告";
             }
 
-            operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+announceInfoEntity.getTitle()+"】,操作结果 【"+msg+"】";
+            operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+announceInfoEntity.getTitle()+"】";
 
             result.put("operationLog",operationLogInfo);
 
@@ -182,7 +182,7 @@ public class AnnounceController {
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();

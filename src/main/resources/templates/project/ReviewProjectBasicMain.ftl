@@ -429,7 +429,7 @@
 
             if (htmlstr != null && htmlstr.length > 0) {
                 //$("#proLeaders").innerHTML(htmlstr);
-                debugger;
+                ;
                 $("#proLeaders").append(htmlstr);
                 $("#proLeaders").val('${proentity.proLeaders!}');
                 // $("#proJoiners").append(htmlstr);

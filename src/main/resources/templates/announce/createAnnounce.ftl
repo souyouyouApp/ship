@@ -296,7 +296,7 @@
         $('#relatedUsers').selectpicker();
 
         var uidStr = '${info.relatedUserIds!}';
-        debugger
+
         var relatedUsers = [];
         if (uidStr != ''){
             uidArr = uidStr.substring(1,uidStr.length-1).split(',');
@@ -788,7 +788,7 @@
                         async: false,
                         success: function (result) {
                             result = JSON.parse(result);
-                            debugger
+
                             finalResult = result.finalResult
                             var fileType = result.fileType;
                             var mid = result.id;
@@ -800,7 +800,7 @@
                                 data: {fileId: fileId,type:'UPLOAD'},
                                 async: false,
                                 success: function (result) {
-                                    debugger
+
                                     result = JSON.parse(result);
                                     if (result.auditResult == -1) {
                                         viewDiv = '<label style="margin-left: 20px;color: red;">审核未通过</label>'

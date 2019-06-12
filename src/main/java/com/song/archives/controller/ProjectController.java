@@ -195,7 +195,7 @@ public class ProjectController {
                                @RequestParam(value = "yanshouTime") String yanshouTime,
                                @RequestParam(value = "content") String content) {
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getUsername() + "】保存乘研单位信息：" + danweiName;
+        operationLogInfo = "用户【" + getUser().getRealName() + "】保存乘研单位信息：" + danweiName;
         try {
             ChengYanDanWeiEntity chengYanDanWeiEntity = null;
             if (editDanweiId > 0) {
@@ -267,7 +267,7 @@ public class ProjectController {
             result.put("msg", "error");
         }
 
-        operationLogInfo="用户【"+getUser().getUsername()+"】获取乘研单位信息列表";
+        operationLogInfo="用户【"+getUser().getRealName()+"】获取乘研单位信息列表";
         result.put("operationLog",operationLogInfo);
 
 
@@ -298,7 +298,7 @@ public class ProjectController {
             result.put("msg", "error");
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除乘研单位:"+stringBuilder.toString();
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除乘研单位:"+stringBuilder.toString();
         result.put("operationLog", operationLogInfo);
         return result.toString();
 
@@ -559,7 +559,7 @@ public class ProjectController {
             msg = "error";
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】加载提示信息";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】加载提示信息";
         result.put("msg", msg);
         result.put("data", pAlertHtml.toString());
         result.put("operationLog", operationLogInfo);
@@ -699,7 +699,7 @@ public class ProjectController {
             result.put("msg","error");
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】加载项目进度";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】加载项目进度";
 
 
         result.put("proData", allProObj);
@@ -846,7 +846,7 @@ public class ProjectController {
             logger.error(ex.getMessage());
             result.put("msg", "error");
         }
-        operationLogInfo = "用户【" + getUser().getUsername() + "】查看拟鉴定奖列表";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查看拟鉴定奖列表";
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(jianDingEntityList));
         return result.toString();
@@ -873,7 +873,7 @@ public class ProjectController {
             msg = "error";
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】保存拟报奖信息";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】保存拟报奖信息";
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
         return result.toString();
@@ -902,7 +902,7 @@ public class ProjectController {
         } else {
             msg = "error";
         }
-        operationLogInfo = "用户【" + getUser().getUsername() + "】保存拟获奖信息";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】保存拟获奖信息";
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
         return result.toString();
@@ -933,7 +933,7 @@ public class ProjectController {
         };
 
         List<BaoJiangEntity> baoJiangEntityList = baoJiangRepository.findAll(specification, pageable);
-        operationLogInfo = "用户【" + getUser().getUsername() + "】查看拟报奖信息列表";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查看拟报奖信息列表";
         result.put("operationLog", operationLogInfo);
         result.put("msg", "success");
         result.put("result", JSONArray.fromObject(baoJiangEntityList));
@@ -966,7 +966,7 @@ public class ProjectController {
 
         List<HuoJiangEntity> huoJiangEntityList = huoJiangRepository.findAll(specification, pageable);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】查看拟获奖信息列表";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查看拟获奖信息列表";
         result.put("operationLog", operationLogInfo);
         result.put("msg", "success");
         result.put("result", JSONArray.fromObject(huoJiangEntityList));
@@ -1001,7 +1001,7 @@ public class ProjectController {
         List<ReceivedLogEntity> receivedLogEntityList = receiveLogRepository.findAll(specification, pageable);
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】进行查询项目[" + projectInfoEntity.getProName() + "]已收账款列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目[" + projectInfoEntity.getProName() + "]已收账款列表操作";
         result.put("msg", "success");
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(receivedLogEntityList));
@@ -1035,7 +1035,7 @@ public class ProjectController {
         List<YantaoLogEntity> yantaoLogEntityList = yantaoLogRepository.findAll(specification, pageable);
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】进行查询项目[" + projectInfoEntity.getProName() + "]研讨记录列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目[" + projectInfoEntity.getProName() + "]研讨记录列表操作";
         result.put("msg", "ok");
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(yantaoLogEntityList));
@@ -1069,7 +1069,7 @@ public class ProjectController {
 
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】进行查询项目[" + projectInfoEntity.getProName() + "]催收列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目[" + projectInfoEntity.getProName() + "]催收列表操作";
         result.put("msg", "success");
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(cuishouLogEntityList));
@@ -1099,7 +1099,7 @@ public class ProjectController {
 
 
         List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
-        operationLogInfo = "用户【" + getUser().getUsername() + "】进行查询项目数量操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目数量操作";
         result.put("msg", "success");
         result.put("data", projectInfoEntities.size());
 
@@ -1335,7 +1335,7 @@ public class ProjectController {
             result.put("msg", "error");
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】进行查询项目列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目列表操作";
 
         result.put("operationLog", operationLogInfo);
 
@@ -1361,14 +1361,14 @@ public class ProjectController {
                         cuishouLogRepository.delete(yid);
                     }
                 }
-                operationLogInfo = "用户【"+getUser().getUsername()+"】删除项目【" + projectInfoEntity.getProName() + "】的已收账款记录成功";
+                operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的已收账款记录成功";
             }
             msg = "success";
 
         } catch (Exception e) {
             logger.error(e.getMessage());
             msg = "error";
-            operationLogInfo = "用户【"+getUser().getUsername()+"】删除项目【" + projectInfoEntity.getProName() + "】的已收账款记录失败";
+            operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的已收账款记录失败";
         }
 
         result.put("msg", msg);
@@ -1389,7 +1389,7 @@ public class ProjectController {
             jianDingRepository.delete(jdid);
 //            }
         }
-        operationLogInfo = "用户【"+getUser().getUsername()+"】删除拟鉴定奖记录";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】删除拟鉴定奖记录";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -1406,7 +1406,7 @@ public class ProjectController {
             baoJiangRepository.delete(bjid);
 
         }
-        operationLogInfo = "用户【"+getUser().getUsername()+"】删除拟报奖记录";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】删除拟报奖记录";
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
         return result.toString();
@@ -1424,7 +1424,7 @@ public class ProjectController {
         }
 
         result.put("msg", msg);
-        operationLogInfo = "用户【"+getUser().getUsername()+"】删除拟获奖记录";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】删除拟获奖记录";
         result.put("operationLog", operationLogInfo);
         return result.toString();
     }
@@ -1464,14 +1464,14 @@ public class ProjectController {
 
 
                 }
-                operationLogInfo = "用户【"+getUser().getUsername()+"】删除项目【" + projectInfoEntity.getProName() + "】的研讨记录成功";
+                operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的研讨记录成功";
             }
             msg = "success";
 
         } catch (Exception e) {
             logger.error(e.getMessage());
             msg = "error";
-            operationLogInfo = "用户【"+getUser().getUsername()+"】删除项目【" + projectInfoEntity.getProName() + "】的研讨记录失败";
+            operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的研讨记录失败";
         }
 
         result.put("msg", msg);
@@ -1484,7 +1484,7 @@ public class ProjectController {
     @ArchivesLog(operationType = "DeleteFilesByIds", operationName = "删除文件")
     public String DeleteFilesByIds(@RequestParam(value = "fids") long[] fids, @RequestParam(value = "pid") Long pid, @RequestParam(value = "attachfid",defaultValue = "-1") long attachfid, @RequestParam(value = "phaseid",defaultValue = "-1") long phaseid) {
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除文件【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除文件【";
         try {
             if (fids != null && fids.length > 0) {
                 StringBuilder sb = new StringBuilder();
@@ -1521,7 +1521,7 @@ public class ProjectController {
             msg = "error";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -1533,7 +1533,7 @@ public class ProjectController {
     public String DeleteProjectByIds(@RequestParam(value = "pids") long[] prids) {
 
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除项目【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除项目【";
         try {
             if (prids != null && prids.length > 0) {
 
@@ -1636,7 +1636,7 @@ public class ProjectController {
             msg = "error";
         }
 
-        operationLogInfo += operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo += operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -1670,7 +1670,7 @@ public class ProjectController {
             auditInfoRepository.save(auditInfo);
 
 
-            operationLogInfo = "用户[" + getUser().getUsername() + "]新建项目成功（项目名称：" + projectInfoEntity.getProName() + ")";
+            operationLogInfo = "用户[" + getUser().getRealName() + "]新建项目成功（项目名称：" + projectInfoEntity.getProName() + ")";
             msg = "success";
         } catch (Exception ex) {
             logger.error(ex.getMessage());
@@ -1690,7 +1690,7 @@ public class ProjectController {
 
         List<ProjectPhaseEntity> projectPhaseEntities = projectPhaseRepository.findAll();
 
-        operationLogInfo = "用户[" + getUser().getUsername() + "]加载项目阶段";
+        operationLogInfo = "用户[" + getUser().getRealName() + "]加载项目阶段";
         result.put("msg", "success");
         result.put("data", projectPhaseEntities);
         result.put("operationLog", operationLogInfo);
@@ -1705,7 +1705,7 @@ public class ProjectController {
 
         List<PhaseFileTypeEntity> phaseFileTypeEntities = phaseFileTypeRepository.findAllByPhaseId(phaseid);
 
-        operationLogInfo = "用户[" + getUser().getUsername() + "]获取项目阶段的文件类型";
+        operationLogInfo = "用户[" + getUser().getRealName() + "]获取项目阶段的文件类型";
         result.put("msg", "success");
         result.put("operationLog", operationLogInfo);
         result.put("data", phaseFileTypeEntities);
@@ -1727,7 +1727,7 @@ public class ProjectController {
 //                }
                 projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
                 projectRepository.save(projectInfoEntity);
-                operationLogInfo = "用户[" + getUser().getUsername() + "]修改项目基本信息（项目名称：" + projectInfoEntity.getProName() + ")";
+                operationLogInfo = "用户[" + getUser().getRealName() + "]修改项目基本信息（项目名称：" + projectInfoEntity.getProName() + ")";
             }
 
             msg = "success";
@@ -1756,7 +1756,7 @@ public class ProjectController {
             logger.error(ex.getMessage());
             msg = "error";
         }
-        operationLogInfo = "用户[" + getUser().getUsername() + "]根据文件ID获取文件";
+        operationLogInfo = "用户[" + getUser().getRealName() + "]根据文件ID获取文件";
 
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
@@ -1774,7 +1774,7 @@ public class ProjectController {
                                    @RequestParam(value = "attachFileId", defaultValue = "-1") long attachFileId) {
         result = new JSONObject();
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne((long) proid);
-        operationLogInfo = "用户【" + getUser().getUsername() + "】进行查询项目附件列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目附件列表操作";
         Page<FileInfoEntity> filelist = null;
         int classiclevel = getUser().getPermissionLevel() == null ? 1 : getUser().getPermissionLevel();
 
@@ -1916,7 +1916,7 @@ public class ProjectController {
             msg = "error";
         }
         result.put("msg", msg);
-        operationLogInfo = "用户[" + getUser().getUsername() + "]保存鉴定奖信息";
+        operationLogInfo = "用户[" + getUser().getRealName() + "]保存鉴定奖信息";
 
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -1954,11 +1954,11 @@ public class ProjectController {
                 projectInfoEntity.setReceivedFee(receiveNum);
                 projectInfoEntity.setNoreceivedFee(Double.parseDouble(projectInfoEntity.getTotalFee()) - projectInfoEntity.getReceivedFee());
                 projectRepository.save(projectInfoEntity);
-                operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "成功";
+                operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "成功";
             }
 
         } catch (Exception ex) {
-            operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "失败";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "失败";
             logger.error(ex.getMessage());
             msg = "error";
         }
@@ -1980,11 +1980,11 @@ public class ProjectController {
             yantaoLogEntity.setCreateTime(Timestamp.valueOf(myFmt2.format(new Date())));
             yantaoLogRepository.save(yantaoLogEntity);
 
-            operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加项目[" + projectInfoEntity.getProName() + "]研讨记录成功";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]研讨记录成功";
         } catch (Exception ex) {
             msg = "error";
             logger.error(ex.getMessage());
-            operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加项目[" + projectInfoEntity.getProName() + "]研讨记录失败";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]研讨记录失败";
         }
 
 
@@ -2028,11 +2028,11 @@ public class ProjectController {
                 cuishouLogEntity.setJingbanrenId(jingbanName);
                 cuishouLogEntity.setJingbanrenName(userRepository.findOne(Long.parseLong(jingbanName)).getUsername());
                 cuishouLogRepository.save(cuishouLogEntity);
-                operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "成功";
+                operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "成功";
             }
 
         } catch (Exception ex) {
-            operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "失败";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "失败";
             logger.error(ex.getMessage());
             msg = "error";
         }
@@ -2062,7 +2062,7 @@ public class ProjectController {
                 fileInfoRepository.save(fileInfoEntity);
             }
         }
-        operationLogInfo = "用户【" + getUser().getUsername() + "】更新文件密级成功";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】更新文件密级成功";
 
         result.put("msg", "success");
 
@@ -2083,7 +2083,7 @@ public class ProjectController {
                               @RequestParam(value = "phaseid") Long phaseid,
                               @RequestParam(value = "editFileId", required = false) Long editFileId) {
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加纸质文件操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加纸质文件操作";
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
         msg = "success";
         try {
@@ -2138,7 +2138,7 @@ public class ProjectController {
             }
         } catch (Exception ex) {
             msg = "error";
-            operationLogInfo = "用户【" + getUser().getUsername() + "】进行添加纸质文件操作发生异常";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加纸质文件操作发生异常";
         }
 
 
@@ -2190,11 +2190,11 @@ public class ProjectController {
                 FileInfoEntity addedFile = fileInfoRepository.save(fileInfoEntity);
                 addedFids.append(addedFile.getId());
 
-                operationLogInfo = "用户[" + getUser().getUsername() + "]上传项目【" + projectInfoEntity.getProName() + "】研讨记录附件成功";
+                operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】研讨记录附件成功";
 
             }
         } catch (Exception e) {
-            operationLogInfo = "用户[" + getUser().getUsername() + "]上传项目【" + projectInfoEntity.getProName() + "】研讨记录附件失败";
+            operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】研讨记录附件失败";
             e.printStackTrace();
             msg = "error";
 
@@ -2367,7 +2367,7 @@ public class ProjectController {
             resultBuilder=new StringBuilder();
             resultBuilder.append("导入失败，请检查数据类型是否正确！");
         }
-        operationLogInfo = "用户[" + getUser().getUsername() + "]批量导入项目";
+        operationLogInfo = "用户[" + getUser().getRealName() + "]批量导入项目";
 
         result.put("msg1", resultBuilder.toString());
         result.put("success", "success");
@@ -2392,7 +2392,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
     }
 
     result.put("msg", res);
-    operationLogInfo = "用户[" + getUser().getUsername() + "]更新存储空间";
+    operationLogInfo = "用户[" + getUser().getRealName() + "]更新存储空间";
     result.put("operationLog", operationLogInfo);
     return res;
 }
@@ -2424,7 +2424,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
             res = "error";
         }
         result.put("msg", res);
-        operationLogInfo = "用户[" + getUser().getUsername() + "]更新预警阈值";
+        operationLogInfo = "用户[" + getUser().getRealName() + "]更新预警阈值";
         result.put("operationLog", operationLogInfo);
         return res;
     }
@@ -2576,10 +2576,10 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
 
                 projectRepository.save(projectInfoEntity);
 
-                operationLogInfo = "用户[" + getUser().getUsername() + "]上传项目【" + projectInfoEntity.getProName() + "】" + fileIdToNameMap.get(attachid) + "成功";
+                operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】" + fileIdToNameMap.get(attachid) + "成功";
 
             } catch (Exception e) {
-                operationLogInfo = "用户[" + getUser().getUsername() + "]上传项目【" + projectInfoEntity.getProName() + "】" + fileIdToNameMap.get(attachid) + "失败";
+                operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】" + fileIdToNameMap.get(attachid) + "失败";
                 e.printStackTrace();
                 msg = "error";
             }

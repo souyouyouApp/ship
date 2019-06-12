@@ -45,6 +45,14 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">证件号码</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="idNo" name="idNo" value="${userInfo.idNo!}"
+                       readonly>
+            </div>
+        </div>
+
 
         <div class="form-group">
             <label for="name" class="col-sm-2 control-label">职务</label>

@@ -52,7 +52,7 @@
 <script src="static/js/layer.js"></script>
 <script type="text/javascript">
     function getNotify(){
-        debugger
+
         $.post("auditCnt", {}, function (result) {
             res = JSON.parse(result);
             if (res.totalCnt > 0){
@@ -101,7 +101,7 @@
 //             result = JSON.parse(result);
 //
 //             if (result.msg == "success") {
-//                 debugger
+//
 //                 var liStr = "";
 //                 if (result.result.length > 0 ){
 //                     $('.fa-bell').css('color','red');

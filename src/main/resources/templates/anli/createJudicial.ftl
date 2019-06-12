@@ -651,7 +651,7 @@
                         async: false,
                         success: function (result) {
                             result = JSON.parse(result);
-                            debugger
+
                             var fileType = result.fileType;
                             var viewDiv = '<span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>';
                             $.ajax({
@@ -660,7 +660,7 @@
                                 data: {fileId: fileId,type:'UPLOAD'},
                                 async: false,
                                 success: function (result) {
-                                    debugger
+
                                     result = JSON.parse(result);
                                     if (result.auditResult == -1) {
                                         viewDiv = '<label style="margin-left: 20px;color: red;">审核未通过</label>'

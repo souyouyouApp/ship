@@ -190,7 +190,7 @@ public class MsgController {
                 User user = userRepository.findOne(uid);
 
                 NotifyEntity notify = new NotifyEntity();
-                notify.setContent(getUser().getUsername()+",邀请您参与群聊【"+groupName+"】");
+                notify.setContent(getUser().getRealName()+",邀请您参与群聊【"+groupName+"】");
                 notify.setOperateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
                 notify.setPersonal(user.getUsername());
                 notify.setStatus(0);
@@ -297,7 +297,7 @@ public class MsgController {
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();

@@ -81,7 +81,7 @@ public class ExpertController {
     @RequestMapping(value = "/delExpert")
     @ResponseBody
     String delExpert(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除专家【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除专家【";
 
         try {
 
@@ -102,7 +102,7 @@ public class ExpertController {
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -148,7 +148,7 @@ public class ExpertController {
             msg = "IOException";
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行创建专家信息操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】执行创建专家信息操作";
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
 
@@ -353,7 +353,7 @@ public class ExpertController {
         }
 
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询专家列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】执行查询专家列表操作";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(datas));

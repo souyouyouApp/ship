@@ -199,7 +199,7 @@
 <script type="text/javascript">
 
     function detailView(id) {
-        $("#page-wrapper").load("createLow?zid="+id)
+        $("#page-wrapper").load("createLowPage?lid="+id)
     }
     
     function deleteById() {
@@ -232,7 +232,7 @@
     
     function createLow() {
 
-        $("#page-wrapper").load("createLow")
+        $("#page-wrapper").load("createLowPage")
     }
 
     function exportAttach() {
@@ -343,7 +343,7 @@
     $(document).ready(function () {
 
         $('#table').bootstrapTable({
-            url: 'datas',         //请求后台的URL（*）
+            url: 'lows',         //请求后台的URL（*）
             method: 'get',                      //请求方式（*）
             //toolbar: '#toolbar',                //工具按钮用哪个容器
             striped: true,                      //是否显示行间隔色
@@ -377,30 +377,38 @@
                     checkbox: true
                 },
                 {
-                    field: 'title',
-                    title: '标题',
-                    sortable: true,
+                    field: 'id',
+                    title:'编号',
                     formatter: function (value, row, index) {
                         return '<a href="javascrip:void(0)" onclick="detailView('+row.id+')">'+value+'</a>'
                     }
+                },
+                {
+                    field: 'type',
+                    title: '类别',
+                    sortable: true
                 }, {
-                    field: 'author',
-                    title: '作者',
+                    field: 'publishDept',
+                    title: '发布部门',
                     sortable: true,
                 }, {
-                    field: 'ziliaoFrom',
-                    title: '资料来源',
+                    field: 'publishTime',
+                    title: '发布时间',
                     sortable: true,
                 }, {
-                    field: 'publishDate',
-                    title: '发表日期',
+                    field: 'keyword',
+                    title: '关键词',
                     sortable: true,
                 }, {
-                    field: 'creator',
+                    field: 'content',
+                    title: '摘要',
+                    sortable: true,
+                },{
+                    field: 'uploader',
                     title: '上传人',
                     sortable: true,
                 },{
-                    field: 'createTime',
+                    field: 'uploadTime',
                     title: '上传时间',
                     sortable: true,
                 }]
@@ -438,7 +446,7 @@
 
         //刷新表格数据,点击你的按钮调用这个方法就可以刷新
         function refresh() {
-            $('#table').bootstrapTable('refresh', {url: 'users'});
+            $('#table').bootstrapTable('refresh', {url: 'lows'});
         }
     })
 

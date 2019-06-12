@@ -82,7 +82,7 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <h1 class="page-header">新建资料</h1>
+            <h1 class="page-header">新建法律法规</h1>
         </div>
         <!-- /.col-lg-12 -->
     </div>
@@ -95,7 +95,7 @@
             <input type="hidden" id="keywordMid" name="keywordMid" value="2">
             <label for="firstname" class="col-sm-2 control-label">类别</label>
             <div class="col-sm-4">
-                <select name="classificlevelId" id="classificlevelId" class="form-control">
+                <select name="type" id="type" class="form-control">
                     <option value="-1">请选择类别</option>
                     <option value="法律">法律</option>
                     <option value="行政法规、军事法规">行政法规、军事法规</option>
@@ -117,18 +117,18 @@
         </div>
 
         <div class="form-group">
-            <label for="title" class="col-sm-2 control-label">发布部门</label>
+            <label for="publishDept" class="col-sm-2 control-label">发布部门</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="title" name="title" placeholder="请输入标题"
-                       value="${info.title!}">
+                <input type="text" class="form-control" id="publishDept" name="publishDept" placeholder="请输入发布部门"
+                       value="${info.publishDept!}">
             </div>
         </div>
 
         <div class="form-group">
-            <label for="author" class="col-sm-2 control-label">发布时间</label>
+            <label for="publishTime" class="col-sm-2 control-label">发布时间</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="author" name="author" placeholder="请输入作者"
-                       value="${info.author!}">
+                <input type="text" class="form-control" id="publishTime" name="publishTime" placeholder="请输入发布时间"
+                       value="${info.publishTime!}">
             </div>
         </div>
 
@@ -156,16 +156,16 @@
         </div>
 
         <div class="form-group">
-            <label for="author" class="col-sm-2 control-label">上传人</label>
+            <label for="uploader" class="col-sm-2 control-label">上传人</label>
             <div class="col-sm-4">
-                <span class="form-control">${info.createTime!}</span>
+                <span class="form-control">${info.uploader!}</span>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="author" class="col-sm-2 control-label">上传时间</label>
+            <label for="uploadTime" class="col-sm-2 control-label">上传时间</label>
             <div class="col-sm-4">
-                <span class="form-control">${info.createTime!}</span>
+                <span class="form-control">${info.uploadTime!}</span>
             </div>
         </div>
 
@@ -214,7 +214,7 @@
 
 
             <@shiro.hasPermission name="datum:save">
-                <a href="javascript:void(0)" class="btn btn-success" onclick="createData()">保存</a>
+                <a href="javascript:void(0)" class="btn btn-success" onclick="createLow()">保存</a>
             </@shiro.hasPermission>
 
                 <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
@@ -240,9 +240,9 @@
             </div>
             <div class="modal-body">
                 <form id="fileForm" action="uploadAatachment" enctype="multipart/form-data" method="post">
-                    <input type="hidden" name="category" value="DT"/>
+                    <input type="hidden" name="category" value="FL"/>
                     <input type="hidden" name="fileType" value="1"/>
-                    <input id="fileClassify" name="fileClassify" type="hidden" value="3"/>
+                    <input id="fileClassify" name="fileClassify" type="hidden" value="7"/>
                     <div class="form-group">
                         <select name="classificlevel" id="classificlevel" class="form-control">
                             <option value="-1">请选择密级</option>
@@ -318,7 +318,7 @@
 
     }
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请选择审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden" name="fileClassify" value="3"/><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="DT"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="fileLevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请选择审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden" name="fileClassify" value="7"/><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="FL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
 
         $("#savePaperFile").removeAttr("disabled");
@@ -439,10 +439,10 @@
             dropZoneTitle: "请通过拖拽文件放到这里",
             dropZoneClickTitle: "或者点击此区域添加文件",
             uploadExtraData: {
-                'category': 'DT',
+                'category': 'FL',
                 "fileType": '1',
-                'classificlevel': document.getElementById("classificlevel").value,
-                'fileClassify': 3,
+                'classificlevel': $("#classificlevel").val(),
+                'fileClassify': 7,
             },//这个是外带数据
             showBrowse: false,
             browseOnZoneClick: true,
@@ -525,15 +525,15 @@
         if (!bootstrapValidator.isValid())
             return;
 
-        var selectVal = $("#classificlevel").find("option:selected").val();
+        var selectVal = $("#fileLevel").find("option:selected").val();
 
         if (selectVal == -1) {
-            layer.msg("请选择密级");
+            layer.msg("请选择文件密级");
             return;
         }
 
         var infoLevel = $("#classificlevelId").find("option:selected").val();
-        var fileLevel = $("#classificlevel").find("option:selected").val();
+        var fileLevel = $("#fileLevel").find("option:selected").val();
 
         if (fileLevel > infoLevel){
             layer.msg("文件密级不可大于案例密级");
@@ -617,7 +617,7 @@
 </script>
 <script type="text/javascript">
 
-    function createData() {
+    function createLow() {
 
         var data = CKEDITOR.instances.ckeditor.getData();
 
@@ -634,10 +634,10 @@
         }
 
 
-        if ($('#typeId').val() == '') {
-            layer.msg('请选择资料类别');
-            return false;
-        }
+        // if ($('#typeId').val() == '') {
+        //     layer.msg('请选择资料类别');
+        //     return false;
+        // }
 
         var bootstrapValidator = $("#dataForm").data('bootstrapValidator');
         bootstrapValidator.validate();
@@ -653,27 +653,28 @@
         });
 
         var params = {
-            title: $("#title").val(),
-            ziliaoFrom: $("#ziliaoFrom").val(),
-            ziliaoContent: data,
+            type: $("#type").val(),
+            publishDept: $("#publishDept").val(),
+            publishTime: $("#publishTime").val(),
+            keyword:$('#keyword').val(),
+            content: data,
             classificlevelId: $("#classificlevelId").val(),
-            isShare: $("#isShare").val(),
-            typeId: $("#typeId").val(),
+            uploader: $("#uploader").val(),
             mids: mids,
-            author:$('#author').val(),
+            uploadTime:$('#uploadTime').val(),
             id: $("#id").val(),
-            type: 'DT',
-            keyword:$('#keyword').val()
+            // type: 'FL',
+
         }
 
 
-        $.post('createZiliao', params, function (result) {
+        $.post('createLow', params, function (result) {
 
             result = JSON.parse(result);
 
             if (result.msg == 'success') {
-                layer.msg("资料信息保存成功!");
-                $("#page-wrapper").load("dataList")
+                layer.msg("新建法律法规成功!");
+                $("#page-wrapper").load("lowList")
             } else {
                 layer.msg(result.msg);
             }
@@ -773,7 +774,7 @@
         $.ajax({
             type: "post",
             url: "findFileByZid",
-            data: {zid: '${info.id!}', type: 'DT'},
+            data: {zid: '${info.id!}', type: 'FL'},
             async: false,
             success: function (data) {
                 data = JSON.parse(data)
@@ -787,7 +788,7 @@
                         async: false,
                         success: function (result) {
                             result = JSON.parse(result);
-                            debugger
+
                             var fileType = result.fileType;
                             var mid = result.id;
                             var viewDiv = '<@shiro.hasPermission name="datum:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
@@ -797,7 +798,7 @@
                                 data: {fileId: fileId,type:'UPLOAD'},
                                 async: false,
                                 success: function (result) {
-                                    debugger
+
                                     result = JSON.parse(result);
                                     finalResult = result.finalResult
                                     if (result.auditResult == -1) {
@@ -809,7 +810,7 @@
                                         if (fileType == 1) {
                                             // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
                                             viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\',\''+""+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';                                        } else {
-                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + fileId + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + mid + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                                         }
 
                                     }
@@ -832,6 +833,18 @@
         });
     }
 
+
+    var classificlevelId = '${info.classificlevelId!}';
+
+    if (classificlevelId != '') {
+        $("#classificlevelId").val(classificlevelId);
+    }
+
+
+    if ('${info.type!}' != '') {
+        $("#type").val('${info.type!}');
+    }
+    CKEDITOR.instances.ckeditor.setData('${info.content!}');
 
 
 </script>

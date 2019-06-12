@@ -586,7 +586,7 @@
 
         var type = $('#myTab').find("li.active a")[0].id;
         type = type.substr(0,type.length-1)
-        debugger
+
         $("#"+type+"-attachment").append(childInput)
         // $("#attachment").append(childInput)
 
@@ -599,7 +599,7 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if>r</select></div><div class="form-group"><label for="select">密级</label><select name="auditUser" id="auditUser1" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="fileClassify"value="2"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="paperClassificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if>r</select></div><div class="form-group"><label for="select">密级</label><select name="auditUser" id="auditUser1" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="fileClassify"value="2"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
 
         $("#savePaperFile").removeAttr("disabled");
@@ -636,7 +636,7 @@
                         }
                     }
                 },
-                classificlevel: {
+                paperClassificlevel: {
                     message: '请选择文件密级',
                     validators: {
                         message: '请选择文件密级',
@@ -782,7 +782,7 @@
                     var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>';
                     var type = $('#myTab').find("li.active a")[0].id;
                     type = type.substr(0,type.length-1);
-                    debugger
+
                     $("#"+type+"-attachment").append(childInput)
                     layer.msg("文件上传成功!");
 //
@@ -812,17 +812,17 @@
         if (!bootstrapValidator.isValid())
             return;
 
-        var selectVal = $("#classificlevel").find("option:selected").val();
+        var selectVal = $("#paperClassificlevel").find("option:selected").val();
 
         if (selectVal == -1) {
-            layer.msg("请选择密级");
+            layer.msg("请选择文件密级");
             return;
         }
 
 
         var tabId = $('#myTab').find("li.active a")[0].id;
         var infoLevel = $("#"+tabId.substr(0,tabId.length-1)+"-classificlevelId").find("option:selected").val();
-        var fileLevel = $("#classificlevel").find("option:selected").val();
+        var fileLevel = $("#paperClassificlevel").find("option:selected").val();
 
 
         if (fileLevel > infoLevel){
@@ -908,7 +908,7 @@
 
     function createAnli(type) {
 
-        debugger
+
         //类别动态赋值
         var as = $('#anli').find('a');
         var typeId;
@@ -1050,7 +1050,7 @@
         });
     }
 
-    debugger
+
     var classificlevelId = '${info.classificlevelId!}';
 
     var type = '${info.type}';
@@ -1089,7 +1089,7 @@
             data: {zid: '${info.id!}', type: 'AL'},
             async: false,
             success: function (data) {
-                debugger
+
 
                 data = JSON.parse(data)
                 $.each(data, function () {
@@ -1102,7 +1102,7 @@
                         async: false,
                         success: function (result) {
                             result = JSON.parse(result);
-                            debugger
+
                             var fileType = result.fileType;
                             var mid = result.id;
                             var viewDiv = '<@shiro.hasPermission name="anli:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
@@ -1112,7 +1112,7 @@
                                 data: {fileId: fileId,type:'UPLOAD'},
                                 async: false,
                                 success: function (result) {
-                                    debugger
+
 
                                     result = JSON.parse(result);
                                     finalResult = result.finalResult
@@ -1123,7 +1123,7 @@
                                     }else {
 
                                         if (fileType == 1) {
-                                            debugger
+
                                             // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
                                             viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\',\''+""+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';                                        } else {
                                             viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + mid + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
@@ -1139,7 +1139,7 @@
                             var childInput = '<div><input style="margin-top: 5px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
                             if (finalResult != -1){
                                 var type = '${info.type}';
-                                debugger
+
                                 $("#"+type+"-attachment").append(childInput)
                                 // $("#attachment").append(childInput);
                             }
@@ -1152,9 +1152,7 @@
     }
 
 
-    $(document).ready(function () {
-        var type = '${info.type}'
-        $('#'+type+'A').tab('show');
-    })
+
+
 
 </script>

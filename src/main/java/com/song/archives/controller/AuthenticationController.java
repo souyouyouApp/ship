@@ -115,7 +115,7 @@ public class AuthenticationController {
             msg = "delete role failed";
         }
 
-        operationLogInfo = operationLogInfo.substring(0,operationLogInfo.length()-1)+"】,操作结果【"+msg+"】";
+        operationLogInfo = operationLogInfo.substring(0,operationLogInfo.length()-1)+"】";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         return result.toString();
@@ -134,7 +134,7 @@ public class AuthenticationController {
     String savePermission(Permission permission) {
 
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】新建权限:"+permission.toString();
+        operationLogInfo = "用户【"+getUser().getRealName()+"】新建权限:"+permission.toString();
 
         try{
             permissionRepository.save(permission);
@@ -142,8 +142,6 @@ public class AuthenticationController {
         }catch (Exception e){
             msg = "Exception";
         }
-
-        operationLogInfo += ",操作结果【"+msg+"】";
 
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
@@ -186,7 +184,7 @@ public class AuthenticationController {
             msg = "delete permission failed";
         }
 
-        operationLogInfo = operationLogInfo.substring(0,operationLogInfo.length()-1)+"】,操作结果【"+msg+"】";
+        operationLogInfo = operationLogInfo.substring(0,operationLogInfo.length()-1)+"】";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         return result.toString();
@@ -314,7 +312,7 @@ public class AuthenticationController {
 
             for (Long rid : rids) {
                 Role role = roleRepository.findOne(rid);
-                operationLogInfo += role.getDescription() + ",";
+                operationLogInfo += role.getName() + ",";
                 roles.add(role);
             }
 
@@ -325,7 +323,7 @@ public class AuthenticationController {
             msg = "exception";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果 【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
 
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
@@ -368,7 +366,7 @@ public class AuthenticationController {
         try {
             Role role = roleRepository.findOne(roleId);
 
-            operationLogInfo = "用户【" + getUser().getUsername() + "】为角色【" + role.getName() + "】分配权限 【";
+            operationLogInfo = "用户【" + getUser().getUsername() + "】为角色【" + role.getIdentification() + "】分配权限 【";
 
 
             Set<Permission> permissions = new HashSet<>();
@@ -388,7 +386,7 @@ public class AuthenticationController {
             msg = "Exception";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果 【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
 
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);

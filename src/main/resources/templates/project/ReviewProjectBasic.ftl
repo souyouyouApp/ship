@@ -466,7 +466,7 @@
 
         $.post("UpdateProject", $("#updateprojectForm").serialize(), function (result) {
             result = JSON.parse(result);
-            //debugger;
+            //;
             if (result.msg == 'success') {
                 layer.msg("修改项目成功！");
                 $("#page-wrapper").load("ProjectList")

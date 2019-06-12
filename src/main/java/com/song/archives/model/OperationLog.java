@@ -27,6 +27,15 @@ public class OperationLog implements Serializable{
     @Lob
     private String operationDescrib;
     private String operationIp;
+    private String operationResult;
+
+    public String getOperationResult() {
+        return operationResult;
+    }
+
+    public void setOperationResult(String operationResult) {
+        this.operationResult = operationResult;
+    }
 
     public Long getId() {
         return id;

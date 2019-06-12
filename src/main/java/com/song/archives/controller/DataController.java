@@ -703,7 +703,7 @@ public class DataController {
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();

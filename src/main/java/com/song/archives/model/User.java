@@ -39,7 +39,15 @@ public class User implements Serializable{
     @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate = new Date();
+    private String idNo;
 
+    public String getIdNo() {
+        return idNo;
+    }
+
+    public void setIdNo(String idNo) {
+        this.idNo = idNo;
+    }
 
     @ManyToMany(targetEntity = Role.class, cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id") , inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id") )

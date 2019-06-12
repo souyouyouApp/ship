@@ -128,7 +128,12 @@
 //                },
                 {
                     field: 'operationDescrib',
-                    title: '操作信息',
+                    title: '操作内容',
+                    sortable: true
+                },
+                {
+                    field: 'operationResult',
+                    title: '操作结果',
                     sortable: true
                 },
                 {

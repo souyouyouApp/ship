@@ -121,7 +121,7 @@ public class AnliController {
                 operationType = "新建案例";
             }
 
-            operationLogInfo = "用户【" + getUser().getUsername() + "】"+operationType+"【"+entity.getTitle()+"】,操作结果 【" + msg + "】";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】"+operationType+"【"+entity.getTitle()+"】";
 
             result.put("operationLog", operationLogInfo);
 
@@ -196,7 +196,7 @@ public class AnliController {
     @RequestMapping(value = "/delAnli")
     @ResponseBody
     String delAnli(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除案例【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除案例【";
 
         try{
 
@@ -217,7 +217,7 @@ public class AnliController {
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -303,7 +303,7 @@ public class AnliController {
 
         JSONArray json = JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询案例列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】执行查询案例列表操作";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", json);

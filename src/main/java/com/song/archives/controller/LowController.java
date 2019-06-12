@@ -77,7 +77,7 @@ public class LowController {
     private DataRepository dataRepository;
 
     @Autowired
-    private AnliRepository anliRepository;
+    private LowRepository lowRepository ;
 
     @Autowired
     private AnnounceRepository announceRepository;
@@ -132,8 +132,8 @@ public class LowController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "createLow", operationName = "新建法律法规页面")
-    @RequestMapping(value = "/createLow")
+    @ArchivesLog(operationType = "createLowPage", operationName = "新建法律法规页面")
+    @RequestMapping(value = "/createLowPage")
     public ModelAndView createData(@RequestParam(value = "lid", required = false) Long lid) {
 
 //        ZiliaoInfoEntity ziliaoInfoEntity;
@@ -155,11 +155,140 @@ public class LowController {
 //        modelAndView.addObject("mid",5);
 //
 //        modelAndView.addObject("auditUsers",auditUser);
+
+        LowInfoEntity lowInfoEntity;
+
+        if (null == lid){
+            lowInfoEntity = new LowInfoEntity();
+            lowInfoEntity.setUploader(getUser().getRealName());
+            lowInfoEntity.setUploadTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+        }else {
+            lowInfoEntity = lowRepository.findOne(lid);
+        }
+
+
+        List<User> auditUser = userRepository.findAuditUser();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("lows/createLow");
+        modelAndView.addObject("info",lowInfoEntity);
         modelAndView.addObject("levelId",getUser().getPermissionLevel());
-        modelAndView.addObject("info", new ZiliaoInfoEntity());
+        modelAndView.addObject("auditUsers",auditUser);
         return modelAndView;
+    }
+
+
+    /**
+     * 创建资料信息
+     *
+     * @param entity
+     * @param mids
+     * @return
+     */
+    @ArchivesLog(operationType = "createLow", operationName = "创建资料信息")
+    @RequestMapping(value = "/createLow")
+    @ResponseBody
+    @Transactional
+    public String createLow(LowInfoEntity entity,
+                               @RequestParam(value = "mids[]", required = false) List<Long> mids,
+                               @RequestParam(value = "type",required = false) String type) {
+
+        result = new JSONObject();
+
+        try {
+
+            if (null != entity.getId()) {
+                moduleFileRespository.updateTidByIdAndType(entity.getId(),type);
+            }
+
+            LowInfoEntity infoEntity = lowRepository.save(entity);
+
+
+            if (null != mids && mids.size() > 0) {
+                for (Long id : mids) {
+                    ModuleFileEntity moduleFileEntity = moduleFileRespository.findOne(id);
+                    moduleFileEntity.setT_id(infoEntity.getId());
+                    moduleFileRespository.save(moduleFileEntity);
+                }
+
+            }
+
+            if (entity != null) {
+                entity.setUploader(getUser().getRealName());
+                entity.setUploadTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+
+                String content = entity.getContent();
+
+                if (StringUtils.isNotEmpty(content) && StringUtils.isNotBlank(content)) {
+                    entity.setContent(content.replace("\n", ""));
+                }
+
+            }
+
+            lowRepository.save(entity);
+            msg = SUCCESS;
+
+        } catch (Exception e) {
+            logger.error("创建资料信息:" + e.getMessage());
+            msg = "Exception";
+        }
+
+        String operationType = "";
+
+        if (entity.getId() == null){
+            operationType = "新建";
+        }else {
+            operationType = "更新";
+        }
+
+        operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+entity.getType()+"】";
+        result.put("operationLog",operationLogInfo);
+        result.put("msg", msg);
+
+
+        return result.toString();
+
+    }
+
+
+
+    @ArchivesLog(operationType = "lows", operationName = "查询资料列表")
+    @RequestMapping(value = "/lows")
+    @ResponseBody
+    String datas(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
+                 @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
+                 @RequestParam(value = "searchValue",required = false) String searchValue,
+                 @RequestParam(value = "typeId",required = false) Long typeId,
+                 @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+                 @RequestParam(value = "sortName", required = false, defaultValue = "id") String sortName) {
+
+        result = new JSONObject();
+        page = page - 1;
+        Sort sort = new Sort(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortName);
+        Pageable pageable = new PageRequest(page, size, sort);
+
+
+
+        Page<LowInfoEntity> lows = null;
+        try {
+            lows = lowRepository.findAll(pageable);
+            msg = SUCCESS;
+        } catch (Exception e) {
+            logger.error("资料列表数据:" + e.getMessage());
+            msg = "Exception";
+        }
+
+
+        JsonConfig jsonConfig = new JsonConfig();
+
+        jsonConfig.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
+
+        JSONArray json = JSONArray.fromObject(lows, jsonConfig);
+
+        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询法律法规列表操作";
+        result.put("msg", msg);
+        result.put("operationLog", operationLogInfo);
+        result.put("result", json);
+        return result.toString();
     }
 
     protected User getUser() {

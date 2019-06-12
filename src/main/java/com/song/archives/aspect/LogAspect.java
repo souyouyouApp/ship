@@ -132,7 +132,8 @@ public class LogAspect {
         if (joinPoint.getSignature().getName().equals("sign_out")) {
             operationLog.setOperationUserId(user.getId());
             operationLog.setOperationUserName(user.getUsername());
-            operationLog.setOperationDescrib("用户【" + user.getUsername() + "】退出系统");
+            operationLog.setOperationDescrib("用户【" + user.getRealName() + "】退出系统");
+            operationLog.setOperationResult("成功");
         }
 
     }
@@ -202,6 +203,7 @@ public class LogAspect {
 
                 if (retObj != null && retObj.containsKey("operationLog")) {
                     operationLog.setOperationDescrib(retObj.getString("operationLog"));
+                    operationLog.setOperationResult(retObj.getString("msg").equals("success")?"成功":"失败");
                     operationLog.setOperationOutPut(JSONObject.fromObject(ret).toString());
                 }
             }

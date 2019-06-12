@@ -151,7 +151,7 @@ public class ReviewController {
         }
 
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】审核文件【"+fileName+ "】,操作结果【" + msg + "】";
+        operationLogInfo = "用户【" + getUser().getUsername() + "】审核文件【"+fileName+ "】,审核结果【"+content==null?"审核通过":"审核拒绝,拒绝理由："+content+"】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -180,7 +180,7 @@ public class ReviewController {
         }
 
 
-        operationLogInfo = fileInfoEntity.getFileName() + "】,操作结果【" + msg + "】";
+        operationLogInfo = fileInfoEntity.getFileName() + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -209,7 +209,7 @@ public class ReviewController {
         }
 
 
-        operationLogInfo = notifyEntity.getContent() + "】,操作结果【" + msg + "】";
+        operationLogInfo = notifyEntity.getContent() + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();

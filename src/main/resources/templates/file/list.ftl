@@ -153,7 +153,7 @@
                     result = JSON.parse(result)
                     layer.close(load);
                     if (result && result.msg != 'success') {
-                        debugger
+
                         return layer.msg(result, so.default), !1;
                     }
                     layer.msg('操作成功。');
@@ -243,6 +243,7 @@
                          * 2 案例库文件
                          * 3 资料库文件
                          * 4 公告库文件
+                         * 5 法律法规库文件
                          */
                         var fileType;
                         //AL：案例；GG：公告；PJ：项目 DT:资料
@@ -256,6 +257,8 @@
                                 fileType = 'DT'
                             if (row.fileClassify == 2)
                                 fileType = 'AL'
+                            if (row.fileClassify == 5)
+                                fileType = 'FL'
 
                             return '<a href="downLoadAttach?ids=' + row.fileId + '&type='+fileType+'" download="'+value+'">' + value + '</a>'
 

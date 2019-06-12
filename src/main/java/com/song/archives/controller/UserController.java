@@ -297,7 +297,7 @@ public class UserController {
             msg = "save user failed";
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】新建用户【" + user.getUsername()+"】";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】新建用户【" + user.getRealName()+"】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -369,7 +369,7 @@ public class UserController {
             msg = "delete user failed";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】,操作结果【" + msg + "】";
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -550,7 +550,7 @@ public class UserController {
             msg = "登录异常!";
         }
 
-        operationLogInfo = "用户【" + username + "】进行登录,操作结果 【" + msg + "】";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】登录系统";
 
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
