@@ -201,7 +201,7 @@
         $('#importProjFile').on("fileuploaded", function (event, data, previewId, index) {
             if (data.response.success == "success") {
                 //layer.msg(data.response.msg);
-                layer.alert(data.response.msg);
+                layer.alert(data.response.msg1);
                 $("#startImport").attr("disabled", "disabled");
                 $('.modal').map(function () {
                     $(this).modal('hide');

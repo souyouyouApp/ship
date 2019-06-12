@@ -81,7 +81,7 @@
 </style>
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">文件管理</h1>
+        <h1 class="page-header">审核中心</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -235,7 +235,7 @@
 
                 {
                     field: 'fileName',
-                    title: '文件名称',
+                    title: '名称',
                     sortable: true,
                     formatter: function (value, row, index) {
                         /**
@@ -266,7 +266,7 @@
                 },
                 {
                     field: 'fileClassify',
-                    title: '文件类别',
+                    title: '类别',
                     formatter: function (value, row, index) {
                         if (value == 1)
                             return '项目文件';
