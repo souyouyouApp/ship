@@ -95,7 +95,14 @@
             <input type="hidden" id="keywordMid" name="keywordMid" value="2">
             <label for="firstname" class="col-sm-2 control-label">类别</label>
             <div class="col-sm-4">
-                <div class="dropdown dropdowmspc" id="dropDown"></div>
+                <select name="classificlevelId" id="classificlevelId" class="form-control">
+                    <option value="-1">请选择类别</option>
+                    <option value="法律">法律</option>
+                    <option value="行政法规、军事法规">行政法规、军事法规</option>
+                    <option value="部门规章">部门规章</option>
+                    <option value="规范性文件">规范性文件</option>
+                    <option value="中央/国务院/中央军委/议事协调机构文件">中央/国务院/中央军委/议事协调机构文件</option>
+                </select>
             </div>
         <#if info.id??>
             <div class="col-sm-2" style="margin-left: -112px;">
@@ -110,7 +117,7 @@
         </div>
 
         <div class="form-group">
-            <label for="title" class="col-sm-2 control-label">标题</label>
+            <label for="title" class="col-sm-2 control-label">发布部门</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="title" name="title" placeholder="请输入标题"
                        value="${info.title!}">
@@ -118,7 +125,7 @@
         </div>
 
         <div class="form-group">
-            <label for="author" class="col-sm-2 control-label">作者</label>
+            <label for="author" class="col-sm-2 control-label">发布时间</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="author" name="author" placeholder="请输入作者"
                        value="${info.author!}">
@@ -133,55 +140,35 @@
             </div>
         </div>
 
+
         <div class="form-group">
-            <label for="author" class="col-sm-2 control-label">创建时间</label>
+            <label for="classificlevelId" class="col-sm-2 control-label">密级</label>
+            <div class="col-sm-4">
+                <select name="classificlevelId" id="classificlevelId" class="form-control">
+                    <option value="-1">请选择密级</option>
+                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                    <#if (levelId >= 1)> <option value="1">公开</option></#if>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label for="author" class="col-sm-2 control-label">上传人</label>
             <div class="col-sm-4">
                 <span class="form-control">${info.createTime!}</span>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="classificlevelId" class="col-sm-2 control-label">密级</label>
+            <label for="author" class="col-sm-2 control-label">上传时间</label>
             <div class="col-sm-4">
-                <select name="classificlevelId" id="classificlevelId" class="form-control">
-                <option value="-1">请选择密级</option>
-                   <#if (levelId >= 4)> <option value="4">机密</option></#if>
-                   <#if (levelId >= 3)> <option value="3">秘密</option></#if>
-                   <#if (levelId >= 2)> <option value="2">内部</option></#if>
-                   <#if (levelId >= 1)> <option value="1">公开</option></#if>
-                </select>
+                <span class="form-control">${info.createTime!}</span>
             </div>
-
-        </div>
-        <div class="form-group">
-            <label for="ziliaoFrom" class="col-sm-2 control-label">来源</label>
-            <div class="col-sm-4">
-                <select name="ziliaoFrom" id="ziliaoFrom" class="form-control">
-                <#--<option value="-1">请选择来源</option>-->
-                    <option value="互联网">互联网</option>
-                    <option value="原创">原创</option>
-                    <option value="集团公司">集团公司</option>
-                    <option value="装备发展部">装备发展部</option>
-                    <option value="科工局">科工局</option>
-                    <option value="国家知识产权局">国家知识产权局</option>
-                    <option value="工信部">工信部</option>
-                    <option value="其他政府部门">其他政府部门</option>
-                    <option value="其他企事业单位">其他企事业单位</option>
-                </select>
-            </div>
-
         </div>
 
-<#--        <div class="form-group">-->
-<#--            <label for="isShare" class="col-sm-2 control-label">共享</label>-->
-<#--            <div class="col-sm-4">-->
-<#--                <select name="isShare" id="isShare" class="form-control">-->
-<#--                &lt;#&ndash;<option value="-1">请选择是否共享</option>&ndash;&gt;-->
-<#--                    <option value="0">否</option>-->
-<#--                    <option value="1">是</option>-->
-<#--                </select>-->
-<#--            </div>-->
-<#--        </div>-->
 
         <div class="form-group">
             <label for="ziliaoContent" class="col-sm-2 control-label">上传附件</label>

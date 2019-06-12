@@ -27,6 +27,15 @@ public class ZiliaoInfoEntity implements Serializable{
     private Integer isShare;
     private String creator;
     private String createTime;
+    private String keyword;
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 
     public Long getId() {
         return id;

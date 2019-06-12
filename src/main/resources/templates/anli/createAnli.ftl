@@ -92,107 +92,173 @@
 
     <div class="row">
         <ul id="myTab" class="nav nav-tabs">
-            <li class="active"><a href="#home" data-toggle="tab">基本信息</a></li>
-            <li><a href="#ios" data-toggle="tab">政策法规</a></li>
-            <li><a href="#sifa" data-toggle="tab">国外司法判例</a></li>
+            <li><a href="#sfpl" id="sfplA" data-toggle="tab">司法判例</a></li>
+            <li><a href="#glzc" id="glzcA" data-toggle="tab">管理支撑</a></li>
+            <li><a href="#hxhz" id="hxhzA" data-toggle="tab">横向合作</a></li>
+            <li><a href="#zlfw" id="zlfwA" data-toggle="tab">专利服务</a></li>
         </ul>
 
 
         <div id="myTabContent" class="tab-content">
-            <div class="tab-pane fade in active" id="home">
-                <div style="margin-top: 30px">
-                    <form class="form-horizontal" role="form" id="dataForm">
+            <div class="tab-pane" id="sfpl">
+                <input type="hidden" id="tabType"/>
+                <div class="panel-body" style="margin-top: 30px">
+                    <form class="form-horizontal" role="form" id="sfplForm">
+                        <input type="hidden" id="sfpl-id"/>
                         <div class="form-group">
-                            <input type="hidden" id="typeId" name="typeId"/>
-                            <input type="hidden" name="id" id="id" value="${info.id!}"/>
-                            <input type="hidden" id="keywordTid" name="keywordTid" value="${info.id!}"/>
-                            <input type="hidden" id="keywordMid" name="keywordMid" value="3">
-                            <label for="firstname" class="col-sm-1 control-label">类别</label>
+                            <label for="sfpl-title" class="col-sm-1 control-label">标题</label>
                             <div class="col-sm-6">
-                                <div class="dropdown dropdowmspc" id="dropDown"></div>
-                            </div>
-                        <#if info.id??>
-                            <div class="col-sm-1" style="margin-left: -112px;">
-                                <@shiro.hasPermission name="keyword:add">
-                                    <button id="btn_addkeyword" type="button" class="btn btn-info" data-toggle="modal"
-                                            data-target="#addKeywordModal">
-                                        添加标签
-                                    </button>
-                                </@shiro.hasPermission>
-                            </div>
-                        </#if>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="title" class="col-sm-1 control-label">标题</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="title" name="title" placeholder="请输入标题"
+                                <input type="text" class="form-control" id="sfpl-title" name="sfpl-title" placeholder="请输入标题"
                                        value="${info.title!}">
                             </div>
                         </div>
 
 
                         <div class="form-group">
-                            <label for="classificlevelId" class="col-sm-1 control-label">密级</label>
+                            <label for="sfpl-classificlevelId" class="col-sm-1 control-label">密级</label>
                             <div class="col-sm-6">
-                                <select name="classificlevelId" id="classificlevelId" class="form-control">
+                                <select name="sfpl-classificlevelId" id="sfpl-classificlevelId" class="form-control">
                                     <option value="-1">请选择密级</option>
-                                        <#if (levelId >= 4)> <option value="4">机密</option></#if>
-                                        <#if (levelId >= 3)> <option value="3">秘密</option></#if>
-                                        <#if (levelId >= 2)> <option value="2">内部</option></#if>
-                                        <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                                    <#if (levelId >= 1)>  <option value="1">公开</option></#if>
                                 </select>
                             </div>
+                        </div>
 
+                        <div class="form-group">
+                            <label for="nationality" class="col-sm-1 control-label">国别</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="nationality" name="nationality" placeholder="请输入国别" value="${info.nationality!}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="caseName" class="col-sm-1 control-label">案例名称</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="caseName" name="caseName"
+                                       placeholder="请输入案例名称"
+                                       value="${info.caseName!}">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="closeTime" class="col-sm-1 control-label">结案时间</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="closeTime" name="closeTime"
+                                       placeholder="请输入结案时间"
+                                       value="${info.closeTime!}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="finalAppeal" class="col-sm-1 control-label">终审法院</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="finalAppeal" name="finalAppeal"
+                                       placeholder="请输入终审法院"
+                                       value="${info.finalAppeal!}">
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
 
                             <div class="col-sm-6">
-                                <a href="javascript:void(0)" class="btn btn-warning" onclick="electronicFile()"
+                                <a href="javascript:void(0)" class="btn btn-warning" onclick="electronicFile('sfpl')"
                                    data-toggle="modal" data-target="#fileuploadModal">电子</a>
-                                <a href="javascript:void(0)" class="btn btn-primary" onclick="paperFile()"
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="paperFile('sfpl')"
                                    data-toggle="modal" data-target="#paperuploadModal">纸质</a>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="ziliaoContent" class="col-sm-1 control-label">附件列表</label>
-                            <div class="col-sm-6" id="attachment">
+                            <label class="col-sm-1 control-label">附件列表</label>
+                            <div class="col-sm-6" id="sfpl-attachment">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="ziliaoContent" class="col-sm-1 control-label">摘要</label>
+                            <label for="sfpl-ckeditor" class="col-sm-1 control-label">摘要</label>
                             <div class="col-sm-6">
-                                <textarea id="ckeditor" name="ckeditor" class="form-control" rows="5"
-                                          cols="38"></textarea>
-                                <script type="text/javascript">CKEDITOR.replace('ckeditor')</script>
+                            <textarea id="sfpl-ckeditor" name="sfpl-ckeditor" class="form-control" rows="5"
+                                      cols="38"></textarea>
+                                <script type="text/javascript">CKEDITOR.replace('sfpl-ckeditor')</script>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-6">
+                                <@shiro.lacksPermission name="anli:save">
+                                    <script language="JavaScript" type="text/javascript">
+                                        $('input').attr("readonly", "readonly")
+                                        $('select').attr("disabled", "disabled")
+                                        $('textarea').attr("readonly", "readonly")
+                                        $("[onclick='electronicFile()']").attr('disabled', 'disabled')
+                                        $("[onclick='paperFile()']").attr('disabled', 'disabled');
+                                        $('#dLabel').attr('data-toggle', '');
+                                    </script>
+
+                                </@shiro.lacksPermission>
+
+                                <@shiro.hasPermission name="anli:save">
+                                    <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('sfpl')">保存</a>
+                                </@shiro.hasPermission>
+
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
                             </div>
                         </div>
 
                     </form>
                 </div>
             </div>
-            <div class="tab-pane fade" id="ios">
-                <div style="margin-top: 30px">
-                    <form class="form-horizontal" role="form">
+
+
+            <div class="tab-pane fade" id="glzc">
+                <div class="panel-body" style="margin-top: 30px">
+                    <form class="form-horizontal" role="form" id="glzcForm">
+                        <input type="hidden" id="glzc-id"/>
+                        <div class="form-group">
+                            <label for="glzc-title" class="col-sm-1 control-label">标题</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="glzc-title" name="glzc-title" placeholder="请输入标题"
+                                       value="${info.title!}">
+                            </div>
+                        </div>
+
 
                         <div class="form-group">
-                            <label for="policy" class="col-sm-1 control-label">政策</label>
+                            <label for="glzc-classificlevelId" class="col-sm-1 control-label">密级</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="policy" name="policy" placeholder="请输入政策"
-                                       value="${info.policy!}">
+                                <select name="glzc-classificlevelId" id="glzc-classificlevelId" class="form-control">
+                                    <option value="-1">请选择密级</option>
+                                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                                    <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="mainAuthor" class="col-sm-1 control-label">执笔人</label>
+                            <label for="projectName" class="col-sm-1 control-label">项目名称</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="mainAuthor" name="mainAuthor"
-                                       placeholder="请输入主要执笔人"
-                                       value="${info.mainAuthor!}">
+                                <input type="text" class="form-control" id="projectName" name="projectName" placeholder="请输入项目名称" value="${info.projectName!}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectSource" class="col-sm-1 control-label">项目来源</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="projectSource" name="projectSource" placeholder="请输入项目来源" value="${info.projectSource!}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="principal" class="col-sm-1 control-label">主要负责人</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="principal" name="principal" placeholder="请输入主要负责人" value="${info.principal!}">
                             </div>
                         </div>
 
@@ -200,75 +266,9 @@
                         <div class="form-group">
                             <label for="participant" class="col-sm-1 control-label">参与人</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="participant" name="participant"
-                                       placeholder="请输入参与人"
-                                       value="${info.participant!}">
+                                <input type="text" class="form-control" id="participant" name="participant" placeholder="请输入参与人" value="${info.participant!}">
                             </div>
                         </div>
-
-
-                        <div class="form-group">
-                            <label for="policySource" class="col-sm-1 control-label">政策来源</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="policySource" name="policySource"
-                                       placeholder="请输入政策来源"
-                                       value="${info.policySource!}">
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="startDate" class="col-sm-1 control-label">起始日期</label>
-                            <div class="col-sm-6">
-                                <input type="date" class="form-control" id="startDate" name="startDate"
-                                       placeholder="请输入起始日期"
-                                       value="${info.startDate!}">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="endDate" class="col-sm-1 control-label">结束日期</label>
-                            <div class="col-sm-6">
-                                <input type="date" class="form-control" id="endDate" name="endDate"
-                                       placeholder="请选择结束日期"
-                                       value="${info.endDate!}">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-            <div class="tab-pane fade" id="sifa">
-                <div class="panel-body" style="margin-top: 30px">
-                    <form class="form-horizontal" role="form">
-
-                        <div class="form-group">
-                            <label for="plaintiff" class="col-sm-1 control-label">原告</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="plaintiff" name="plaintiff" placeholder="请输入原告"
-                                       value="${info.plaintiff!}">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="defendant" class="col-sm-1 control-label">被告</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="defendant" name="defendant"
-                                       placeholder="请输入主要被告"
-                                       value="${info.defendant!}">
-                            </div>
-                        </div>
-
-
-                        <div class="form-group">
-                            <label for="caseNum" class="col-sm-1 control-label">案例编号</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="caseNum" name="caseNum"
-                                       placeholder="请输入案例编号"
-                                       value="${info.participant!}">
-                            </div>
-                        </div>
-
 
                         <div class="form-group">
                             <label for="judicialStatus" class="col-sm-1 control-label">状态</label>
@@ -282,13 +282,207 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
+
+                            <div class="col-sm-6">
+                                <a href="javascript:void(0)" class="btn btn-warning" onclick="electronicFile('glzc')"
+                                   data-toggle="modal" data-target="#fileuploadModal">电子</a>
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="paperFile('glzc')"
+                                   data-toggle="modal" data-target="#paperuploadModal">纸质</a>
+                            </div>
+                        </div>
 
                         <div class="form-group">
-                            <label for="keyword" class="col-sm-1 control-label">关键词</label>
+                            <label for="ziliaoContent" class="col-sm-1 control-label">附件列表</label>
+                            <div class="col-sm-6" id="glzc-attachment">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="glzc-ckeditor" class="col-sm-1 control-label">摘要</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="keyword" name="keyword"
-                                       placeholder="请输入关键词"
-                                       value="${info.keyword!}">
+                            <textarea id="glzc-ckeditor" name="glzc-ckeditor" class="form-control" rows="5"
+                                      cols="38"></textarea>
+                                <script type="text/javascript">CKEDITOR.replace('glzc-ckeditor')</script>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-6">
+                                <@shiro.lacksPermission name="anli:save">
+                                    <script language="JavaScript" type="text/javascript">
+                                        $('input').attr("readonly", "readonly")
+                                        $('select').attr("disabled", "disabled")
+                                        $('textarea').attr("readonly", "readonly")
+                                        $("[onclick='electronicFile()']").attr('disabled', 'disabled')
+                                        $("[onclick='paperFile()']").attr('disabled', 'disabled');
+                                        $('#dLabel').attr('data-toggle', '');
+                                    </script>
+
+                                </@shiro.lacksPermission>
+
+                                <@shiro.hasPermission name="anli:save">
+                                    <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('glzc')">保存</a>
+                                </@shiro.hasPermission>
+
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="hxhz">
+                <div class="panel-body" style="margin-top: 30px">
+                    <form class="form-horizontal" role="form" id="hxhzForm">
+                        <input type="hidden" id="hxhz-id"/>
+                        <div class="form-group">
+                            <label for="hxhz-title" class="col-sm-1 control-label">标题</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="hxhz-title" name="hxhz-title" placeholder="请输入标题"
+                                       value="${info.title!}">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="hxhz-classificlevelId" class="col-sm-1 control-label">密级</label>
+                            <div class="col-sm-6">
+                                <select name="hxhz-classificlevelId" id="hxhz-classificlevelId" class="form-control">
+                                    <option value="-1">请选择密级</option>
+                                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                                    <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
+
+                            <div class="col-sm-6">
+                                <a href="javascript:void(0)" class="btn btn-warning" onclick="electronicFile('hxhz')"
+                                   data-toggle="modal" data-target="#fileuploadModal">电子</a>
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="paperFile('hxhz')"
+                                   data-toggle="modal" data-target="#paperuploadModal">纸质</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ziliaoContent" class="col-sm-1 control-label">附件列表</label>
+                            <div class="col-sm-6" id="hxhz-attachment">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hxhz-ckeditor" class="col-sm-1 control-label">摘要</label>
+                            <div class="col-sm-6">
+                            <textarea id="hxhz-ckeditor" name="hxhz-ckeditor" class="form-control" rows="5"
+                                      cols="38"></textarea>
+                                <script type="text/javascript">CKEDITOR.replace('hxhz-ckeditor')</script>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-6">
+                                <@shiro.lacksPermission name="anli:save">
+                                    <script language="JavaScript" type="text/javascript">
+                                        $('input').attr("readonly", "readonly")
+                                        $('select').attr("disabled", "disabled")
+                                        $('textarea').attr("readonly", "readonly")
+                                        $("[onclick='electronicFile()']").attr('disabled', 'disabled')
+                                        $("[onclick='paperFile()']").attr('disabled', 'disabled');
+                                        $('#dLabel').attr('data-toggle', '');
+                                    </script>
+
+                                </@shiro.lacksPermission>
+
+                                <@shiro.hasPermission name="anli:save">
+                                    <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('hxhz')">保存</a>
+                                </@shiro.hasPermission>
+
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="zlfw">
+                <div class="panel-body" style="margin-top: 30px">
+                    <form class="form-horizontal" role="form" id="zlfwForm">
+                        <input type="hidden" id="zlfw-id"/>
+                        <div class="form-group">
+                            <label for="zlfw-title" class="col-sm-1 control-label">标题</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="zlfw-title" name="zlfw-title" placeholder="请输入标题"
+                                       value="${info.title!}">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="zlfw-classificlevelId" class="col-sm-1 control-label">密级</label>
+                            <div class="col-sm-6">
+                                <select name="zlfw-classificlevelId" id="zlfw-classificlevelId" class="form-control">
+                                    <option value="-1">请选择密级</option>
+                                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                                    <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
+
+                            <div class="col-sm-6">
+                                <a href="javascript:void(0)" class="btn btn-warning" onclick="electronicFile('zlfw')"
+                                   data-toggle="modal" data-target="#fileuploadModal">电子</a>
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="paperFile('zlfw')"
+                                   data-toggle="modal" data-target="#paperuploadModal">纸质</a>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="zlfw-attachment" class="col-sm-1 control-label">附件列表</label>
+                            <div class="col-sm-6" id="zlfw-attachment">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="zlfw-ckeditor" class="col-sm-1 control-label">摘要</label>
+                            <div class="col-sm-6">
+                            <textarea id="zlfw-ckeditor" name="zlfw-ckeditor" class="form-control" rows="5"
+                                      cols="38"></textarea>
+                                <script type="text/javascript">CKEDITOR.replace('zlfw-ckeditor')</script>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-6">
+                                <@shiro.lacksPermission name="anli:save">
+                                    <script language="JavaScript" type="text/javascript">
+                                        $('input').attr("readonly", "readonly")
+                                        $('select').attr("disabled", "disabled")
+                                        $('textarea').attr("readonly", "readonly")
+                                        $("[onclick='electronicFile()']").attr('disabled', 'disabled')
+                                        $("[onclick='paperFile()']").attr('disabled', 'disabled');
+                                        $('#dLabel').attr('data-toggle', '');
+                                    </script>
+
+                                </@shiro.lacksPermission>
+
+                                <@shiro.hasPermission name="anli:save">
+                                    <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('zlfw')">保存</a>
+                                </@shiro.hasPermission>
+
+                                <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
                             </div>
                         </div>
 
@@ -298,32 +492,6 @@
         </div>
 
 
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-6">
-            <@shiro.lacksPermission name="anli:save">
-                <script language="JavaScript" type="text/javascript">
-                    $('input').attr("readonly", "readonly")
-                    $('select').attr("disabled", "disabled")
-                    $('textarea').attr("readonly", "readonly")
-                    $("[onclick='electronicFile()']").attr('disabled', 'disabled')
-                    $("[onclick='paperFile()']").attr('disabled', 'disabled');
-                    $('#dLabel').attr('data-toggle', '');
-                </script>
-
-            </@shiro.lacksPermission>
-
-            <@shiro.hasPermission name="anli:save">
-                <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli()">保存</a>
-            </@shiro.hasPermission>
-
-                <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
-            </div>
-        </div>
-        <script>
-            $(function () {
-                $('#myTab li:eq(0) a').tab('show');
-            });
-        </script>
 
     </div>
 
@@ -367,7 +535,7 @@
                         </select>
                     </div>
                     <div class="form-group" style="height: 300px">
-                        <input id="dataFile" name="dataFile" onchange="selectFile()" type="file" multiple=""/>
+                        <input id="dataFile" name="dataFile" onchange="selectFile()" type="file" multiple/>
                     </div>
                 </form>
             </div>
@@ -415,7 +583,12 @@
         }
 
         var childInput = '<div><input style="margin-top: 5px;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
-        $("#attachment").append(childInput)
+
+        var type = $('#myTab').find("li.active a")[0].id;
+        type = type.substr(0,type.length-1)
+        debugger
+        $("#"+type+"-attachment").append(childInput)
+        // $("#attachment").append(childInput)
 
     }
 
@@ -426,7 +599,7 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if>r</select></div><div class="form-group"><label for="select">密级</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="fileClassify"value="2"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"><div class="form-group"><label for="select">密级</label><select id="classificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if>r</select></div><div class="form-group"><label for="select">密级</label><select name="auditUser" id="auditUser1" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="fileClassify"value="2"/><input type="hidden"name="category"value="AL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
 
         $("#savePaperFile").removeAttr("disabled");
@@ -527,7 +700,7 @@
     //     $("#classificlevelId").val(selectVal);
     //
     // })
-    function electronicFile() {
+    function electronicFile(type) {
 
         $("#saveFile").removeAttr("disabled");
         $('#fileuploadModal').modal('show')
@@ -536,7 +709,7 @@
         $('#dataFile').fileinput({//初始化上传文件框
             showUpload: false,
             showRemove: false,
-            uploadAsync: true,
+            uploadAsync:false,
             uploadLabel: "上传",//设置上传按钮的汉字
             uploadClass: "btn btn-primary",//设置上传按钮样式
             showCaption: false,//是否显示标题
@@ -553,8 +726,9 @@
             uploadExtraData: {
                 'category': 'AL',
                 "fileType": '1',
-                'classificlevel': document.getElementById("classificlevel").value,
+                'classificlevel': $("#"+type+"classificlevel").value,
                 'fileClassify': 2,
+                'auditUser':$('#auditUser').value,
             },//这个是外带数据
             showBrowse: false,
             browseOnZoneClick: true,
@@ -567,6 +741,7 @@
 
     $('#saveFile').on('click', function () {
 
+
         var selectVal = $("#classificlevel").find("option:selected").val();
 
         if (selectVal == -1) {
@@ -574,7 +749,8 @@
             return;
         }
 
-        var infoLevel = $("#classificlevelId").find("option:selected").val();
+        var tabId = $('#myTab').find("li.active a")[0].id;
+        var infoLevel = $("#"+tabId.substr(0,tabId.length-1)+"-classificlevelId").find("option:selected").val();
         var fileLevel = $("#classificlevel").find("option:selected").val();
 
         if (fileLevel > infoLevel){
@@ -603,8 +779,11 @@
                     var fileName = data.fileName;
 
                     var viewDiv = '审核中';
-                    var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
-                    $("#attachment").append(childInput)
+                    var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>';
+                    var type = $('#myTab').find("li.active a")[0].id;
+                    type = type.substr(0,type.length-1);
+                    debugger
+                    $("#"+type+"-attachment").append(childInput)
                     layer.msg("文件上传成功!");
 //
                     $("#saveFile").attr("disabled", "disabled");
@@ -633,8 +812,18 @@
         if (!bootstrapValidator.isValid())
             return;
 
-        var infoLevel = $("#classificlevelId").find("option:selected").val();
+        var selectVal = $("#classificlevel").find("option:selected").val();
+
+        if (selectVal == -1) {
+            layer.msg("请选择密级");
+            return;
+        }
+
+
+        var tabId = $('#myTab').find("li.active a")[0].id;
+        var infoLevel = $("#"+tabId.substr(0,tabId.length-1)+"-classificlevelId").find("option:selected").val();
         var fileLevel = $("#classificlevel").find("option:selected").val();
+
 
         if (fileLevel > infoLevel){
             layer.msg("文件密级不可大于案例密级");
@@ -717,27 +906,47 @@
 </script>
 <script type="text/javascript">
 
-    function createAnli() {
+    function createAnli(type) {
+
+        debugger
+        //类别动态赋值
+        var as = $('#anli').find('a');
+        var typeId;
+        for(var i =1 ;i<as.length;i++){
+            var typeName = $(as[i]).find('span')[0].innerText;
+            var href = as[i].href;
+
+            if (typeName == '司法判例' && type == 'sfpl'){
+               typeId = href.split(',')[1].substring(0,href.split(',')[1].length-1);
+            } else if (typeName == '管理支撑' && type == 'glzc') {
+                typeId = href.split(',')[1].substring(0,href.split(',')[1].length-1);
+            } else if (typeName == '横向合作' && type == 'hxhz') {
+                typeId = href.split(',')[1].substring(0,href.split(',')[1].length-1);
+            } else if (typeName == '专利服务' && type == 'zlfw') {
+                typeId = href.split(',')[1].substring(0,href.split(',')[1].length-1);
+            }
+        }
         var selectVal = $("#classificlevelId").find("option:selected").val();
 
         if (selectVal == -1) {
-            layer.msg("请选择案例密级");
+            layer.msg("请选择密级");
             return;
         }
 
-        var data = CKEDITOR.instances.ckeditor.getData();
+        var data = CKEDITOR.instances[type+'-ckeditor'].getData();
+
 
         if (data == '') {
             layer.msg('请填写案例摘要');
             return false;
         }
 
-        if ($('#typeId').val() == '') {
+        if (typeId == '' || typeId == undefined) {
             layer.msg('请选择案例类别');
             return false;
         }
 
-        var bootstrapValidator = $("#dataForm").data('bootstrapValidator');
+        var bootstrapValidator = $("#"+type+"Form").data('bootstrapValidator');
         bootstrapValidator.validate();
 
         if (!bootstrapValidator.isValid()) {
@@ -750,24 +959,23 @@
         });
 
         var params = {
-            title: $("#title").val(),
+            title: $("#"+type+"-title").val(),
             content: data,
-            classificlevelId: $("#classificlevelId").val(),
-            typeId: $("#typeId").val(),
+            classificlevelId: $("#"+type+"-classificlevelId").val(),
+            typeId: typeId,
             mids: mids,
-            id: $("#id").val(),
+            id: $("#"+type+"-id").val(),
             type: 'AL',
-            policy:$('#policy').val(),
-            mainAuthor:$('#mainAuthor').val(),
+            nationality:$('#nationality').val(),
+            caseName:$('#caseName').val(),
+            closeTime:$('#closeTime').val(),
+            finalAppeal:$('#finalAppeal').val(),
+            projectName:$('#projectName').val(),
+            projectSource:$('#projectSource').val(),
+            principal:$('#principal').val(),
             participant:$('#participant').val(),
-            policySource:$('#policySource').val(),
-            startDate:$('#startDate').val(),
-            endDate:$('#endDate').val(),
-            plaintiff:$('#plaintiff').val(),
-            defendant:$('#defendant').val(),
-            caseNum:$('#caseNum').val(),
-            judicialStatus:$('#judicialStatus').val(),
-            keyword:$('#keyword').val()
+            judicialStatus:$('judicialStatus').val(),
+            type:type
         }
 
 
@@ -842,31 +1050,35 @@
         });
     }
 
-
+    debugger
     var classificlevelId = '${info.classificlevelId!}';
 
+    var type = '${info.type}';
+
+    $('#'+type+"-id").val('${info.id}')
+
     if (classificlevelId != "") {
-        $("#classificlevelId").val(classificlevelId);
+        $("#"+type+"-classificlevelId").val(classificlevelId);
     }
 
-    CKEDITOR.instances.ckeditor.setData('${info.content!}');
-    $("#typeId").val('${info.typeId!}');
+    CKEDITOR.instances[type+'-ckeditor'].setData('${info.content!}');
+    <#--$("#typeId").val('${info.typeId!}');-->
 
-    if ('${info.typeId!}' != '') {
-        $.ajax({
-            type: "post",
-            url: "findMenuById",
-            data: {mid: '${info.typeId!}'},
-            async: false,
-            success: function (data) {
-                data = JSON.parse(data)
-                $("#select-title").text(data.typeName);
-                <@shiro.lacksPermission name="anli:save">
-                    $('#dropDown').html('<input type="text" class="form-control" readonly value="'+data.typeName+'"/>')
-                </@shiro.lacksPermission>
-            }
-        });
-    }
+    <#--if ('${info.typeId!}' != '') {-->
+    <#--    $.ajax({-->
+    <#--        type: "post",-->
+    <#--        url: "findMenuById",-->
+    <#--        data: {mid: '${info.typeId!}'},-->
+    <#--        async: false,-->
+    <#--        success: function (data) {-->
+    <#--            data = JSON.parse(data)-->
+    <#--            $("#select-title").text(data.typeName);-->
+    <#--            <@shiro.lacksPermission name="anli:save">-->
+    <#--                $('#dropDown').html('<input type="text" class="form-control" readonly value="'+data.typeName+'"/>')-->
+    <#--            </@shiro.lacksPermission>-->
+    <#--        }-->
+    <#--    });-->
+    <#--}-->
 
 
     if ('${info.id!}' != '') {
@@ -877,6 +1089,7 @@
             data: {zid: '${info.id!}', type: 'AL'},
             async: false,
             success: function (data) {
+                debugger
 
                 data = JSON.parse(data)
                 $.each(data, function () {
@@ -913,7 +1126,7 @@
                                             debugger
                                             // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
                                             viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\',\''+""+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';                                        } else {
-                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + fileId + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + mid + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                                         }
 
                                     }
@@ -925,7 +1138,10 @@
 
                             var childInput = '<div><input style="margin-top: 5px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
                             if (finalResult != -1){
-                                $("#attachment").append(childInput);
+                                var type = '${info.type}';
+                                debugger
+                                $("#"+type+"-attachment").append(childInput)
+                                // $("#attachment").append(childInput);
                             }
                         }
                     });
@@ -935,5 +1151,10 @@
         });
     }
 
+
+    $(document).ready(function () {
+        var type = '${info.type}'
+        $('#'+type+'A').tab('show');
+    })
 
 </script>

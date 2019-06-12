@@ -110,6 +110,8 @@ public class MenuController {
             case 4:
                 menuName = "公告菜单";
                 break;
+            case 5:
+                menuName = "法律法规库菜单";
         }
 
         modelAndView.addObject("menuName",menuName);

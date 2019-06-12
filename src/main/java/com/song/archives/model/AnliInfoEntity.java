@@ -22,22 +22,27 @@ public class AnliInfoEntity implements Serializable {
     @Lob
     private String content;
 
-    private String plaintiff;
-    private String defendant;
-    private String caseNum;
-    private String trialSys;
-    private String judicialStatus;
-    private String keyword;
+    private String nationality;
+    private String caseName;
+    private String closeTime;
+    private String finalAppeal;
+    private String projectName;
+    private String projectSource;
 
 
-    private String policy;
-    private String mainAuthor;
+    private String principal;
     private String participant;
-    private String policySource;
-    private String startDate;
-    private String endDate;
-    private String policyStatus;
+    private String judicialStatus;
 
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Long getId() {
         return id;
@@ -95,68 +100,60 @@ public class AnliInfoEntity implements Serializable {
         this.content = content;
     }
 
-    public String getPlaintiff() {
-        return plaintiff;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setPlaintiff(String plaintiff) {
-        this.plaintiff = plaintiff;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
-    public String getDefendant() {
-        return defendant;
+    public String getCaseName() {
+        return caseName;
     }
 
-    public void setDefendant(String defendant) {
-        this.defendant = defendant;
+    public void setCaseName(String caseName) {
+        this.caseName = caseName;
     }
 
-    public String getCaseNum() {
-        return caseNum;
+    public String getCloseTime() {
+        return closeTime;
     }
 
-    public void setCaseNum(String caseNum) {
-        this.caseNum = caseNum;
+    public void setCloseTime(String closeTime) {
+        this.closeTime = closeTime;
     }
 
-    public String getTrialSys() {
-        return trialSys;
+    public String getFinalAppeal() {
+        return finalAppeal;
     }
 
-    public void setTrialSys(String trialSys) {
-        this.trialSys = trialSys;
+    public void setFinalAppeal(String finalAppeal) {
+        this.finalAppeal = finalAppeal;
     }
 
-    public String getJudicialStatus() {
-        return judicialStatus;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setJudicialStatus(String judicialStatus) {
-        this.judicialStatus = judicialStatus;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
-    public String getKeyword() {
-        return keyword;
+    public String getProjectSource() {
+        return projectSource;
     }
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setProjectSource(String projectSource) {
+        this.projectSource = projectSource;
     }
 
-    public String getPolicy() {
-        return policy;
+    public String getPrincipal() {
+        return principal;
     }
 
-    public void setPolicy(String policy) {
-        this.policy = policy;
-    }
-
-    public String getMainAuthor() {
-        return mainAuthor;
-    }
-
-    public void setMainAuthor(String mainAuthor) {
-        this.mainAuthor = mainAuthor;
+    public void setPrincipal(String principal) {
+        this.principal = principal;
     }
 
     public String getParticipant() {
@@ -167,35 +164,11 @@ public class AnliInfoEntity implements Serializable {
         this.participant = participant;
     }
 
-    public String getPolicySource() {
-        return policySource;
+    public String getJudicialStatus() {
+        return judicialStatus;
     }
 
-    public void setPolicySource(String policySource) {
-        this.policySource = policySource;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getPolicyStatus() {
-        return policyStatus;
-    }
-
-    public void setPolicyStatus(String policyStatus) {
-        this.policyStatus = policyStatus;
+    public void setJudicialStatus(String judicialStatus) {
+        this.judicialStatus = judicialStatus;
     }
 }

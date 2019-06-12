@@ -39,6 +39,7 @@
             </li>
             <li id="data"></li>
             <li id="anli"></li>
+            <li id="lows"></li>
             <li id="expert"></li>
             <li id="announce"></li>
             <li>
@@ -134,6 +135,9 @@
                 <a href="#"><i class="fa fa-chain fa-fw"></i> 菜单管理<span class="spc_span fa arrow"></span></a>
                 <ul class="nav nav-1-level ">
                     <li>
+                        <a href="javascript:void(0)" onclick="menu(5)">法律法规菜单</a>
+                    </li>
+                    <li>
                         <a href="javascript:void(0)" onclick="menu(1)">案例菜单</a>
                     </li>
                     <li>
@@ -215,6 +219,7 @@
     var anliMenu = new Object();
     var announceMenu = new Object();
     var expertMenu = new Object();
+    var lowMenu = new Object();
     var dataTitle = '<a href="javascript:void(0)" onclick="tab(2)"><span><i class="fa fa-folder fa-fw"></i> 资料库</span><span class="spc_span fa arrow"></span></a>';
     dataMenu.title = dataTitle;
     dataMenu.id = 'data';
@@ -235,12 +240,18 @@
     expertMenu.id = 'expert';
     expertMenu.type = '3';
     expertMenu.target = 'expertList';
+    var lowTitle = '<a href="javascript:void(0)" onclick="tab(18)"><span ><i class="fa fa-suitcase fa-fw"></i> 法律法规库</span><span class="spc_span fa arrow"></span></a>';
+    lowMenu.title = lowTitle;
+    lowMenu.id = 'lows';
+    lowMenu.type = '5';
+    lowMenu.target = 'lowsList';
 
     var menuArr = [];
     menuArr.push(dataMenu);
     menuArr.push(anliMenu);
     menuArr.push(announceMenu);
     menuArr.push(expertMenu);
+    menuArr.push(lowMenu);
 
 
     menuArr.forEach(function (value, index, arr) {
@@ -273,7 +284,7 @@
                     $.each(result, function () {
                         console.log(result)
                         subHtml.push('<li>');
-                        strClick = 'type(\''+target+'\','+this.id+')'
+                        strClick = 'type1(\''+target+'\','+this.id+')'
                         subHtml.push('<a href="javascript:'+strClick+'"><span>' + this.typeName + '</span><span class="spc_span fa arrow"></span></a>');
                         subHtml.push(addSubMenu(type, this.id, levels, target));
                         subHtml.push('</li>');
@@ -291,7 +302,7 @@
     }
 
 
-    function type(target, id) {
+    function type1(target, id) {
         $("#page-wrapper").load(target + "?typeId=" + id);
     }
 

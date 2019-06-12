@@ -50,6 +50,11 @@ function tab(val) {
         $("#page-wrapper").load("GetStorageInfo")
     }
 
+    //法律法规库
+    if (val == 18) {
+        $("#page-wrapper").load("lowList")
+    }
+
 
 }
 

@@ -76,7 +76,7 @@
 </style>
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">资料库</h1>
+        <h1 class="page-header">法律法规库</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -90,7 +90,7 @@
         <div id="toolbar">
 
             <form class="form-inline">
-                <input type="hidden" id="typeId" name="typeId" value="${ziliaoInfoEntity.typeId!}"/>
+<#--                <input type="hidden" id="typeId" name="typeId" value="${ziliaoInfoEntity.typeId!}"/>-->
                 <#--<div class="form-group">-->
                     <#--<select name="condition" id="condition" class="form-control">-->
                         <#--<option value="">选择查询条件</option>-->
@@ -149,7 +149,7 @@
 
                 <@shiro.hasPermission name="datum:add">
                     <div class="form-group">
-                        <a href="javascript:void(0)" class="btn btn-info" onclick="createData()">新建</a>
+                        <a href="javascript:void(0)" class="btn btn-info" onclick="createLow()">新建</a>
                     </div>
                 </@shiro.hasPermission>
                 <@shiro.hasPermission name="datum:delete">
@@ -199,7 +199,7 @@
 <script type="text/javascript">
 
     function detailView(id) {
-        $("#page-wrapper").load("createData?zid="+id)
+        $("#page-wrapper").load("createLow?zid="+id)
     }
     
     function deleteById() {
@@ -230,9 +230,9 @@
 
     }
     
-    function createData() {
+    function createLow() {
 
-        $("#page-wrapper").load("createData")
+        $("#page-wrapper").load("createLow")
     }
 
     function exportAttach() {
