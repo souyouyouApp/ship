@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -510,66 +513,12 @@ public class UserController {
 
 
         try {
-            StorageEntity storageEntity=new StorageEntity();
-
-            List<StorageEntity> storageEntityList= (List<StorageEntity>) storageRepository.findAll();
-
-            if(storageEntityList==null||storageEntityList.size()<=0) {
-                storageEntity=new StorageEntity();
-                storageEntity.setId(1);
-                storageEntity.setTotalAmount("1TB");
-                storageEntity.setAlertAmount("900GB");
-            }else
-            {
-                storageEntity=storageEntityList.get(0);
-            }
-
-            double d0 = storageRepository.GetDataBaseSpace();
-            double d1 = storageRepository.GetFileSpaceByType(1);
-            double d2 = storageRepository.GetFileSpaceByType(2);
-            double d3 = storageRepository.GetFileSpaceByType(3);
-            double d4 = storageRepository.GetFileSpaceByType(4);
-            double d5 = storageRepository.GetFileSpaceByType(5);
-            double d6=storageRepository.GetLogSpace();
-
-            storageEntity.setDbAmount(GetStorageDesc(d0));
-
-            storageEntity.setProjectAmount(GetStorageDesc(d1));
-            storageEntity.setAnliAmount(GetStorageDesc(d2));
-            storageEntity.setZiliaoAmount(GetStorageDesc(d3));
-            storageEntity.setExpertAmount(GetStorageDesc(d4));
-            storageEntity.setGongaoAmount(GetStorageDesc(d5));
-            storageEntity.setLogAmount(GetStorageDesc(d6));
-
-            storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5+d6));
-//
-            storageRepository.save(storageEntity);
-
-
             currentUser.login(token);
             User user = (User) currentUser.getPrincipal();
 //            SecurityUtils.getSubject().getSession().setTimeout(1000);
             session.setAttribute("user", user);
 
-            if(storageEntity.getCurrentUsed().equals(storageEntity.getAlertAmount())){
-
-               //List<User>  userList=userRepository.findUsersByTypeId(1L);
-                //for(User user1:userList) {
-
-                synchronized(spaceAlertLock) {
-                    if (user.getType() == 1 && session.getAttribute("spacealert" + user.getUsername()) == null) {
-
-                        NotifyEntity notify = new NotifyEntity();
-                        notify.setContent("存储空间已经达到预警值：" + storageEntity.getAlertAmount());
-                        notify.setOperateTime(DateUtil.parseDateToStr(new Date(), DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
-                        notify.setApprover(user.getUsername());
-                        notify.setPersonal(user.getUsername());
-                        notify.setStatus(0);
-                        notifyRepository.save(notify);
-                        session.setAttribute("spacealert" + user.getUsername(), "1");
-                    }
-                }
-            }
+            UpdateStorageInfo(user, session);
             msg = SUCCESS;
         } catch (UnknownAccountException e) {
             msg = "账户不存在!";
@@ -588,6 +537,125 @@ public class UserController {
         result.put("msg", msg);
         return JSONObject.fromObject(result).toString();
 
+    }
+
+    @RequestMapping(value = "/UniformLogin")
+    @ResponseBody
+    @ArchivesLog(operationType = "UniformLogin", operationName = "认证网关登录")
+   public String UniformLogin(HttpServletRequest request, HttpSession session) {
+
+        result = new JSONObject();
+        try {
+            String username = "", password = "";
+
+            String tStrDn = request.getHeader("dnname");
+            tStrDn = new String(tStrDn.getBytes("ISO8859-1"), "GB2312");
+
+            String tStrClientIp = request.getHeader("clientip");
+
+            String tStrCardNo = request.getHeader("ResidenterCardNumber");
+            result.put("cientip", tStrClientIp);
+            result.put("dname", tStrDn);
+            result.put("cardno", tStrCardNo);
+            User user1 = userRepository.findByIdNo(tStrCardNo);
+            username = user1.getUsername();
+            password = user1.getPassword();
+
+            Subject currentUser = SecurityUtils.getSubject();
+
+            Md5Hash mh = new Md5Hash(password, username, 2);
+            UsernamePasswordToken token = new UsernamePasswordToken(username, mh.toString());
+
+            token.setRememberMe(true);
+
+
+            currentUser.login(token);
+            User user = (User) currentUser.getPrincipal();
+//            SecurityUtils.getSubject().getSession().setTimeout(1000);
+            session.setAttribute("user", user);
+
+            UpdateStorageInfo(user, session);
+            msg = SUCCESS;
+        } catch (UnknownAccountException e) {
+            msg = "账户不存在!";
+        } catch (IncorrectCredentialsException e) {
+            msg = "账户密码错误!";
+        } catch (DisabledAccountException e) {
+            msg = "账户状态异常!";
+        } catch (AuthenticationException e) {
+            logger.error("认证失败 : " + e.getMessage());
+            msg = "登录异常!";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        operationLogInfo = "用户【" + getUser().getRealName() + "】登录系统";
+
+        result.put("operationLog", operationLogInfo);
+        result.put("msg", msg);
+
+        return JSONObject.fromObject(result).toString();
+
+    }
+
+    private void UpdateStorageInfo(User user,HttpSession session) {
+        try {
+            StorageEntity storageEntity = new StorageEntity();
+
+            List<StorageEntity> storageEntityList = (List<StorageEntity>) storageRepository.findAll();
+
+            if (storageEntityList == null || storageEntityList.size() <= 0) {
+                storageEntity = new StorageEntity();
+                storageEntity.setId(1);
+                storageEntity.setTotalAmount("1TB");
+                storageEntity.setAlertAmount("900GB");
+            } else {
+                storageEntity = storageEntityList.get(0);
+            }
+
+            double d0 = storageRepository.GetDataBaseSpace();
+            double d1 = storageRepository.GetFileSpaceByType(1);
+            double d2 = storageRepository.GetFileSpaceByType(2);
+            double d3 = storageRepository.GetFileSpaceByType(3);
+            double d4 = storageRepository.GetFileSpaceByType(4);
+            double d5 = storageRepository.GetFileSpaceByType(5);
+            double d6 = storageRepository.GetLogSpace();
+
+            storageEntity.setDbAmount(GetStorageDesc(d0));
+
+            storageEntity.setProjectAmount(GetStorageDesc(d1));
+            storageEntity.setAnliAmount(GetStorageDesc(d2));
+            storageEntity.setZiliaoAmount(GetStorageDesc(d3));
+            storageEntity.setExpertAmount(GetStorageDesc(d4));
+            storageEntity.setGongaoAmount(GetStorageDesc(d5));
+            storageEntity.setLogAmount(GetStorageDesc(d6));
+
+            storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5 + d6));
+//
+            storageRepository.save(storageEntity);
+
+            if (storageEntity.getCurrentUsed().equals(storageEntity.getAlertAmount())) {
+
+                //List<User>  userList=userRepository.findUsersByTypeId(1L);
+                //for(User user1:userList) {
+
+                synchronized (spaceAlertLock) {
+                    if (user.getType() == 1 && session.getAttribute("spacealert" + user.getUsername()) == null) {
+
+                        NotifyEntity notify = new NotifyEntity();
+                        notify.setContent("存储空间已经达到预警值：" + storageEntity.getAlertAmount());
+                        notify.setOperateTime(DateUtil.parseDateToStr(new Date(), DateUtil.DATE_TIME_FORMAT_YYYYMMDD_HH_MI));
+                        notify.setApprover(user.getUsername());
+                        notify.setPersonal(user.getUsername());
+                        notify.setStatus(0);
+                        notifyRepository.save(notify);
+                        session.setAttribute("spacealert" + user.getUsername(), "1");
+                    }
+                }
+            }
+        }catch (Exception ex){
+            logger.error(ex.getMessage());
+        }
     }
 
     private String GetStorageDesc(double amounts) {

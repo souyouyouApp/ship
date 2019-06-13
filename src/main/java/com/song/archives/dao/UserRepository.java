@@ -13,6 +13,8 @@ public interface UserRepository extends CrudRepository<User,Long> {
 
     User findByUsername(String username);
 
+    User findByIdNo(String idNo);
+
     @Query(value = "select ur.id roleId,ur.identification roleName,ifnull(uu.id,0) maker,uu.id userId from role ur left join user_role uur on uur.role_id = ur.id left join (select id from user where id =:userId) uu on uu.id = uur.user_id group by ur.id",nativeQuery = true)
     List<Object> findRoleByUserId(@Param(value = "userId") Long userId);
 
@@ -30,4 +32,6 @@ public interface UserRepository extends CrudRepository<User,Long> {
 
     @Query(value = "select * from user where type=:typeId",nativeQuery = true)
     List<User> findUsersByTypeId(@Param(value = "typeId") Long roleId);
+
+
 }
