@@ -173,7 +173,7 @@
                         <a href="javascript:void(0)" onclick="review(4)">公告文件<span id="ggCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" onclick="review(7)">法律法规文件<span id="ggCnt" style="color: red;margin-left: 20px;"></span></a>
+                        <a href="javascript:void(0)" onclick="review(7)">法律法规文件<span id="flCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
                 </ul>
             </li>

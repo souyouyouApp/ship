@@ -199,7 +199,7 @@
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
 
-            <@shiro.lacksPermission name="datum:save">
+            <@shiro.lacksPermission name="low:save">
                 <script language="JavaScript" type="text/javascript">
                     $('input').attr("readonly", "readonly")
                     $('select').attr("disabled", "disabled")
@@ -213,7 +213,7 @@
             </@shiro.lacksPermission>
 
 
-            <@shiro.hasPermission name="datum:save">
+            <@shiro.hasPermission name="low:save">
                 <a href="javascript:void(0)" class="btn btn-success" onclick="createLow()">保存</a>
             </@shiro.hasPermission>
 
@@ -761,7 +761,7 @@
 
                 data = JSON.parse(data)
                 $("#select-title").text(data.typeName);
-                 <@shiro.lacksPermission name="dateum:save">
+                 <@shiro.lacksPermission name="low:save">
                     $('#dropDown').html('<input type="text" class="form-control" readonly value="'+data.typeName+'"/>')
                  </@shiro.lacksPermission>
             }
@@ -791,7 +791,7 @@
 
                             var fileType = result.fileType;
                             var mid = result.id;
-                            var viewDiv = '<@shiro.hasPermission name="datum:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
+                            var viewDiv = '<@shiro.hasPermission name="low:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
                             $.ajax({
                                 type: "post",
                                 url: "getFileAuditResult",

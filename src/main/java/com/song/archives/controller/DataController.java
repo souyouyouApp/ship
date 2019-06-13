@@ -682,7 +682,7 @@ public class DataController {
     @RequestMapping(value = "/delData")
     @ResponseBody
     String delData(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除资料【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除资料【";
 
         try{
 

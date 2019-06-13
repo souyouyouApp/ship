@@ -70,6 +70,9 @@
             if (res.ggCnt > 0){
                 $('#ggCnt').text(res.ggCnt)
             }
+            if (res.flCnt > 0){
+                $('#flCnt').text(res.flCnt)
+            }
             console.log(result)
         })
         $.post("getNotify", {}, function (result) {

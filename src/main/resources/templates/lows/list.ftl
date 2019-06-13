@@ -128,31 +128,13 @@
                     <#--</div>-->
                 <#--</@shiro.hasPermission>-->
 
-                <@shiro.hasPermission name="datum:export">
-                    <div class="form-group">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">导出
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                               <#-- <li>
-                                    <a href="javascript:void(0)" onclick="exportData()">列表数据</a>
-                                </li>-->
-                                <li>
-                                    <a href="javascript:void(0)" onclick="exportAttach()">附件打包</a>
 
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </@shiro.hasPermission>
-
-                <@shiro.hasPermission name="datum:add">
+                <@shiro.hasPermission name="low:add">
                     <div class="form-group">
                         <a href="javascript:void(0)" class="btn btn-info" onclick="createLow()">新建</a>
                     </div>
                 </@shiro.hasPermission>
-                <@shiro.hasPermission name="datum:delete">
+                <@shiro.hasPermission name="low:delete">
                 <div class="form-group">
                     <a href="javascript:void(0)" class="btn btn-danger" onclick="deleteById()">删除</a>
                 </div>
@@ -217,7 +199,7 @@
         layer.confirm("确定删除已勾选记录？", function () {
 
             var load = layer.load();
-            $.post('delData', {ids: ids.join(',')}, function (result) {
+            $.post('delLow', {ids: ids.join(',')}, function (result) {
                 result = JSON.parse(result)
                 layer.close(load);
                 if (result && result.msg != 'success') {

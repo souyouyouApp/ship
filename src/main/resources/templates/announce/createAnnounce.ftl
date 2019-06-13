@@ -337,7 +337,7 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="select"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><div class="form-group"><label>文件名</label><input class="form-control"name="fileName"placeholder="请输入文件名"/><input type="hidden"name="fileClassify"value="4"/></div><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="paperClassificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden"name="fileClassify"value="4"/><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
         $("#savePaperFile").removeAttr("disabled");
 
@@ -351,13 +351,6 @@
                validating: 'glyphicon glyphicon-refresh'
            },
            fields: {
-               fileName: {
-                   validators: {
-                       notEmpty: {
-                           message: '文件名不能为空'
-                       }
-                   }
-               },
                zrr: {
                    validators: {
                        notEmpty: {
@@ -542,7 +535,7 @@
             return;
 
         var infoLevel = $("#classificlevelId").find("option:selected").val();
-        var fileLevel = $("#classificlevel").find("option:selected").val();
+        var fileLevel = $("#paperClassificlevel").find("option:selected").val();
 
         if (fileLevel > infoLevel){
             layer.msg("文件密级不可大于案例密级");

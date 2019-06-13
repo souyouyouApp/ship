@@ -254,7 +254,7 @@ public class LowController {
     @ArchivesLog(operationType = "lows", operationName = "查询资料列表")
     @RequestMapping(value = "/lows")
     @ResponseBody
-    String datas(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
+    String lows(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                  @RequestParam(value = "searchValue",required = false) String searchValue,
                  @RequestParam(value = "typeId",required = false) Long typeId,
@@ -268,9 +268,40 @@ public class LowController {
 
 
 
+        Specification<LowInfoEntity> specification = (root, criteriaQuery, criteriaBuilder) -> {
+
+            List<Predicate> predicates = new ArrayList<>();
+            List<Predicate> predicatesWhereArr = new ArrayList<>();
+
+
+            predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
+
+
+            Predicate whereEquals = criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
+
+
+            if (StringUtils.isNotEmpty(searchValue)) {
+                predicates.add(criteriaBuilder.like(root.get("type"), "%" + searchValue + "%"));
+                predicates.add(criteriaBuilder.like(root.get("publishDept"), "%" + searchValue + "%"));
+                predicates.add(criteriaBuilder.like(root.get("content"), "%" + searchValue + "%"));
+                predicates.add(criteriaBuilder.like(root.get("keyword"), "%" + searchValue + "%"));
+                predicates.add(criteriaBuilder.like(root.get("uploader"), "%" + searchValue + "%"));
+            }
+
+            Predicate whereLike = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
+
+            List<Predicate> predicateArr = new ArrayList<>();
+
+            if (predicates.size() > 0){
+                predicateArr.add(whereLike);
+            }
+
+            return criteriaQuery.where(predicateArr.toArray(new Predicate[predicateArr.size()])).getRestriction();
+        };
+
         Page<LowInfoEntity> lows = null;
         try {
-            lows = lowRepository.findAll(pageable);
+            lows = lowRepository.findAll(specification,pageable);
             msg = SUCCESS;
         } catch (Exception e) {
             logger.error("资料列表数据:" + e.getMessage());
@@ -288,6 +319,43 @@ public class LowController {
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", json);
+        return result.toString();
+    }
+
+
+    /**
+     * 删除法律法规
+     * @param ids
+     * @return
+     */
+    @ArchivesLog(operationType = "delLow", operationName = "删除法律法规")
+    @RequestMapping(value = "/delLow")
+    @ResponseBody
+    String delData(Long[] ids) {
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除法律法规【";
+
+        try{
+
+            if (null != ids && ids.length >0){
+                for (Long id:ids){
+                    LowInfoEntity entity = lowRepository.findOne(id);
+                    operationLogInfo += entity.getType() + ",";
+                    lowRepository.delete(entity);
+
+                }
+            }
+            msg = SUCCESS;
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            msg = "delete low failed";
+
+        }
+
+
+        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
+        result.put("msg", msg);
+        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 

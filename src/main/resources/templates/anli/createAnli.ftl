@@ -92,7 +92,7 @@
 
     <div class="row">
         <ul id="myTab" class="nav nav-tabs">
-            <li><a href="#sfpl" id="sfplA" data-toggle="tab">司法判例</a></li>
+            <li class="active"><a href="#sfpl" id="sfplA" data-toggle="tab">司法判例</a></li>
             <li><a href="#glzc" id="glzcA" data-toggle="tab">管理支撑</a></li>
             <li><a href="#hxhz" id="hxhzA" data-toggle="tab">横向合作</a></li>
             <li><a href="#zlfw" id="zlfwA" data-toggle="tab">专利服务</a></li>
@@ -100,7 +100,7 @@
 
 
         <div id="myTabContent" class="tab-content">
-            <div class="tab-pane" id="sfpl">
+            <div class="tab-pane fade in active" id="sfpl">
                 <input type="hidden" id="tabType"/>
                 <div class="panel-body" style="margin-top: 30px">
                     <form class="form-horizontal" role="form" id="sfplForm">
@@ -1153,6 +1153,11 @@
 
 
 
+    var type = '${info.type}'
 
+    if (type == '' || type == undefined){
+        type = 'sfpl';
+    }
+    $('#'+type+'A').tab('show');
 
 </script>
