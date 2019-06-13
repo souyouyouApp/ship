@@ -108,9 +108,13 @@
                         <div class="form-group col-md-12">
                             <label>选择下载审核人：</label>
                             <select id="selreqDown" class="form-control">
-                                <#list users as user>
-                                    <option value="${user.username}">${user.username}</option>
-                                </#list>
+                                <#--<#list users as user>-->
+                                    <#--<option value="${user.username}">${user.username}</option>-->
+                                <#--</#list>-->
+                                    <option value="-1">请选择审核人员</option>
+                                                <#foreach user in auditUsers>
+                                <option value="${user.id?c}">${user.username!}</option>
+                                                </#foreach>
                             </select>
                         </div>
                     </form>

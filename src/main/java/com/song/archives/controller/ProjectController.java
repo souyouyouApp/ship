@@ -556,7 +556,7 @@ public class ProjectController {
         }
 
         if (pAlertHtml.length() <= 0) {
-            msg = "error";
+            msg = "success";
         }
 
         operationLogInfo = "用户【" + getUser().getRealName() + "】加载提示信息";
@@ -2273,7 +2273,8 @@ public class ProjectController {
                         //5立项时间(YYYY-MM-DD)//6立项提取通知时间(天)//7开题时间(YYYY-MM-DD)//8开题提取通知时间(天)
                         //9中期检查时间(YYYY-MM-DD)//10中期检查提前通知时间（天）//11结题时间(YYYY-MM-DD)//12结题提前通知时间（天）
                         //13验收时间(YYYY-MM-DD)//14验收提前通知时间（天）
-                        //15项目承研单位//16主管部门//17参研单位//18项目负责人//19研究内容//20项目渠道//21总经费//22研究周期//23备注
+                        //15项目承研单位//16主管部门//17参研单位//18项目负责人//19研究内容//20项目渠道//21总经费//22研究周期
+                        //23财务编号24首款25尾款//26备注
                         try {
                             ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
                             projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
@@ -2309,7 +2310,10 @@ public class ProjectController {
                             projectInfoEntity.setTotalFee(projectDatas.get(i)[21]);
 
                             projectInfoEntity.setYanjiuZhouQi(projectDatas.get(i)[22]);
-                            projectInfoEntity.setProRemark(projectDatas.get(i)[23]);
+                            projectInfoEntity.setFinanceNo(projectDatas.get(i)[23]);
+                            projectInfoEntity.setFirstFee(projectDatas.get(i)[24]);
+                            projectInfoEntity.setEndFee(projectDatas.get(i)[25]);
+                            projectInfoEntity.setProRemark(projectDatas.get(i)[26]);
 
                             ProjectInfoEntity addProject = projectRepository.save(projectInfoEntity);
                             ChengYanDanWeiEntity chengYanDanWeiEntity = new ChengYanDanWeiEntity();

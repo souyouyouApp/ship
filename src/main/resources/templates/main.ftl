@@ -239,7 +239,7 @@
 
             result = JSON.parse(result);
 
-            if (result.msg == "success") {
+            if (result.msg == "success"&&result.msg.length>0) {
 
                 $("#alertCenterDiv").html(result.data);
 

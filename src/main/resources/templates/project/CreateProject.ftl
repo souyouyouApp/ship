@@ -48,7 +48,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label>项目密级</label>
-                                        <select class="form-control" id="classificlevelId" name="classificlevelId">
+                                        <select class="form-control" id="classificlevelId" name="classificlevelId" onchange="refreshUsrList()">
                                         <#if (levelId >= 4)> <option value="4">机密</option></#if>
                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
@@ -476,9 +476,15 @@
         $("#page-wrapper").load("ProjectList")
     }
 
+   function refreshUsrList() {
 
-    function LoadUsers() {
-        $.post("getlallusers", {}, function (result) {
+       var classicLevel = $("#classificlevelId").val();
+
+       LoadUsers(classicLevel);
+   }
+
+    function LoadUsers(clv) {
+        $.post("getusersByClassLevel", {cl:clv}, function (result) {
 
             result = JSON.parse(result);
             var htmlstr = "";
@@ -489,9 +495,13 @@
 
             if (htmlstr != null && htmlstr.length > 0) {
                 //$("#proLeaders").innerHTML(htmlstr);
+                $("#proLeaders").html("")
                 $("#proLeaders").append(htmlstr);
                 $("#proLeaders").val("");
+                $("#proJoiners").html("");
                 $("#proJoiners").append(htmlstr);
+                $("#proCompleteors").html("");
+
                 $("#proCompleteors").append(htmlstr);
                 $('#proJoiners').selectpicker();
                 $('#proJoiners').selectpicker("refresh");
@@ -532,7 +542,7 @@
     }
 
     $(document).ready(function () {
-        LoadUsers();
+        LoadUsers(-1);
         InitDateCrt();
         $("#classificlevelId").val("");
     })

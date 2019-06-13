@@ -430,7 +430,7 @@ public class UserController {
     @RequestMapping(value = "/getlallusers")
     @ResponseBody
     @ArchivesLog(operationType = "getlallusers", operationName = "查询所有用户信息")
-    String GetAllUsers() {
+   public String GetAllUsers() {
 
         Specification<User> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
@@ -453,6 +453,38 @@ public class UserController {
         return JSONArray.fromObject(users).toString();
     }
 
+
+    @RequestMapping(value = "/getusersByClassLevel")
+    @ResponseBody
+    @ArchivesLog(operationType = "getusersByClassLevel", operationName = "根据密级查询所有用户信息")
+    public String GetUsersByClassLevel(@RequestParam(value = "cl") Integer cl) {
+
+        Specification<User> specification = (root, criteriaQuery, criteriaBuilder) -> {
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            Path<Integer> usertype = root.get("type");
+
+
+            Predicate predicate = criteriaBuilder.equal(usertype.as(Integer.class), 0);
+
+            Path<Integer> userClassLevel = root.get("permissionLevel");
+
+            Predicate predicate1 = criteriaBuilder.greaterThanOrEqualTo(userClassLevel.as(Integer.class), cl);
+
+            predicates.add(predicate);
+            predicates.add(predicate1);
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            //return predicate;
+        };
+
+
+        Iterable<User> users = userRepository.findAll(specification);
+
+
+        return JSONArray.fromObject(users).toString();
+    }
 
     /**
      * 用户登录
