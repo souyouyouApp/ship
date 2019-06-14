@@ -171,6 +171,14 @@
 
         var form = new FormData(document.getElementById("pwdForm"));
 
+        var pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{8,30}');
+
+
+        if (!pwdRegex.test($("#newPwd").val())) {
+            layer.msg("密码复杂度太低（密码中必须包含大字母、数字、特殊字符），长度最低为8位！");
+            return;
+        }
+
         if ($('#newPwd').val() != $('#repeatPwd').val()){
             layer.msg("新密码和确认密码不一致");
             return;

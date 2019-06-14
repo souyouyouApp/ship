@@ -115,6 +115,21 @@
 
     })
 
+function checkPwdDate() {
+    $.post("checkPwdDate",{},function(result){
+        result = JSON.parse(result);
+        if(result && (result.msg == 'change')){
+           //window.location.href = "index";
+            layer.alert("密码使用周期超过七天，请及时更改！");
+        }
+        else
+        {
+           // layer.alert("密码OK！");
+        }
+    });
+}
+
+checkPwdDate();
 
 </script>
 

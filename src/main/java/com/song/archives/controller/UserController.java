@@ -41,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -263,6 +264,7 @@ public class UserController {
 
             User user = getUser();
             user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, repeatPwd, getUser().getUsername(), 2).toHex());
+            user.setLastUpdatepwd(new Date());
             userRepository.save(user);
             msg = SUCCESS;
 
@@ -294,8 +296,17 @@ public class UserController {
         user.setAvailable(true);
 
         try {
-            userRepository.save(user);
-            msg = "success";
+            User existUser= userRepository.findByUsername(user.getUsername());
+            if(existUser!=null){
+                msg="用户名已经存在";
+                operationLogInfo = "用户【" + getUser().getRealName() + "】新建用户【" + user.getRealName()+"】,用户名已经存在";
+            }else {
+                user.setLastUpdatepwd(new Date());
+                userRepository.save(user);
+                operationLogInfo = "用户【" + getUser().getRealName() + "】新建用户【" + user.getRealName()+"】成功";
+                msg = "success";
+            }
+
         } catch (Exception e) {
             msg = "save user failed";
         }
@@ -489,6 +500,36 @@ public class UserController {
         return JSONArray.fromObject(users).toString();
     }
 
+
+    @RequestMapping(value = "/checkPwdDate")
+    @ResponseBody
+    public String checkPwdDate() {
+
+        User user = getUser();
+
+        Calendar aCalendar = Calendar.getInstance();
+        aCalendar.setTime(user.getLastUpdatepwd());
+        int day1 = aCalendar.get(Calendar.DAY_OF_YEAR);
+        int year1 = aCalendar.get(Calendar.YEAR);
+        aCalendar.setTime(new Date());
+        int day2 = aCalendar.get(Calendar.DAY_OF_YEAR);
+        int year2 = aCalendar.get(Calendar.YEAR);
+        int days = day2 - day1;
+
+        result = new JSONObject();
+
+        if (year2 > year1) {
+            result.put("msg", "change");
+        } else {
+            if (days > 7) {
+                result.put("msg", "change");
+            } else {
+                result.put("msg", "no");
+            }
+        }
+        return JSONObject.fromObject(result).toString();
+    }
+
     /**
      * 用户登录
      *
@@ -513,17 +554,58 @@ public class UserController {
 
 
         try {
+
             currentUser.login(token);
             User user = (User) currentUser.getPrincipal();
 //            SecurityUtils.getSubject().getSession().setTimeout(1000);
-            session.setAttribute("user", user);
 
-            UpdateStorageInfo(user, session);
-            msg = SUCCESS;
+            if(user.getPwdErrorTime()>=5) {
+                long nd = 1000 * 24 * 60 * 60;
+                long nh = 1000 * 60 * 60;
+                long nm = 1000 * 60;
+                // long ns = 1000;
+                // 获得两个时间的毫秒时间差异
+                long diff = new Date().getTime()-user.getLastPwdLockTime().getTime();
+                // 计算差多少天
+                //long day = diff / nd;
+                // 计算差多少小时
+                //long hour = diff % nd / nh;
+                long min = diff % nd % nh / nm;
+
+                if(min<=10){
+                    msg = "账号已经锁定，请10分钟后重试!";
+                }else
+                {
+                    user.setPwdErrorTime(0);
+                    userRepository.save(user);
+
+                    session.setAttribute("user", user);
+
+                    UpdateStorageInfo(user, session);
+
+                    msg = SUCCESS;
+                }
+            }else {
+
+                session.setAttribute("user", user);
+
+                UpdateStorageInfo(user, session);
+
+                msg = SUCCESS;
+            }
         } catch (UnknownAccountException e) {
             msg = "账户不存在!";
         } catch (IncorrectCredentialsException e) {
-            msg = "账户密码错误!";
+            User user = userRepository.findByUsername(username);
+            int errorTime=user.getPwdErrorTime();
+            user.setPwdErrorTime(errorTime+1);
+            if(user.getPwdErrorTime()>=5){
+                msg = "账户密码错误超过5次，请十分钟后重试!";
+                user.setLastPwdLockTime(new Date());
+                userRepository.save(user);
+            }else {
+                msg = "账户密码错误!";
+            }
         } catch (DisabledAccountException e) {
             msg = "账户状态异常!";
         } catch (AuthenticationException e) {
@@ -531,7 +613,7 @@ public class UserController {
             msg = "登录异常!";
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】登录系统";
+       // operationLogInfo = "用户【" + getUser().getRealName() + "】登录系统";
 
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);

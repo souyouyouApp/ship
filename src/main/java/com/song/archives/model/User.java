@@ -39,7 +39,19 @@ public class User implements Serializable{
     @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate = new Date();
+
+    @Column(name = "lastupdate_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdatepwd=new Date();
+
     private String idNo;
+
+    private int pwdErrorTime;
+
+    private Date lastPwdLockTime;
+
+
+
 
     public String getIdNo() {
         return idNo;
@@ -160,5 +172,29 @@ public class User implements Serializable{
                 ", 描述信息:'" + description + '\'' +
                 ", 职务:'" + positions + '\'' +
                 '】';
+    }
+
+    public Date getLastUpdatepwd() {
+        return lastUpdatepwd;
+    }
+
+    public void setLastUpdatepwd(Date lastUpdatepwd) {
+        this.lastUpdatepwd = lastUpdatepwd;
+    }
+
+    public int getPwdErrorTime() {
+        return pwdErrorTime;
+    }
+
+    public void setPwdErrorTime(int pwdErrorTime) {
+        this.pwdErrorTime = pwdErrorTime;
+    }
+
+    public Date getLastPwdLockTime() {
+        return lastPwdLockTime;
+    }
+
+    public void setLastPwdLockTime(Date lastPwdLockTime) {
+        this.lastPwdLockTime = lastPwdLockTime;
     }
 }
