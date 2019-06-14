@@ -276,6 +276,7 @@
                         '<input type="hidden" id="id" name="id" value="'+id+'"/> '+
                 '<div class="form-group"><label>用户名</label><input class="form-control" name="username" id="username" value="'+username+'" placeholder="请输入用户名" />' +
                 '</div><div class="form-group"><label>真实姓名</label><input class="form-control" name="realName" id="realName" value="'+realName+'" placeholder="请输入真实姓名" />' +
+                '</div><div class="form-group"><label>证件号码</label><input class="form-control" name="idNo" id="idNo" value="'+idNo+'" placeholder="请输入证件号码" />' +
                 '</div><div class="form-group"><label>密码</label><input class="form-control" type="password" name="password" id="password" placeholder="请输入密码" />' +
                 '</div><div class="form-group"><label for="select">职务</label><select id="positions" name="positions" value="'+positions+'" class="form-control">' +
                 '<option value="-1">请选择职务</option><option value="1">主任</option><option value="2">处长</option><option value="3">助理</option><option value="4">工程师</option></select></div>' +

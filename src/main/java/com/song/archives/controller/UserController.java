@@ -539,32 +539,190 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    public String test(HttpServletRequest request){
+
+        JSONObject resJson = new JSONObject();
+
+        try {
+            String tStrDN = request.getHeader("dnname"); //用户证书主题
+            if(tStrDN==null){
+                tStrDN = "";
+            }else{
+                tStrDN = new String(tStrDN.getBytes("ISO8859-1"),"GB2312"); //由于DN中可能存在中文,所以对DN进行转码
+            }
+            String tStrSN = request.getHeader("serialnumber");//用户证书序列号
+            if(tStrSN == null){
+                tStrSN = "";
+            }
+            String tStrIssuerDN = request.getHeader("issuerdn");//用户证书颁发者主题
+            if(tStrIssuerDN == null){
+                tStrIssuerDN = "";
+            }else{
+                tStrIssuerDN = new String(tStrIssuerDN.getBytes("ISO8859-1"),"GB2312"); //由于IssuerDN中可能存在中文,所以对DN进行转码
+            }
+            String tStrNotBefore = request.getHeader("notbefore");//证书起始有效期
+            if(tStrNotBefore == null){
+                tStrNotBefore = "";
+            }
+            String tStrNotAfter = request.getHeader("notafter");//证书终止有效期
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
+            String tStrCertCode = request.getHeader("certinfo");//证书Baes64编码
+            if(tStrCertCode == null){
+                tStrCertCode = "";
+            }
+            String tStrClientIP = request.getHeader("clientip");//取用户客户端IP
+            if(tStrClientIP == null){
+                tStrClientIP = "";
+            }
+            String tStrPrivilege = request.getHeader("privilege");//取用户权限
+            if(tStrPrivilege==null){
+                tStrPrivilege = "";
+            }else{
+                tStrPrivilege = new String(tStrPrivilege.getBytes("ISO8859-1"),"GB2312"); //由于权限中可能存在中文,所以对权限信息进行转码
+            }
+            String tStrServicelist = request.getHeader("servicelist");//取用户权限
+            if(tStrServicelist==null){
+                tStrServicelist = "";
+            }else{
+                tStrServicelist = new String(tStrServicelist.getBytes("ISO8859-1"),"GB2312"); //用户可访问应用列表
+            }
+            String tStrResidenterCardNumber = request.getHeader("ResidenterCardNumber");//扩展中的身份证号
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
+            String tStrEmail = request.getHeader("email");//扩展中的邮箱
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
+            String tStrIP = request.getHeader("SubjectAltName.IP");//扩展中的IP
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
+
+            resJson.put("tStrDN",tStrDN);
+            resJson.put("tStrSN",tStrSN);
+            resJson.put("tStrIssuerDN",tStrIssuerDN);
+            resJson.put("tStrNotBefore",tStrNotBefore);
+            resJson.put("tStrNotAfter",tStrNotAfter);
+            resJson.put("tStrCertCode",tStrCertCode);
+            resJson.put("tStrClientIP",tStrClientIP);
+            resJson.put("tStrPrivilege",tStrPrivilege);
+            resJson.put("tStrServicelist",tStrServicelist);
+            resJson.put("tStrResidenterCardNumber",tStrResidenterCardNumber);
+            resJson.put("tStrEmail",tStrEmail);
+            resJson.put("tStrIP",tStrIP);
+
+
+
+
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+
+        return resJson.toString();
+    }
+
     @RequestMapping(value = "/UniformLogin")
     @ResponseBody
     @ArchivesLog(operationType = "UniformLogin", operationName = "认证网关登录")
-   public String UniformLogin(HttpServletRequest request, HttpSession session) {
+   public ModelAndView UniformLogin(HttpServletRequest request, HttpSession session) {
 
+
+        ModelAndView mav = new ModelAndView("index");
         result = new JSONObject();
         try {
-            String username = "", password = "";
+            String tStrDN = request.getHeader("dnname"); //用户证书主题
+            if(tStrDN==null){
+                tStrDN = "";
+            }else{
+                tStrDN = new String(tStrDN.getBytes("ISO8859-1"),"GB2312"); //由于DN中可能存在中文,所以对DN进行转码
+            }
+            String tStrSN = request.getHeader("serialnumber");//用户证书序列号
+            if(tStrSN == null){
+                tStrSN = "";
+            }
+            String tStrIssuerDN = request.getHeader("issuerdn");//用户证书颁发者主题
+            if(tStrIssuerDN == null){
+                tStrIssuerDN = "";
+            }else{
+                tStrIssuerDN = new String(tStrIssuerDN.getBytes("ISO8859-1"),"GB2312"); //由于IssuerDN中可能存在中文,所以对DN进行转码
+            }
+            String tStrNotBefore = request.getHeader("notbefore");//证书起始有效期
+            if(tStrNotBefore == null){
+                tStrNotBefore = "";
+            }
+            String tStrNotAfter = request.getHeader("notafter");//证书终止有效期
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
+            String tStrCertCode = request.getHeader("certinfo");//证书Baes64编码
+            if(tStrCertCode == null){
+                tStrCertCode = "";
+            }
+            String tStrClientIP = request.getHeader("clientip");//取用户客户端IP
+            if(tStrClientIP == null){
+                tStrClientIP = "";
+            }
+            String tStrPrivilege = request.getHeader("privilege");//取用户权限
+            if(tStrPrivilege==null){
+                tStrPrivilege = "";
+            }else{
+                tStrPrivilege = new String(tStrPrivilege.getBytes("ISO8859-1"),"GB2312"); //由于权限中可能存在中文,所以对权限信息进行转码
+            }
+            String tStrServicelist = request.getHeader("servicelist");//取用户权限
+            if(tStrServicelist==null){
+                tStrServicelist = "";
+            }else{
+                tStrServicelist = new String(tStrServicelist.getBytes("ISO8859-1"),"GB2312"); //用户可访问应用列表
+            }
+            String tStrResidenterCardNumber = request.getHeader("ResidenterCardNumber");//扩展中的身份证号
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
+            String tStrEmail = request.getHeader("email");//扩展中的邮箱
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
+            String tStrIP = request.getHeader("SubjectAltName.IP");//扩展中的IP
+            if(tStrNotAfter == null){
+                tStrNotAfter = "";
+            }
 
-            String tStrDn = request.getHeader("dnname");
-            tStrDn = new String(tStrDn.getBytes("ISO8859-1"), "GB2312");
+            logger.info("tStrDN:"+tStrDN);
+            logger.info("tStrSN:"+tStrSN);
+            logger.info("tStrIssuerDN:"+tStrIssuerDN);
+            logger.info("tStrNotBefore:"+tStrNotBefore);
+            logger.info("tStrNotAfter:"+tStrNotAfter);
+            logger.info("tStrCertCode:"+tStrCertCode);
+            logger.info("tStrClientIP:"+tStrClientIP);
+            logger.info("tStrPrivilege:"+tStrPrivilege);
+            logger.info("tStrServicelist:"+tStrServicelist);
+            logger.info("tStrResidenterCardNumber:"+tStrResidenterCardNumber);
+            logger.info("tStrEmail:"+tStrEmail);
+            logger.info("tStrIP:"+tStrIP);
 
-            String tStrClientIp = request.getHeader("clientip");
+            if (null == tStrResidenterCardNumber || tStrResidenterCardNumber.equals("")){
+                mav = new ModelAndView("login");
+                logger.error("网关授权认证未通过,证件号码为空");
+                return mav;
+            }
 
-            String tStrCardNo = request.getHeader("ResidenterCardNumber");
-            result.put("cientip", tStrClientIp);
-            result.put("dname", tStrDn);
-            result.put("cardno", tStrCardNo);
-            User user1 = userRepository.findByIdNo(tStrCardNo);
-            username = user1.getUsername();
-            password = user1.getPassword();
+            User user1 = userRepository.findByIdNo(tStrResidenterCardNumber);
+
+
+            if (null == user1){
+                mav = new ModelAndView("login");
+                logger.error("网关授权认证未通过,未查找与【"+tStrResidenterCardNumber+"】到匹配的用户信息");
+                return mav;
+            }
 
             Subject currentUser = SecurityUtils.getSubject();
 
-            Md5Hash mh = new Md5Hash(password, username, 2);
-            UsernamePasswordToken token = new UsernamePasswordToken(username, mh.toString());
+            UsernamePasswordToken token = new UsernamePasswordToken(user1.getUsername(), user1.getPassword());
 
             token.setRememberMe(true);
 
@@ -589,12 +747,7 @@ public class UserController {
             e.printStackTrace();
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】登录系统";
-
-        result.put("operationLog", operationLogInfo);
-        result.put("msg", msg);
-
-        return JSONObject.fromObject(result).toString();
+        return mav;
 
     }
 

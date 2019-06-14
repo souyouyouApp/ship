@@ -62,6 +62,7 @@ public class MsgController {
     @Autowired
     private NotifyRepository notifyRepository;
 
+
     @ArchivesLog(operationType = "msgGroupList" , operationName = "发件页面")
     @RequestMapping("msgGroupList")
     public ModelAndView newMessage(){

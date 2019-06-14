@@ -9,7 +9,7 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
 
-    <title>知识共享管理平台</title>
+    <title>知识共享管理平台 </title>
 
     <!-- Bootstrap Core CSS -->
     <link href="static/css/bootstrap.min.css" rel="stylesheet"/>
@@ -70,7 +70,10 @@
             });
         }
 
-        UniformLogin();
+        // UniformLogin();
+
+        var header = '${header}';
+        debugger
         
     </script>
 
