@@ -32,7 +32,7 @@
 
     <br>
 
-
+    <h4>日志保存时长： <input type="number" value="6"> 月
 
 </div>
 <h5>空间占用明细如下表所示：</h5>
@@ -40,24 +40,24 @@
     <thead>
     <tr>
     <#--<th data-field="id" data-checkbox="true"></th>-->
-        <th>MYSQL数据库大小</th>
-        <th>项目文件大小</th>
-        <th>案例库文件大小</th>
-        <th>资料库文件大小</th>
-        <th>专家库文件大小</th>
-        <th>公告文件大小</th>
+        <#--<th>MYSQL数据库大小</th>-->
+        <#--<th>项目文件大小</th>-->
+        <#--<th>案例库文件大小</th>-->
+        <#--<th>资料库文件大小</th>-->
+        <#--<th>专家库文件大小</th>-->
+        <#--<th>公告文件大小</th>-->
         <th>日志空间大小</th>
     </tr>
     </thead>
 
     <tr>
     <#--<th data-field="id" data-checkbox="true"></th>-->
-        <td>${storageinfo.dbAmount}</td>
-        <td>${storageinfo.projectAmount}</td>
-        <td>${storageinfo.anliAmount}</td>
-        <td>${storageinfo.ziliaoAmount}</td>
-        <td>${storageinfo.expertAmount}</td>
-        <td>${storageinfo.gongaoAmount}</td>
+        <#--<td>${storageinfo.dbAmount}</td>-->
+        <#--<td>${storageinfo.projectAmount}</td>-->
+        <#--<td>${storageinfo.anliAmount}</td>-->
+        <#--<td>${storageinfo.ziliaoAmount}</td>-->
+        <#--<td>${storageinfo.expertAmount}</td>-->
+        <#--<td>${storageinfo.gongaoAmount}</td>-->
         <td>${storageinfo.logAmount}</td>
     </tr>
     <tbody>
