@@ -98,6 +98,19 @@ public class LogAspect {
         viewNames.add("UpdateSpaceAmount");
         viewNames.add("UpdateAlertAmount");
         viewNames.add("UpLoadProjectFiles");
+
+
+        viewNames.add("createLow");
+        viewNames.add("lows");
+        viewNames.add("delLow");
+
+        viewNames.add("delExpert");
+        viewNames.add("createExpert");
+        viewNames.add("importExpert");
+        viewNames.add("experts");
+        viewNames.add("logs");
+
+
     }
 
     private static Object OperationLogLock=new Object();
@@ -107,7 +120,8 @@ public class LogAspect {
     @Autowired
     private OperationRepository operationRepository;
 
-    private OperationLog operationLog = null;
+    @Autowired
+    private OperationLog operationLog;
 
     User user = null;
 
@@ -121,17 +135,20 @@ public class LogAspect {
 
     @Before("operation()")
     public void before(JoinPoint joinPoint) throws Throwable {
-
+        operationLog.setId(null);
+        operationLog.setOperationBefore(null);
+        operationLog.setOperationAfter(null);
         user = (User) getHttpServletRequest().getSession().getAttribute("user");
+        Object clientIp = getHttpServletRequest().getSession().getAttribute("clientIp");
 
-        operationLog = new OperationLog();
-        operationLog.setOperationIp(getRemortIP(getHttpServletRequest()));
+//        operationLog = new OperationLog();
         operationLog.setOperationStartTime(dateFormat.format(System.currentTimeMillis()));
         operationLog.setOperationInput(JSONObject.fromObject(getHttpServletRequest().getParameterMap()).toString());
 
         if (joinPoint.getSignature().getName().equals("sign_out")) {
             operationLog.setOperationUserId(user.getId());
             operationLog.setOperationUserName(user.getUsername());
+            operationLog.setOperationIp(clientIp==null?null:clientIp.toString());
             operationLog.setOperationDescrib("用户【" + user.getRealName() + "】退出系统");
             operationLog.setOperationResult("成功");
         }
@@ -169,7 +186,6 @@ public class LogAspect {
         operationLog.setOperationName(operationName);
         operationLog.setOperationType(operationType);
 
-
         if (user != null) {
             operationLog.setOperationUserId(user.getId());
             operationLog.setOperationUserName(user.getUsername());
@@ -184,11 +200,15 @@ public class LogAspect {
 
     @AfterReturning(returning = "ret", pointcut = "operation()")
     public void afterReturn(JoinPoint joinPoint, Object ret) throws Throwable {
-
+        String methodName = joinPoint.getSignature().getName();
         try {
 
 
-            String methodName = joinPoint.getSignature().getName();
+            Object clientIp = getHttpServletRequest().getSession().getAttribute("clientIp");
+
+            if (clientIp != null){
+                operationLog.setOperationIp(clientIp.toString());
+            }
 
             if (methodName.equals("sign_out")) {
 
@@ -197,14 +217,17 @@ public class LogAspect {
                 }else {
                     operationLog.setOperationOutPut(ret.toString());
                 }
-            } else {
+            } else if (viewNames.contains(methodName)){
 
                 JSONObject retObj = JSONObject.fromObject(ret);
 
                 if (retObj != null && retObj.containsKey("operationLog")) {
                     operationLog.setOperationDescrib(retObj.getString("operationLog"));
                     operationLog.setOperationResult(retObj.getString("msg").equals("success")?"成功":"失败");
-                    operationLog.setOperationOutPut(JSONObject.fromObject(ret).toString());
+                    if (viewNames.contains(methodName)){
+                        operationLog.setOperationOutPut(JSONObject.fromObject(ret).toString());
+                    }
+
                 }
             }
 
@@ -215,6 +238,7 @@ public class LogAspect {
             }
 
         }catch (Exception e){
+            logger.error("异常方法："+methodName);
             logger.error("记录日志 ERROR:" + e.getMessage());
         }
 

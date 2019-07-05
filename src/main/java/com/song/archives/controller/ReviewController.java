@@ -62,7 +62,7 @@ public class ReviewController {
     private AuditInfoRepository auditInfoRepository;
 
 
-    @ArchivesLog(operationType = "auditCnt", operationName = "查询带审核文件")
+    @ArchivesLog(operationType = "auditCnt", operationName = "查询待审核文件")
     @RequestMapping(value = "/auditCnt")
     @ResponseBody
     String auditCnt() {
@@ -153,7 +153,7 @@ public class ReviewController {
         }
 
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】审核文件【"+fileName+ "】,审核结果【"+content==null?"审核通过":"审核拒绝,拒绝理由："+content+"】";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】审核文件【"+fileName+ "】,审核结果【"+content==null?"审核通过":"审核拒绝,拒绝理由："+content+"】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -167,7 +167,7 @@ public class ReviewController {
     String deleteById(@RequestParam(value = "fileId") Long fileId) {
 
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除文件【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除文件【";
         FileInfoEntity fileInfoEntity = null;
         try{
             fileInfoEntity = fileInfoRepository.findOne(fileId);
@@ -196,7 +196,7 @@ public class ReviewController {
     String delNotify(@RequestParam(value = "nId") Long nId) {
 
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除通知信息【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除通知信息【";
         NotifyEntity notifyEntity = null;
         try{
             notifyEntity = notifyRepository.findOne(nId);

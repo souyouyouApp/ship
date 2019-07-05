@@ -119,6 +119,8 @@ public class ExpertController {
 
         result = new JSONObject();
 
+        String operateType = "";
+
 
         try {
             ExpertInfoEntity expertInfoEntity;
@@ -126,11 +128,13 @@ public class ExpertController {
 
             if (null == id) {
                 expertInfoEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-
+                operateType = "新建专家";
             } else {
                 infoEntity = expertRepository.findOne(id);
                 expertInfoEntity.setPic(infoEntity.getPic());
                 expertInfoEntity.setId(id);
+                operateType = "更新专家";
+
             }
 
 
@@ -148,7 +152,7 @@ public class ExpertController {
             msg = "IOException";
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】执行创建专家信息操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】"+operateType;
         result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
 
@@ -353,7 +357,7 @@ public class ExpertController {
         }
 
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】执行查询专家列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询专家列表";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(datas));

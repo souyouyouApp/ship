@@ -77,12 +77,12 @@ public class KeyWordController {
         try {
             keyWordRepository.save(keywordInfoEntity);
             result.put("msg", "ok");
-            operationLogInfo = "用户【" + getUser().getUsername() + "】对" + map.get(mid) + "进行添加标签[" + keywords + "]成功";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】对" + map.get(mid) + "添加标签[" + keywords + "]成功";
 
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             result.put("msg", "failed");
-            operationLogInfo = "用户【" + getUser().getUsername() + "】对" + map.get(mid) + "进行添加标签[" + keywords + "]失败";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】对" + map.get(mid) + "添加标签[" + keywords + "]失败";
         }
 
         result.put("operationLog", operationLogInfo);

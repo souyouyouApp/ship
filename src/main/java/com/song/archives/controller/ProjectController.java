@@ -1001,7 +1001,7 @@ public class ProjectController {
         List<ReceivedLogEntity> receivedLogEntityList = receiveLogRepository.findAll(specification, pageable);
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目[" + projectInfoEntity.getProName() + "]已收账款列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目[" + projectInfoEntity.getProName() + "]已收账款列表操作";
         result.put("msg", "success");
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(receivedLogEntityList));
@@ -1035,7 +1035,7 @@ public class ProjectController {
         List<YantaoLogEntity> yantaoLogEntityList = yantaoLogRepository.findAll(specification, pageable);
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目[" + projectInfoEntity.getProName() + "]研讨记录列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目[" + projectInfoEntity.getProName() + "]研讨记录列表操作";
         result.put("msg", "ok");
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(yantaoLogEntityList));
@@ -1069,7 +1069,7 @@ public class ProjectController {
 
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目[" + projectInfoEntity.getProName() + "]催收列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目[" + projectInfoEntity.getProName() + "]催收列表操作";
         result.put("msg", "success");
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(cuishouLogEntityList));
@@ -1099,7 +1099,7 @@ public class ProjectController {
 
 
         List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
-        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目数量操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目数量";
         result.put("msg", "success");
         result.put("data", projectInfoEntities.size());
 
@@ -1335,7 +1335,7 @@ public class ProjectController {
             result.put("msg", "error");
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目列表";
 
         result.put("operationLog", operationLogInfo);
 
@@ -1774,7 +1774,7 @@ public class ProjectController {
                                    @RequestParam(value = "attachFileId", defaultValue = "-1") long attachFileId) {
         result = new JSONObject();
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne((long) proid);
-        operationLogInfo = "用户【" + getUser().getRealName() + "】进行查询项目附件列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目附件列表";
         Page<FileInfoEntity> filelist = null;
         int classiclevel = getUser().getPermissionLevel() == null ? 1 : getUser().getPermissionLevel();
 
@@ -1954,11 +1954,11 @@ public class ProjectController {
                 projectInfoEntity.setReceivedFee(receiveNum);
                 projectInfoEntity.setNoreceivedFee(Double.parseDouble(projectInfoEntity.getTotalFee()) - projectInfoEntity.getReceivedFee());
                 projectRepository.save(projectInfoEntity);
-                operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "成功";
+                operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "成功";
             }
 
         } catch (Exception ex) {
-            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "失败";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "失败";
             logger.error(ex.getMessage());
             msg = "error";
         }
@@ -1980,11 +1980,11 @@ public class ProjectController {
             yantaoLogEntity.setCreateTime(Timestamp.valueOf(myFmt2.format(new Date())));
             yantaoLogRepository.save(yantaoLogEntity);
 
-            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]研讨记录成功";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]研讨记录成功";
         } catch (Exception ex) {
             msg = "error";
             logger.error(ex.getMessage());
-            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]研讨记录失败";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]研讨记录失败";
         }
 
 
@@ -2028,11 +2028,11 @@ public class ProjectController {
                 cuishouLogEntity.setJingbanrenId(jingbanName);
                 cuishouLogEntity.setJingbanrenName(userRepository.findOne(Long.parseLong(jingbanName)).getUsername());
                 cuishouLogRepository.save(cuishouLogEntity);
-                operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "成功";
+                operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "成功";
             }
 
         } catch (Exception ex) {
-            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "失败";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "失败";
             logger.error(ex.getMessage());
             msg = "error";
         }
@@ -2083,7 +2083,7 @@ public class ProjectController {
                               @RequestParam(value = "phaseid") Long phaseid,
                               @RequestParam(value = "editFileId", required = false) Long editFileId) {
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加纸质文件操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】添加纸质文件";
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
         msg = "success";
         try {
@@ -2138,7 +2138,7 @@ public class ProjectController {
             }
         } catch (Exception ex) {
             msg = "error";
-            operationLogInfo = "用户【" + getUser().getRealName() + "】进行添加纸质文件操作发生异常";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】添加纸质文件发生异常";
         }
 
 

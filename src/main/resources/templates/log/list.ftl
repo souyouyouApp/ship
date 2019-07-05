@@ -26,8 +26,8 @@
                 </div>
                 &nbsp;
                 <div class="form-group">
-                    <span>操作信息: </span>
-                    <input name="operationDetail" class="form-control w70" type="text" placeholder="操作信息"/>
+                    <span>操作内容: </span>
+                    <input name="operationDetail" class="form-control w70" type="text" placeholder="操作内容"/>
                 </div>
                 &nbsp;
                 <div class="form-group">

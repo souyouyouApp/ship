@@ -303,7 +303,7 @@ public class AnliController {
 
         JSONArray json = JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】执行查询案例列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询案例列表";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", json);

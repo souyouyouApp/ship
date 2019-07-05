@@ -1,5 +1,6 @@
 package com.song;
 
+import com.song.archives.model.OperationLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -57,6 +58,11 @@ public class Application extends SpringBootServletInitializer {
 		});
 	}
 
+	@Bean(name="operationLog")
+//    @Scope("request")
+	public OperationLog generateDemo() {
+		return new OperationLog();
+	}
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {

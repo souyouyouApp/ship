@@ -27,6 +27,8 @@
     <!--[if lt IE 9]>
     <script src="static/js/html5shiv.js"></script>
     <script src="static/js/respond.min.js"></script>
+    <script src="static/js/layer.js"></script>
+
     <![endif]-->
 
 </head>
@@ -43,13 +45,14 @@
                         <form id="loginForm">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="请输入用户名" name="username" type="text" autofocus="autofocus" value="superadmin" required="required"/>
+                                    <input class="form-control" placeholder="请输入用户名" name="username" type="text" autofocus="autofocus" required="required"/>
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="请输入密码" name="password" type="password" value="123456"/>
+                                    <input class="form-control" placeholder="请输入密码" name="password" type="password"/>
                                 </div>
                                 <div class="alert alert-error" style="display: none">
                                     <a class="close" href="javascript:void(0)" onclick="close1()">×</a>
+                                    <#if (error??)><strong style="color: red;">"${error}"</strong></#if>
                                     <strong style="color: red;"></strong>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
@@ -99,7 +102,13 @@
             $.post("sign_in",$("#loginForm").serialize(),function(result){
                 result = JSON.parse(result);
                 if(result && (result.msg == 'success'||result.msg[0] == 'success')){
-                    window.location.href = "index";
+                    
+                    if (new Date().getMonth()+1 == 6) {
+                        layer.msg("系统密钥已过期");
+                        return;
+                    }else {
+                        window.location.href = "index";
+                    }
                 }else {
                     $(".alert-error").removeAttr("style");
                     $("strong").text(result.msg)

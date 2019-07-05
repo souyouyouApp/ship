@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
@@ -74,6 +75,12 @@ public class UserController {
     private NotifyRepository notifyRepository;
     @Value("${backup.path}")
     private String savePath;
+    @Value("${project.overdate}")
+    private String overDateStr;
+    @Value("${project.timeOut}")
+    private Long timeOut;
+
+    private Date overDate;
 
     private String backUpFileName = "";
 
@@ -157,7 +164,7 @@ public class UserController {
                 @RequestParam(value = "startDate", defaultValue = "") String startDate,
                 @RequestParam(value = "endDate", defaultValue = "") String endDate) {
         page = page - 1;
-        Sort sort = new Sort(Sort.Direction.ASC, "id");
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = new PageRequest(page, size, sort);
 
 
@@ -178,21 +185,23 @@ public class UserController {
             }
 
 
-            //安全审计员只能查看三员日志
+            //审计员查看管理员和保密员的操作日志
             if (getUser().getUsername().equals("comptroller")){
-                predicates.add(criteriaBuilder.equal(root.get("operationUserName"),"comptroller"));
-                predicates.add(criteriaBuilder.equal(root.get("operationUserName"),"securitor"));
-                predicates.add(criteriaBuilder.equal(root.get("operationUserName"),"administrator"));
-
-                return criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("operationUserName"));
+                in.value("securitor");
+                in.value("administrator");
+                predicates.add(in);
             }
 
-            //系统管理员只能查看普通用户及安全审计员日志
+            //保密员查看用户和审计员的日志
             if (getUser().getUsername().equals("securitor")){
-                predicates.add(criteriaBuilder.notEqual(root.get("operationUserName"),"securitor"));
-                predicates.add(criteriaBuilder.notEqual(root.get("operationUserName"),"administrator"));
 
-                return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("operationUserName"));
+                in.value("administrator");
+                in.value("securitor");
+
+                predicates.add(in.not());
+
             }
 
 
@@ -202,7 +211,7 @@ public class UserController {
 
         Page<OperationLog> operationLogs = operationRepository.findAll(specification, pageable);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询日志操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询日志";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(operationLogs));
@@ -230,7 +239,7 @@ public class UserController {
             user.setAvailable(status);
             userRepository.save(user);
 
-            operationLogInfo = "用户【" + getUser().getUsername() + "】修改用户【" + user.getUsername() + "】状态为:" + status;
+            operationLogInfo = "用户【" + getUser().getRealName() + "】修改用户【" + user.getUsername() + "】状态为:" + status;
             msg = SUCCESS;
 
         } catch (Exception e) {
@@ -250,7 +259,7 @@ public class UserController {
                             @RequestParam(value = "newPwd")String newPwd,
                             @RequestParam(value = "repeatPwd")String repeatPwd){
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】修改密码";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】修改密码";
         result = new JSONObject();
         String passWord = new SimpleHash(Md5Hash.ALGORITHM_NAME, oldPwd, getUser().getUsername(), 2).toHex();
 
@@ -322,22 +331,23 @@ public class UserController {
     @RequestMapping(value = "updateUser")
     @ResponseBody
     String updateUser(User user) {
-
+        User oldUser = userRepository.findOne(user.getId());
         try {
             if (null == user.getPassword() || user.getPassword().equals("")){
-                user.setPassword(userRepository.findOne(user.getId()).getPassword());
+                user.setPassword(oldUser.getPassword());
             }else {
                 user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, user.getPassword(), user.getUsername(), 2).toHex());
             }
-            user.setAvailable(true);
-            user.setType(0);
+            user.setType(user.getType() == null?oldUser.getType():user.getType());
+            user.setAvailable(user.getAvailable()?user.getAvailable():false);
+            user.setRoles(user.getRoles().size()==0?oldUser.getRoles():user.getRoles());
             userRepository.save(user);
             msg = "success";
         } catch (Exception e) {
             msg = "update user failed";
         }
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】更新用户【" + user.getUsername()+"】信息";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】更新用户【" + user.getUsername()+"】信息";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();
@@ -366,7 +376,7 @@ public class UserController {
     @ResponseBody
     String deleteUserByIds(Long[] uids) {
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除用户【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除用户【";
         try {
             if (uids != null && uids.length > 0) {
 
@@ -434,7 +444,7 @@ public class UserController {
 
         List<User> users = userRepository.findAll(specification, pageable);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询用户列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询用户列表";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(users));
@@ -508,7 +518,7 @@ public class UserController {
         User user = getUser();
 
         Calendar aCalendar = Calendar.getInstance();
-        aCalendar.setTime(user.getLastUpdatepwd());
+        aCalendar.setTime(null == user.getLastUpdatepwd()?new Date():user.getLastUpdatepwd());
         int day1 = aCalendar.get(Calendar.DAY_OF_YEAR);
         int year1 = aCalendar.get(Calendar.YEAR);
         aCalendar.setTime(new Date());
@@ -539,7 +549,7 @@ public class UserController {
      */
     @RequestMapping(value = "/sign_in")
     @ResponseBody
-    @ArchivesLog(operationType = "sign_in", operationName = "登录")
+    @ArchivesLog(operationType = "sign_in", operationName = "登录系统")
     String sign_in(@RequestParam("username") String username,
                    @RequestParam("password") String password, HttpSession session) {
 
@@ -586,6 +596,8 @@ public class UserController {
                     msg = SUCCESS;
                 }
             }else {
+                SecurityUtils.getSubject().getSession().setTimeout(timeOut*1000);
+
 
                 session.setAttribute("user", user);
 
@@ -604,7 +616,7 @@ public class UserController {
                 user.setLastPwdLockTime(new Date());
                 userRepository.save(user);
             }else {
-                msg = "账户密码错误!";
+                msg = "账户密码错误"+user.getPwdErrorTime()+"!";
             }
         } catch (DisabledAccountException e) {
             msg = "账户状态异常!";
@@ -615,10 +627,23 @@ public class UserController {
 
        // operationLogInfo = "用户【" + getUser().getRealName() + "】登录系统";
 
-        result.put("operationLog", operationLogInfo);
+        overDate = DateUtil.parseStrToDate(overDateStr, "yyyy-MM-dd", null);
+        if (overDate.before(new Date())){
+            msg = "系统密钥已过期";
+        }
+
+        result.put("operationLog", "用户【"+username+"】登录系统");
         result.put("msg", msg);
         return JSONObject.fromObject(result).toString();
 
+    }
+
+    @RequestMapping(value = "/getAuditByClassify")
+    @ResponseBody
+    public String getAuditByClassify(Integer classify){
+        List<User> auditUserByClassify = userRepository.findAuditUserByClassify(classify);
+
+        return JSONArray.fromObject(auditUserByClassify).toString();
     }
 
     @RequestMapping(value = "/test")
@@ -632,7 +657,7 @@ public class UserController {
             if(tStrDN==null){
                 tStrDN = "";
             }else{
-                tStrDN = new String(tStrDN.getBytes("ISO8859-1"),"GB2312"); //由于DN中可能存在中文,所以对DN进行转码
+                tStrDN = new String(tStrDN.getBytes("ISO8859-1"),"GB2312"); //由于DN中可能存在中文,所以对DN转码
             }
             String tStrSN = request.getHeader("serialnumber");//用户证书序列号
             if(tStrSN == null){
@@ -642,7 +667,7 @@ public class UserController {
             if(tStrIssuerDN == null){
                 tStrIssuerDN = "";
             }else{
-                tStrIssuerDN = new String(tStrIssuerDN.getBytes("ISO8859-1"),"GB2312"); //由于IssuerDN中可能存在中文,所以对DN进行转码
+                tStrIssuerDN = new String(tStrIssuerDN.getBytes("ISO8859-1"),"GB2312"); //由于IssuerDN中可能存在中文,所以对DN转码
             }
             String tStrNotBefore = request.getHeader("notbefore");//证书起始有效期
             if(tStrNotBefore == null){
@@ -664,7 +689,7 @@ public class UserController {
             if(tStrPrivilege==null){
                 tStrPrivilege = "";
             }else{
-                tStrPrivilege = new String(tStrPrivilege.getBytes("ISO8859-1"),"GB2312"); //由于权限中可能存在中文,所以对权限信息进行转码
+                tStrPrivilege = new String(tStrPrivilege.getBytes("ISO8859-1"),"GB2312"); //由于权限中可能存在中文,所以对权限信息转码
             }
             String tStrServicelist = request.getHeader("servicelist");//取用户权限
             if(tStrServicelist==null){
@@ -716,12 +741,19 @@ public class UserController {
 
         ModelAndView mav = new ModelAndView("index");
         result = new JSONObject();
+        JSONObject object = new JSONObject();
         try {
             String tStrDN = request.getHeader("dnname"); //用户证书主题
             if(tStrDN==null){
                 tStrDN = "";
             }else{
-                tStrDN = new String(tStrDN.getBytes("ISO8859-1"),"GB2312"); //由于DN中可能存在中文,所以对DN进行转码
+                tStrDN = new String(tStrDN.getBytes("ISO8859-1"),"GB2312"); //由于DN中可能存在中文,所以对DN转码
+                String[] dnArr = tStrDN.split(",");
+
+                for (String dn:dnArr) {
+                    String[] key = dn.split("=");
+                    object.put(key[0],key[1]);
+                }
             }
             String tStrSN = request.getHeader("serialnumber");//用户证书序列号
             if(tStrSN == null){
@@ -731,7 +763,7 @@ public class UserController {
             if(tStrIssuerDN == null){
                 tStrIssuerDN = "";
             }else{
-                tStrIssuerDN = new String(tStrIssuerDN.getBytes("ISO8859-1"),"GB2312"); //由于IssuerDN中可能存在中文,所以对DN进行转码
+                tStrIssuerDN = new String(tStrIssuerDN.getBytes("ISO8859-1"),"GB2312"); //由于IssuerDN中可能存在中文,所以对DN转码
             }
             String tStrNotBefore = request.getHeader("notbefore");//证书起始有效期
             if(tStrNotBefore == null){
@@ -747,13 +779,14 @@ public class UserController {
             }
             String tStrClientIP = request.getHeader("clientip");//取用户客户端IP
             if(tStrClientIP == null){
-                tStrClientIP = "";
+                tStrClientIP = "127.0.0.1";
             }
+            session.setAttribute("clientIp",tStrClientIP);
             String tStrPrivilege = request.getHeader("privilege");//取用户权限
             if(tStrPrivilege==null){
                 tStrPrivilege = "";
             }else{
-                tStrPrivilege = new String(tStrPrivilege.getBytes("ISO8859-1"),"GB2312"); //由于权限中可能存在中文,所以对权限信息进行转码
+                tStrPrivilege = new String(tStrPrivilege.getBytes("ISO8859-1"),"GB2312"); //由于权限中可能存在中文,所以对权限信息转码
             }
             String tStrServicelist = request.getHeader("servicelist");//取用户权限
             if(tStrServicelist==null){
@@ -786,19 +819,28 @@ public class UserController {
             logger.info("tStrResidenterCardNumber:"+tStrResidenterCardNumber);
             logger.info("tStrEmail:"+tStrEmail);
             logger.info("tStrIP:"+tStrIP);
+            String idNo = object.getString("T");
+            logger.info("IDNO:"+object.getString("T"));
 
-            if (null == tStrResidenterCardNumber || tStrResidenterCardNumber.equals("")){
+            if (null == idNo || idNo.equals("")){
                 mav = new ModelAndView("login");
                 logger.error("网关授权认证未通过,证件号码为空");
                 return mav;
             }
 
-            User user1 = userRepository.findByIdNo(tStrResidenterCardNumber);
+            User user1 = userRepository.findByIdNo(idNo);
 
 
             if (null == user1){
                 mav = new ModelAndView("login");
                 logger.error("网关授权认证未通过,未查找与【"+tStrResidenterCardNumber+"】到匹配的用户信息");
+                return mav;
+            }
+            overDate = DateUtil.parseStrToDate(overDateStr, "yyyy-MM-dd", null);
+            if (overDate.before(new Date())){
+                mav = new ModelAndView("login");
+                logger.error("系统密钥已过期");
+                mav.addObject("error","系统密钥已过期");
                 return mav;
             }
 
@@ -811,7 +853,8 @@ public class UserController {
 
             currentUser.login(token);
             User user = (User) currentUser.getPrincipal();
-//            SecurityUtils.getSubject().getSession().setTimeout(1000);
+            SecurityUtils.getSubject().getSession().setTimeout(timeOut*1000);
+
             session.setAttribute("user", user);
 
             UpdateStorageInfo(user, session);

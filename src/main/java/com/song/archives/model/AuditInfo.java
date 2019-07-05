@@ -1,10 +1,11 @@
 package com.song.archives.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "audit_info")
-public class AuditInfo {
+public class AuditInfo implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -132,7 +132,7 @@ public class AnnounceController {
                 operationType = "新建公告";
             }
 
-            operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+announceInfoEntity.getTitle()+"】";
+            operationLogInfo = "用户【"+getUser().getRealName()+"】"+operationType+"【"+announceInfoEntity.getTitle()+"】";
 
             result.put("operationLog",operationLogInfo);
 
@@ -161,7 +161,7 @@ public class AnnounceController {
     @RequestMapping(value = "/delAnnounce")
     @ResponseBody
     String delAnnounce(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除公告【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除公告【";
 
         try{
 
@@ -322,7 +322,7 @@ public class AnnounceController {
 
         JSONArray json =JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询公告列表操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询公告列表";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         result.put("result", json);

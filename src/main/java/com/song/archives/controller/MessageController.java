@@ -75,7 +75,7 @@ public class MessageController {
         Message message = msgRepository.findOne(mid);
         JSONObject json = JSONObject.fromObject(message);
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询消息操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询消息";
         json.put("operationLog",operationLogInfo);
 
         return json.toString();
@@ -125,7 +125,7 @@ public class MessageController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行删除信息["+msgId+"]";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】删除信息["+msgId+"]";
         result.put("operationLog",operationLogInfo);
         result.put("msg",msg);
 
@@ -205,7 +205,7 @@ public class MessageController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询发件列表操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询发件列表";
         result.put("operationLog",operationLogInfo);
         result.put("msg",msg);
         return result.toString();
@@ -246,7 +246,7 @@ public class MessageController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询收件列表操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询收件列表";
         result.put("operationLog",operationLogInfo);
         result.put("msg",msg);
         return result.toString();
@@ -287,7 +287,7 @@ public class MessageController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询草稿列表操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询草稿列表";
         result.put("operationLog",operationLogInfo);
         result.put("msg",msg);
         return result.toString();
@@ -351,7 +351,7 @@ public class MessageController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行发送信息操作,消息标题【"+saveMsg.getTitle()+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】发送信息,消息标题【"+saveMsg.getTitle()+"】";
         result.put("operationLog",operationLogInfo);
         result.put("msg",msg);
 
@@ -367,7 +367,7 @@ public class MessageController {
         User user = userRepository.findOne(uid);
 
         JSONObject result = JSONObject.fromObject(user);
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行获取联系人操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】获取联系人";
         result.put("operationLog",operationLogInfo);
         return result.toString();
     }

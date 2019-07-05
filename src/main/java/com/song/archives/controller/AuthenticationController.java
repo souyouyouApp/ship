@@ -66,7 +66,7 @@ public class AuthenticationController {
     @ResponseBody
     String saveRole(Role role) {
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】新建角色【"+role.getDescription()+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】新建角色【"+role.getDescription()+"】";
 
         try {
             roleRepository.save(role);
@@ -92,7 +92,7 @@ public class AuthenticationController {
     @ResponseBody
     String deleteRoleByIds(Long[] rids) {
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】删除角色【";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】删除角色【";
 
         try {
             if (rids != null && rids.length > 0) {
@@ -160,7 +160,7 @@ public class AuthenticationController {
     @ResponseBody
     String deletePermissionByIds(Long[] pids) {
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】删除权限【";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】删除权限【";
 
         try {
             if (pids != null && pids.length > 0) {
@@ -215,7 +215,7 @@ public class AuthenticationController {
     String permisssions(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
                         @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询权限列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询权限列表";
 
         page = page - 1;
         Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -253,7 +253,7 @@ public class AuthenticationController {
     String roles(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询角色列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询角色列表";
 
         page = page - 1;
         Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -278,7 +278,7 @@ public class AuthenticationController {
     String findRoleByUserId(Long id) {
 
         User queryUser = userRepository.findOne(id);
-        operationLogInfo = "用户【" + getUser().getUsername() + "】查询【" + queryUser.getUsername() + "】拥有角色";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询【" + queryUser.getUsername() + "】拥有角色";
 
         List<Object> roles = userRepository.findRoleByUserId(id);
 
@@ -303,7 +303,7 @@ public class AuthenticationController {
     String saveRoles(Long userId, Long[] rids) {
 
         User queryUser = userRepository.findOne(userId);
-        operationLogInfo = "用户【" + getUser().getUsername() + "】为【" + queryUser.getUsername() + "】分配角色 【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】为【" + queryUser.getUsername() + "】分配角色 【";
 
         try {
             User user = userRepository.findOne(userId);
@@ -312,7 +312,7 @@ public class AuthenticationController {
 
             for (Long rid : rids) {
                 Role role = roleRepository.findOne(rid);
-                operationLogInfo += role.getName() + ",";
+                operationLogInfo += role.getIdentification() + ",";
                 roles.add(role);
             }
 
@@ -366,7 +366,7 @@ public class AuthenticationController {
         try {
             Role role = roleRepository.findOne(roleId);
 
-            operationLogInfo = "用户【" + getUser().getUsername() + "】为角色【" + role.getIdentification() + "】分配权限 【";
+            operationLogInfo = "用户【" + getUser().getRealName() + "】为角色【" + role.getIdentification() + "】分配权限 【";
 
 
             Set<Permission> permissions = new HashSet<>();

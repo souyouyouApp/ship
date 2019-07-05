@@ -79,7 +79,7 @@ public class MenuController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行获取菜单操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】获取菜单";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         result.put("result", JSONArray.fromObject(menus));
@@ -156,7 +156,7 @@ public class MenuController {
         }
 
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询菜单操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询菜单";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         result.put("result", JSONArray.fromObject(menus));
@@ -198,7 +198,7 @@ public class MenuController {
             msg = "save AnliTypeMenu failed";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】新建菜单【"+entity.getTypeName()+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】新建菜单【"+entity.getTypeName()+"】";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         return result.toString();
@@ -228,7 +228,7 @@ public class MenuController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】删除菜单【"+menu.getTypeName()+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】删除菜单【"+menu.getTypeName()+"】";
         result.put("msg",msg);
         result.put("operationLog",operationLogInfo);
         return result.toString();
@@ -264,7 +264,7 @@ public class MenuController {
             msg = "Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】查询子菜单"+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询子菜单"+"】";
 
         result.put("childrenNames",childrenNames);
         result.put("msg",msg);
@@ -304,7 +304,7 @@ public class MenuController {
             logger.error("更新用户通知消息:" + e.getMessage());
             msg = "Exception";
         }
-//        operationLogInfo = "用户【"+getUser().getUsername()+"】获取用户通知信息";
+//        operationLogInfo = "用户【"+getUser().getRealName()+"】获取用户通知信息";
         result.put("msg", msg);
         return result.toString();
     }

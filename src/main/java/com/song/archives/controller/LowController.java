@@ -194,6 +194,14 @@ public class LowController {
 
         result = new JSONObject();
 
+        String operationType = "";
+
+        if (entity.getId() == null){
+            operationType = "新建法律法规";
+        }else {
+            operationType = "更新法律法规";
+        }
+
         try {
 
             if (null != entity.getId()) {
@@ -228,19 +236,11 @@ public class LowController {
             msg = SUCCESS;
 
         } catch (Exception e) {
-            logger.error("创建资料信息:" + e.getMessage());
+            logger.error("创建法律法规:" + e.getMessage());
             msg = "Exception";
         }
 
-        String operationType = "";
-
-        if (entity.getId() == null){
-            operationType = "新建";
-        }else {
-            operationType = "更新";
-        }
-
-        operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+entity.getType()+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】"+operationType+"【"+entity.getType()+"】";
         result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
 
@@ -315,7 +315,7 @@ public class LowController {
 
         JSONArray json = JSONArray.fromObject(lows, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询法律法规列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询法律法规列表";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", json);

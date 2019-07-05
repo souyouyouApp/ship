@@ -28,6 +28,26 @@ public class OperationLog implements Serializable{
     private String operationDescrib;
     private String operationIp;
     private String operationResult;
+    @Lob
+    private String operationBefore;
+    @Lob
+    private String operationAfter;
+
+    public String getOperationBefore() {
+        return operationBefore;
+    }
+
+    public void setOperationBefore(String operationBefore) {
+        this.operationBefore = operationBefore;
+    }
+
+    public String getOperationAfter() {
+        return operationAfter;
+    }
+
+    public void setOperationAfter(String operationAfter) {
+        this.operationAfter = operationAfter;
+    }
 
     public String getOperationResult() {
         return operationResult;

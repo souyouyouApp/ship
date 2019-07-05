@@ -158,8 +158,8 @@
                     title: '用户名',
                     formatter: function (value, row) {
                         console.log(row)
-                        return '<span style="color:#00F;text-decoration:underline;cursor:pointer" onclick="updateUser('+row.id+',\''+row.username+'\',\''+row.realName+'\',\''+row.positions+'\',\''+row.mobile+'\',\''+row.permissionLevel+'\',\''+row.description+'\')' +
-                                '" data-target="#updateUser" data-toggle="modal">'+value+'</span>';
+                        return '<@shiro.lacksRole name = "securitor"><span style="color:#00F;text-decoration:underline;cursor:pointer" onclick="updateUser('+row.id+',\''+row.username+'\',\''+row.idNo+'\',\''+row.realName+'\',\''+row.positions+'\',\''+row.mobile+'\',\''+row.permissionLevel+'\',\''+row.description+'\')' +
+                                '" data-target="#updateUser" data-toggle="modal">'+value+'</span></@shiro.lacksRole> <@shiro.hasRole name="securitor">'+value+'</@shiro.hasRole>';
                     }
                 },
                 {
@@ -271,7 +271,7 @@
         }
     })
 
-    function updateUser(id,username,realName,positions,mobile,permissionLevel,description) {
+    function updateUser(id,username,idNo,realName,positions,mobile,permissionLevel,description) {
         var content = '<div class="panel-body"><div class="row"><div class="col-lg-10"><form role="form" id="updateForm">' +
                         '<input type="hidden" id="id" name="id" value="'+id+'"/> '+
                 '<div class="form-group"><label>用户名</label><input class="form-control" name="username" id="username" value="'+username+'" placeholder="请输入用户名" />' +

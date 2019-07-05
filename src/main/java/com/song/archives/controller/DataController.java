@@ -126,7 +126,7 @@ public class DataController {
 
         JSONObject json = JSONObject.fromObject(moduleFileEntity, jsonConfig);
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查询资料文件操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查询资料文件";
         json.put("operationLog",operationLogInfo);
         json.put("fileType", fileInfoEntity.getFileType());
         return json.toString();
@@ -178,7 +178,7 @@ public class DataController {
         FileInfoEntity fileInfoEntity = fileInfoRepository.findByFileCode(moduleFileEntity.getFileCode());
         JSONObject json = JSONObject.fromObject(fileInfoEntity);
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行查看纸质文件存档操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查看纸质文件存档";
         json.put("operationLog",operationLogInfo);
         return json.toString();
     }
@@ -248,7 +248,8 @@ public class DataController {
             operation.setOperationEndTime(dateFormat.format(new Date()));
             operation.setOperationUserName(getUser().getUsername());
             operation.setOperationType("getFile");
-            operationRepository.save(operation);
+            operation.setOperationResult("成功");
+
             //按照个例打包成一个文件
             File caseZip = new File(filePath + "/" + fileName + ".zip");
             try {
@@ -263,7 +264,9 @@ public class DataController {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                operation.setOperationResult("失败");
             }
+            operationRepository.save(operation);
 
         }
 
@@ -307,6 +310,14 @@ public class DataController {
 
         result = new JSONObject();
 
+        String operationType = "";
+
+        if (entity.getId() == null || entity.getId().equals(0L)){
+            operationType = "新建资料";
+        }else {
+            operationType = "更新资料";
+        }
+
         try {
 
             if (null != entity.getId()) {
@@ -347,15 +358,9 @@ public class DataController {
             msg = "Exception";
         }
 
-        String operationType = "";
 
-        if (entity.getId() == null){
-            operationType = "新建资料";
-        }else {
-            operationType = "更新资料";
-        }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】"+operationType+"【"+entity.getTitle()+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】"+operationType+"【"+entity.getTitle()+"】";
         result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
 
@@ -395,7 +400,7 @@ public class DataController {
 
         FileInfoEntity fileInfo = new FileInfoEntity();
         ModuleFileEntity moduleFile = new ModuleFileEntity();
-
+        String fileCode = String.valueOf(System.currentTimeMillis());
 
         try {
 
@@ -405,7 +410,7 @@ public class DataController {
             if (fileType.equals("1")) {
                 String originalFilename = multipartFile.getOriginalFilename();
 
-                File file = new File(filePath + "/" + originalFilename);
+                File file = new File(filePath + "/" + fileCode);
                 multipartFile.transferTo(file);
 
                 fileName = originalFilename;
@@ -430,7 +435,7 @@ public class DataController {
                 result.put("fileName", fileName);
             }
 
-            fileInfo.setFileCode(String.valueOf(System.currentTimeMillis()));
+            fileInfo.setFileCode(fileCode);
             fileInfo.setClassificlevelId(classificlevel);
             fileInfo.setFileClassify(fileClassify);
             fileInfo.setCreator(getUser().getUsername());
@@ -477,7 +482,7 @@ public class DataController {
             msg = "IOException";
         }
 
-        operationLogInfo = "用户【"+getUser().getUsername()+"】上传附件【"+fileName+"】";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】上传附件【"+fileName+"】";
         result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
 
@@ -501,7 +506,7 @@ public class DataController {
 
 
         File file;
-        String fileType;
+        String fileType,fileName = null;
         if (null != type) {
             MessageAttach messageAttach = msgAttachRepository.findOne(mid);
             file = new File(messageAttach.getFilePath());
@@ -510,19 +515,19 @@ public class DataController {
         } else {
             ModuleFileEntity fileEntity = moduleFileRespository.findOne(mid);
             FileInfoEntity fileInfoEntity = fileInfoRepository.findByFileCode(fileEntity.getFileCode());
-            String fileName = fileInfoEntity.getOriginalFileName();
+            fileName = fileInfoEntity.getOriginalFileName();
 
             fileType = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             file = new File(fileInfoEntity.getFilePath());
 
         }
 
-        operation.setOperationDescrib("用户【"+getUser().getRealName()+"】下载文件【"+file.getName()+"】");
+        operation.setOperationDescrib("用户【"+getUser().getRealName()+"】下载文件【"+fileName+"】");
         operation.setOperationUserId(getUser().getId());
         operation.setOperationEndTime(dateFormat.format(new Date()));
         operation.setOperationUserName(getUser().getUsername());
         operation.setOperationType("getFile");
-        operationRepository.save(operation);
+
 
 
 
@@ -543,12 +548,16 @@ public class DataController {
             OutputStream out = response.getOutputStream();
             out.write(data);
             out.flush();
+            operation.setOperationResult("成功");
         } catch (FileNotFoundException e) {
+            operation.setOperationResult("失败");
             logger.error("获取文件:" + e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        operationRepository.save(operation);
 
 
     }
@@ -582,7 +591,7 @@ public class DataController {
             logger.error("上传编辑图片:" + e.getMessage());
             msg = "Exception";
         }
-        operationLogInfo = "用户【"+getUser().getUsername()+"】执行上传编辑图片操作";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】上传编辑图片";
         result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
         return result.toString();
@@ -815,7 +824,7 @@ public class DataController {
 
         JSONArray json = JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询资料列表操作";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】查询资料列表";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", json);

@@ -263,7 +263,7 @@ public class MsgController {
 
         JSONArray json = JSONArray.fromObject(msgGroups, jsonConfig);
 
-//        operationLogInfo = "用户【" + getUser().getUsername() + "】执行查询资料列表操作";
+//        operationLogInfo = "用户【" + getUser().getUsername() + "】查询资料列表";
         result.put("msg", msg);
 //        result.put("operationLog", operationLogInfo);
         result.put("result", json);
@@ -277,7 +277,7 @@ public class MsgController {
     @RequestMapping(value = "/delGroup")
     @ResponseBody
     String delGroup(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getUsername() + "】删除聊天室【";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】删除聊天室【";
 
         try{
 
