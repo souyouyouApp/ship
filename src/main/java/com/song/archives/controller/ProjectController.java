@@ -33,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.io.*;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -1715,6 +1716,7 @@ public class ProjectController {
     @RequestMapping(value = "UpdateProject")
     @ResponseBody
     @ArchivesLog(operationType = "UpdateProject", operationName = "更新项目信息")
+    @Transactional
     public String UpdateProject(ProjectInfoEntity projectInfoEntity) {
         result = new JSONObject();
         try {
@@ -1727,7 +1729,7 @@ public class ProjectController {
 //                }
                 projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
                 projectRepository.save(projectInfoEntity);
-                operationLogInfo = "用户[" + getUser().getRealName() + "]修改项目基本信息（项目名称：" + projectInfoEntity.getProName() + ")";
+                operationLogInfo = "用户【" + getUser().getRealName() + "】修改项目【" + projectInfoEntity.getProName() + "】";
             }
 
             msg = "success";

@@ -136,7 +136,8 @@
         <div class="form-group">
             <label for="author" class="col-sm-2 control-label">创建时间</label>
             <div class="col-sm-4">
-                <span class="form-control">${info.createTime!}</span>
+                <input type="text" class="form-control" id="createTime" name="createTime"
+                       value="${info.createTime!}">
             </div>
         </div>
 
@@ -305,9 +306,11 @@
 
     }
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="paperClassificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请选择审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden" name="fileClassify" value="3"/><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="DT"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
 
+        var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="paperClassificlevel"name="classificlevel"class="form-control" onchange="qryAuditUser(this,'+"'auditUser'"+')">'+getOptions()+'</select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden" name="fileClassify" value="3"/><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="DT"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+
+        $("#fileBody").html('');
         $("#savePaperFile").removeAttr("disabled");
 
         $("#paperBody").html(paperContent);
@@ -401,34 +404,15 @@
     //     $("#classificlevelId").val(selectVal);
     //
     // })
-    
-    function qryAuditUser(obj) {
-        var optionAudit = '<option value="-1">请选择审核人员</option>';
-        $.ajax({
-            type: "post",
-            url: "getAuditByClassify",
-            data: {classify: obj.value},
-            async: false,
-            success: function (result) {
-                result = JSON.parse(result);
-                if (result && result.length > 0) {
-                    for (let i = 0; i < result.length; i++) {
-                        optionAudit += '<option value="'+result[i].id+'">'+result[i].username+'</option>'
-                    }
 
-                    $('#auditUser').html(optionAudit);
 
-                }
-            }
-        });
-    }
-    function electronicFile() {
+    function getOptions() {
         var optionArr = ['<#if (levelId >= 1)> <option value="1">公开</option></#if>' ,
-                    '<#if (levelId >= 2)> <option value="2">内部</option></#if>' ,
-                    '<#if (levelId >= 3)> <option value="3">秘密</option></#if>' ,
-                    '<#if (levelId >= 4)> <option value="4">机密</option></#if>' ];
+            '<#if (levelId >= 2)> <option value="2">内部</option></#if>' ,
+            '<#if (levelId >= 3)> <option value="3">秘密</option></#if>' ,
+            '<#if (levelId >= 4)> <option value="4">机密</option></#if>' ];
         var classificlevelId = $("#classificlevelId").val();
-        
+
         if (classificlevelId == -1){
             layer.msg("请选择资料密级");
             return;
@@ -441,15 +425,21 @@
             }
         }
 
+        return optionClassify;
+
+    }
+
+    function electronicFile() {
 
 
+        optionClassify = getOptions();
 
         var fileContent = '<div><form id="fileForm" action="uploadAatachment" enctype="multipart/form-data" method="post">' +
             '                    <input type="hidden" name="category" value="DT"/>' +
             '                    <input type="hidden" name="fileType" value="1"/>' +
             '                    <input id="fileClassify" name="fileClassify" type="hidden" value="3"/>' +
             '                    <div class="form-group">' +
-            '                        <select name="classificlevel" id="classificlevel" onchange="qryAuditUser(this)" class="form-control">' +
+            '                        <select name="classificlevel" id="classificlevel" onchange="qryAuditUser(this,'+"'auditUser'"+')" class="form-control">' +
             optionClassify+
             '                        </select>' +
             '                    </div>' +
@@ -712,7 +702,10 @@
             author:$('#author').val(),
             id: $("#id").val(),
             type: 'DT',
-            keyword:$('#keyword').val()
+            keyword:$('#keyword').val(),
+            publishDate:$('#publishDate').val(),
+            creator:$('#creator').val(),
+            createTime:$('#createTime').val()
         }
 
 

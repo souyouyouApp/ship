@@ -122,6 +122,19 @@
         </div>
 
         <div class="form-group">
+            <label for="classificlevelId" class="col-sm-2 control-label">密级</label>
+            <div class="col-sm-4">
+                <select name="classificlevelId" id="classificlevelId" class="form-control">
+                    <option value="-1">请选择密级</option>
+                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
+                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
+                    <#if (levelId >= 2)> <option value="2">内部</option></#if>
+                    <#if (levelId >= 1)>  <option value="1">公开</option></#if>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label for="sponsor" class="col-sm-2 control-label">发起人</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" readonly id="sponsor" name="sponsor" value="<@shiro.principal property="realName"/>">
@@ -229,33 +242,8 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel">电子附件</h4>
             </div>
-            <div class="modal-body">
-                <form id="fileForm" action="uploadAatachment" enctype="multipart/form-data" method="post">
-                    <input type="hidden" name="category" value="GG"/>
-                    <input type="hidden" name="fileType" value="1"/>
-                    <input id="fileClassify" name="fileClassify" type="hidden" value="5"/>
-                    <div class="form-group">
-                        <select name="classificlevel" id="classificlevel" class="form-control">
-                        <option value="-1">请选择密级</option>
-                            <#if (levelId >= 4)> <option value="4">机密</option></#if>
-                            <#if (levelId >= 3)> <option value="3">秘密</option></#if>
-                            <#if (levelId >= 2)> <option value="2">内部</option></#if>
-                            <#if (levelId >= 1)>  <option value="1">公开</option></#if>
-                        </select>
-                    </div>
+            <div class="modal-body" id="fileBody">
 
-                    <div class="form-group">
-                        <select name="auditUser" id="auditUser" class="form-control">
-                            <option value="-1">请选择审核人员</option>
-                            <#foreach user in auditUsers>
-                                <option value="${user.id?c}">${user.username!}</option>
-                            </#foreach>
-                        </select>
-                    </div>
-                    <div class="form-group" style="height: 300px;">
-                        <input id="dataFile" name="dataFile" onchange="selectFile()" type="file" multiple=""/>
-                    </div>
-                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -337,8 +325,11 @@
     }
 
 
-    var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="paperClassificlevel"name="classificlevel"class="form-control"><option value="-1">请选择密级</option><#if (levelId >= 4)> <option value="4">机密</option></#if><#if (levelId >= 3)> <option value="3">秘密</option></#if><#if (levelId >= 2)> <option value="2">内部</option></#if><#if (levelId >= 1)>  <option value="1">公开</option></#if></select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden"name="fileClassify"value="4"/><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
     function paperFile() {
+
+        $('#fileBody').html('');
+        var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"id="paperForm"action="paperForm"><div class="form-group"><label for="select">密级</label><select id="paperClassificlevel"name="classificlevel"class="form-control" onchange="qryAuditUser(this,'+"'auditUser'"+')">'+getOptions()+'</select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请指定审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden"name="fileClassify"value="4"/><div class="form-group"><label>责任人</label><input type="hidden" name="fileType" value="0"/><input type="hidden"name="category"value="GG"/><input type="hidden"name="creator"value=<@shiro.principal property="realName"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+
         $("#savePaperFile").removeAttr("disabled");
 
         $(".paper-body").html(paperContent);
@@ -430,8 +421,52 @@
     //     $("#classificlevelId").val(selectVal);
     //
     // })
-    function electronicFile() {
 
+    function getOptions() {
+        var optionArr = ['<#if (levelId >= 1)> <option value="1">公开</option></#if>' ,
+            '<#if (levelId >= 2)> <option value="2">内部</option></#if>' ,
+            '<#if (levelId >= 3)> <option value="3">秘密</option></#if>' ,
+            '<#if (levelId >= 4)> <option value="4">机密</option></#if>' ];
+        var classificlevelId = $("#classificlevelId").val();
+
+        if (classificlevelId == -1){
+            layer.msg("请选择资料密级");
+            return;
+        }
+        var optionClassify = '<option value="-1">请选择密级</option>';
+
+        for (let i = 0;i <= optionArr.length; i++) {
+            if (classificlevelId >= i){
+                optionClassify = optionClassify + optionArr[i-1];
+            }
+        }
+
+        return optionClassify;
+
+    }
+    function electronicFile() {
+        
+        var fileContent = '<form id="fileForm" action="uploadAatachment" enctype="multipart/form-data" method="post">' +
+            '                    <input type="hidden" name="category" value="GG"/>' +
+            '                    <input type="hidden" name="fileType" value="1"/>' +
+            '                    <input id="fileClassify" name="fileClassify" type="hidden" value="5"/>' +
+            '                    <div class="form-group">' +
+            '                        <select name="classificlevel" id="classificlevel" class="form-control" onchange="qryAuditUser(this,'+"'auditUser'"+')">' +
+                getOptions()+
+            '                        </select>' +
+            '                    </div>' +
+            '' +
+            '                    <div class="form-group">' +
+            '                        <select name="auditUser" id="auditUser" class="form-control">' +
+            '                            <option value="-1">请选择审核人员</option>'+
+            '                        </select>' +
+            '                    </div>' +
+            '                    <div class="form-group" style="height: 300px;">' +
+            '                        <input id="dataFile" name="dataFile" onchange="selectFile()" type="file" multiple=""/>' +
+            '                    </div>' +
+            '                </form>'
+
+        $('#fileBody').html(fileContent);
         $("#saveFile").removeAttr("disabled");
         $('#fileuploadModal').modal('show')
 

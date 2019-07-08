@@ -184,7 +184,7 @@ public class LowController {
      * @param mids
      * @return
      */
-    @ArchivesLog(operationType = "createLow", operationName = "创建资料信息")
+    @ArchivesLog(operationType = "createLow", operationName = "创建法律法规库信息")
     @RequestMapping(value = "/createLow")
     @ResponseBody
     @Transactional

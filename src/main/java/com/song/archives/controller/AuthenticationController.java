@@ -11,6 +11,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -341,6 +342,7 @@ public class AuthenticationController {
     @ArchivesLog(operationType = "findPermissionByRoleId", operationName = "查询角色权限")
     @RequestMapping(value = "/findPermissionByRoleId")
     @ResponseBody
+    @RequiresRoles("securitor")
     String findPermissionByRoleId(String rid) {
 
         List<Object> permissions = permissionRepository.findPermissionByRoleId(rid);

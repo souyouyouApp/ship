@@ -27,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -112,6 +113,7 @@ public class ExpertController {
     @ArchivesLog(operationType = "createExpert", operationName = "创建专家信息")
     @RequestMapping(value = "/createExpert")
     @ResponseBody
+    @Transactional
     public String createExpert(@RequestParam(value = "pic", required = false) MultipartFile file,
                                @RequestParam(value = "id", required = false) Long id,
                                HttpServletRequest request) {

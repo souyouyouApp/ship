@@ -42,22 +42,22 @@
             <li id="lows"></li>
             <li id="expert"></li>
             <li id="announce"></li>
-            <li>
-                <a href="javascrip:void(0)" onclick="tab(6)"><i class="fa fa-envelope fa-fw"></i> 工作群聊<#--<span
-                        class="spc_span fa arrow"></span>--></a>
-                <#--<ul class="nav nav-1-level">-->
-                    <#--<li>-->
-                        <#--<a href="javascript:void(0)" onclick="tab(6)">收件箱</a>-->
-                    <#--</li>-->
-                    <#--<li>-->
-                        <#--<a href="javascript:void(0)" onclick="tab(7)">发件箱</a>-->
-                    <#--</li>-->
-                    <#--<li>-->
-                        <#--<a href="javascript:void(0)" onclick="tab(8)">草稿箱</a>-->
-                    <#--</li>-->
-                <#--</ul>-->
-                <!-- /.nav-second-level -->
-            </li>
+<#--            <li>-->
+<#--                <a href="javascrip:void(0)" onclick="tab(6)"><i class="fa fa-envelope fa-fw"></i> 工作群聊&lt;#&ndash;<span-->
+<#--                        class="spc_span fa arrow"></span>&ndash;&gt;</a>-->
+<#--                &lt;#&ndash;<ul class="nav nav-1-level">&ndash;&gt;-->
+<#--                    &lt;#&ndash;<li>&ndash;&gt;-->
+<#--                        &lt;#&ndash;<a href="javascript:void(0)" onclick="tab(6)">收件箱</a>&ndash;&gt;-->
+<#--                    &lt;#&ndash;</li>&ndash;&gt;-->
+<#--                    &lt;#&ndash;<li>&ndash;&gt;-->
+<#--                        &lt;#&ndash;<a href="javascript:void(0)" onclick="tab(7)">发件箱</a>&ndash;&gt;-->
+<#--                    &lt;#&ndash;</li>&ndash;&gt;-->
+<#--                    &lt;#&ndash;<li>&ndash;&gt;-->
+<#--                        &lt;#&ndash;<a href="javascript:void(0)" onclick="tab(8)">草稿箱</a>&ndash;&gt;-->
+<#--                    &lt;#&ndash;</li>&ndash;&gt;-->
+<#--                &lt;#&ndash;</ul>&ndash;&gt;-->
+<#--                <!-- /.nav-second-level &ndash;&gt;-->
+<#--            </li>-->
             </@shiro.lacksRole>
         <@shiro.hasAnyRoles name="administrator,securitor,superadmin">
             <li>

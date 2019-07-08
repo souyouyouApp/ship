@@ -153,7 +153,7 @@ public class ReviewController {
         }
 
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】审核文件【"+fileName+ "】,审核结果【"+content==null?"审核通过":"审核拒绝,拒绝理由："+content+"】";
+        operationLogInfo = "用户【" + getUser().getRealName() + "】审核文件【"+fileName+ "】,审核结果【"+content+"】";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();

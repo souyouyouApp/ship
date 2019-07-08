@@ -337,16 +337,16 @@ public class DataController {
             }
 
             if (entity != null) {
-                entity.setAuthor(entity.getAuthor());
-                entity.setPublishDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
-                entity.setCreator(getUser().getUsername());
-                entity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+                    entity.setAuthor(entity.getAuthor());
+                    entity.setPublishDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
+                    entity.setCreator(getUser().getUsername());
+                    entity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
 
-                String content = entity.getZiliaoContent();
+                    String content = entity.getZiliaoContent();
 
-                if (StringUtils.isNotEmpty(content) && StringUtils.isNotBlank(content)) {
-                    entity.setZiliaoContent(content.replace("\n", ""));
-                }
+                    if (StringUtils.isNotEmpty(content) && StringUtils.isNotBlank(content)) {
+                        entity.setZiliaoContent(content.replace("\n", ""));
+                    }
 
             }
 

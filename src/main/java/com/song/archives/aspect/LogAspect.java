@@ -138,6 +138,7 @@ public class LogAspect {
         operationLog.setId(null);
         operationLog.setOperationBefore(null);
         operationLog.setOperationAfter(null);
+        operationLog.setOperationDescrib(null);
         user = (User) getHttpServletRequest().getSession().getAttribute("user");
         Object clientIp = getHttpServletRequest().getSession().getAttribute("clientIp");
 
@@ -233,7 +234,12 @@ public class LogAspect {
 
             synchronized (operationLog) {
                 if (viewNames.contains(methodName)){
-                    operationRepository.save(operationLog);
+                    if (null == operationLog.getOperationDescrib() || operationLog.getOperationDescrib().equals("")){
+                        logger.error(operationLog.getOperationType());
+                    }else {
+                        operationRepository.save(operationLog);
+                    }
+
                 }
             }
 

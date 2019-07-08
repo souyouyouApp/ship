@@ -26,6 +26,15 @@ public class AnnounceInfoEntity implements Serializable{
     private String typeName;
     private String relatedUserName;
     private String relatedUserIds;
+    private Integer classificlevelId;
+
+    public Integer getClassificlevelId() {
+        return classificlevelId;
+    }
+
+    public void setClassificlevelId(Integer classificlevelId) {
+        this.classificlevelId = classificlevelId;
+    }
 
     public Long getId() {
         return id;

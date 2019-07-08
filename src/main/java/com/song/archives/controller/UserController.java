@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.hibernate.annotations.Synchronize;
@@ -38,13 +39,11 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by souyouyou on 2018/2/1.
@@ -104,7 +103,6 @@ public class UserController {
         return "login";
     }
 
-
     /**
      * 日志页面
      *
@@ -118,6 +116,7 @@ public class UserController {
 
     @ArchivesLog(operationType = "userInfo", operationName = "用户基本信息")
     @RequestMapping(value = "userInfo")
+    @RequiresRoles("administrator")
     public ModelAndView userInfo(@RequestParam(value = "uId") Long uId) {
         ModelAndView mav = new ModelAndView("member/info");
         User userInfo = userRepository.findOne(uId);
@@ -330,7 +329,22 @@ public class UserController {
     @ArchivesLog(operationType = "updateUser", operationName = "更新用户信息")
     @RequestMapping(value = "updateUser")
     @ResponseBody
+    @Transactional
     String updateUser(User user) {
+
+        StringBuffer optDesc = new StringBuffer();
+
+        HashMap<String, String> userMap = new HashMap<>();
+
+        //用户信息
+        userMap.put("username","用户名");
+        userMap.put("mobile","联系电话");
+        userMap.put("type","用户类型");
+        userMap.put("description","描述");
+        userMap.put("positions","职务");
+        userMap.put("realName","真实姓名");
+        userMap.put("idNo","证件号码");
+
         User oldUser = userRepository.findOne(user.getId());
         try {
             if (null == user.getPassword() || user.getPassword().equals("")){
@@ -341,13 +355,39 @@ public class UserController {
             user.setType(user.getType() == null?oldUser.getType():user.getType());
             user.setAvailable(user.getAvailable()?user.getAvailable():false);
             user.setRoles(user.getRoles().size()==0?oldUser.getRoles():user.getRoles());
+
+
+            if (!user.getUsername().equals(oldUser.getUsername())){
+                optDesc.append("将【用户名】由【"+oldUser.getUsername()+"】修改为【"+user.getUsername()+"】、");
+            }
+
+            if (!user.getRealName().equals(oldUser.getRealName())){
+                optDesc.append("将【真实姓名】由【"+oldUser.getRealName()+"】修改为【"+user.getRealName()+"】、");
+            }
+
+            if (!user.getMobile().equals(oldUser.getMobile())){
+                optDesc.append("将【联系电话】由【"+oldUser.getMobile()+"】修改为【"+user.getRealName()+"】、");
+            }
+
+            if (!user.getDescription().equals(oldUser.getDescription())){
+                optDesc.append("将【描述】由【"+oldUser.getDescription()+"】修改为【"+user.getDescription()+"】、");
+            }
+
+            if (!user.getPositions().equals(oldUser.getPositions())){
+                optDesc.append("将【职务】由【"+oldUser.getPositions()+"】修改为【"+user.getPositions()+"】、");
+            }
+
+            if (!user.getIdNo().equals(oldUser.getIdNo())){
+                optDesc.append("将【证件号码】由【"+oldUser.getIdNo()+"】修改为【"+user.getIdNo()+"】、");
+            }
+
             userRepository.save(user);
             msg = "success";
         } catch (Exception e) {
             msg = "update user failed";
         }
+        operationLogInfo = "用户【" + getUser().getRealName() + "】更新用户【" + user.getUsername()+"】信息, "+optDesc.toString();
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】更新用户【" + user.getUsername()+"】信息";
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         return result.toString();

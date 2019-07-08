@@ -72,3 +72,26 @@ $(document).ready(
         $("#page-wrapper").load("main")
     }
 )
+
+
+function qryAuditUser(obj,id) {
+    var optionAudit = '<option value="-1">请选择审核人员</option>';
+    $.ajax({
+        type: "post",
+        url: "getAuditByClassify",
+        data: {classify: obj.value},
+        async: false,
+        success: function (result) {
+            result = JSON.parse(result);
+            if (result && result.length > 0) {
+                for (let i = 0; i < result.length; i++) {
+                    optionAudit += '<option value="'+result[i].id+'">'+result[i].username+'</option>'
+                }
+
+                $('#'+id).html(optionAudit);
+
+            }
+        }
+    });
+}
+

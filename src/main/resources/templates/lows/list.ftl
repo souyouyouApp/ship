@@ -359,8 +359,8 @@
                     checkbox: true
                 },
                 {
-                    field: 'id',
-                    title:'编号',
+                    field: 'title',
+                    title:'标题',
                     formatter: function (value, row, index) {
                         return '<a href="javascrip:void(0)" onclick="detailView('+row.id+')">'+value+'</a>'
                     }
