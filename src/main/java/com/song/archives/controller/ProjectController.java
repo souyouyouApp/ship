@@ -8,13 +8,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
-import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
-import org.apache.tomcat.jni.FileInfo;
-import org.hibernate.id.GUIDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -23,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,13 +28,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.*;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
@@ -1716,7 +1709,6 @@ public class ProjectController {
     @RequestMapping(value = "UpdateProject")
     @ResponseBody
     @ArchivesLog(operationType = "UpdateProject", operationName = "更新项目信息")
-    @Transactional
     public String UpdateProject(ProjectInfoEntity projectInfoEntity) {
         result = new JSONObject();
         try {
@@ -1729,7 +1721,7 @@ public class ProjectController {
 //                }
                 projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
                 projectRepository.save(projectInfoEntity);
-                operationLogInfo = "用户【" + getUser().getRealName() + "】修改项目【" + projectInfoEntity.getProName() + "】";
+                operationLogInfo = "用户[" + getUser().getRealName() + "]修改项目基本信息（项目名称：" + projectInfoEntity.getProName() + ")";
             }
 
             msg = "success";

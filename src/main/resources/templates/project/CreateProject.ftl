@@ -481,8 +481,27 @@
        var classicLevel = $("#classificlevelId").val();
 
        LoadUsers(classicLevel);
+       LoadAuditUsers(classicLevel);
    }
 
+   function LoadAuditUsers(clv) {
+
+       $.post("getAuditByClassifyForProject", {cl:clv}, function (result) {
+
+           result = JSON.parse(result);
+           var htmlstr = "";
+           $.each(result, function (i, item) {
+               // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+               htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+           })
+
+           if (htmlstr != null && htmlstr.length > 0) {
+               $("#proauditUser").html("")
+               $("#proauditUser").append(htmlstr);
+           }
+       });
+
+   }
     function LoadUsers(clv) {
         $.post("getusersByClassLevel", {cl:clv}, function (result) {
 

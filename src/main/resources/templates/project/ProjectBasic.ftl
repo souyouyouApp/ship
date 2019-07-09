@@ -19,7 +19,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>项目密级</label>
-                            <select class="form-control" id="classificlevelId" name="classificlevelId">
+                            <select class="form-control" id="classificlevelId" name="classificlevelId" onchange="refreshUsrList()">
                             <#--<option value="-1">请选择</option>-->
                                <#if (levelId >= 4)> <option value="4">机密</option></#if>
                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
@@ -151,6 +151,12 @@
                             <label>项目备注</label>
                             <textarea class="form-control" rows="3" id="proRemark"
                                       name="proRemark"></textarea>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>项目审核人</label>
+                            <select name="proauditUser" id="proauditUser" class="form-control">
+                                <option value="-1">请选择审核人员</option>
+                            </select>
                         </div>
 
                     </div>
@@ -425,7 +431,8 @@
     }
 
 
-    function LoadUsers() {
+
+    function InitLoadUsers() {
         $.post("getlallusers", {}, function (result) {
 
             result = JSON.parse(result);
@@ -484,16 +491,69 @@
 
     }
 
+
+    function LoadAuditUsers1(aa) {
+        $.post("getAuditByClassifyForProject", {cl: aa}, function (result) {
+
+            result = JSON.parse(result);
+            var htmlstr = "";
+            $.each(result, function (i, item) {
+                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+            })
+
+            if (htmlstr != null && htmlstr.length > 0) {
+                $("#proauditUser").html("")
+                $("#proauditUser").append(htmlstr);
+            }
+        });
+
+    }
+    function refreshUsrList() {
+
+        var classicLevel = $("#classificlevelId").val();
+
+        LoadUsers(classicLevel);
+        LoadAuditUsers(classicLevel);
+    }
+
+    function LoadUsers(clv) {
+        $.post("getusersByClassLevel", {cl:clv}, function (result) {
+
+            result = JSON.parse(result);
+            var htmlstr = "";
+            $.each(result, function (i, item) {
+                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.username + "'>" + item.username + "</option>";
+            })
+
+            if (htmlstr != null && htmlstr.length > 0) {
+                //$("#proLeaders").innerHTML(htmlstr);
+                $("#proLeaders").html("")
+                $("#proLeaders").append(htmlstr);
+                $("#proLeaders").val("");
+                $("#proJoiners").html("");
+                $("#proJoiners").append(htmlstr);
+                $("#proCompleteors").html("");
+
+                $("#proCompleteors").append(htmlstr);
+                $('#proJoiners').selectpicker();
+                $('#proJoiners').selectpicker("refresh");
+                $("#proCompleteors").selectpicker();
+                $("#proCompleteors").selectpicker("refresh");
+            }
+        })
+    }
+
+
     function InitData() {
 
         $("#isreportReward").val("${proentity.isreportReward!}");
         $("#reportChannel").val("${proentity.reportChannel!}");
         $("#proPhase").val("${proentity.proPhase!}");
-        $("#classificlevelId").val("${proentity.classificlevelId!}");
-
+        $("#classificlevelId").val("${proentity.classificlevelId!}")
         $("#proResearchcontent").val("${proentity.proResearchcontent!}");
         $("#proRemark").val("${proentity.proRemark!}");
-        $("#yanjiuFangXiang").val("${proentity.yanjiuFangXiang!}");
     }
 
     function InitDateBCrt() {
@@ -547,8 +607,9 @@
 
     $(document).ready(function () {
 
-        LoadUsers();
+        InitLoadUsers();
         InitData();
+        LoadAuditUsers1($("#classificlevelId").val());
         InitDateBCrt();
         if($("#hidowner").val()=="1") {
             $("#btnupdatepro").show();

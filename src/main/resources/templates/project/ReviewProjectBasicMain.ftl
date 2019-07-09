@@ -134,7 +134,7 @@
                             <div class="form-group col-md-6">
                                 <label>项目来源</label>
                                 <input class="form-control" id="proFrom" name="proFrom"
-                                       value="${proentity.proFrom}">
+                                       value="${proentity.proFrom!}">
                             </div>
                             <div class="form-group col-md-6">
                                 <label>项目负责人</label>
@@ -148,7 +148,7 @@
                                 <#--</select>-->
 
                                 <input class="form-control" id="proCompleteors" name="proCompleteors"
-                                       value="${proentity.proCompleteors}">
+                                       value="${proentity.proCompleteors!}">
 
                             </div>
 
@@ -160,7 +160,7 @@
                                 <#--</select>-->
 
                                 <input class="form-control" id="proJoiners" name="proJoiners"
-                                       value="${proentity.proJoiners}">
+                                       value="${proentity.proJoiners!}">
                             </div>
 
                             <div class="form-group col-md-6">

@@ -19,7 +19,7 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.hibernate.annotations.Synchronize;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -27,11 +27,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import org.apache.shiro.subject.Subject;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -927,6 +927,7 @@ public class UserController {
                 storageEntity.setId(1);
                 storageEntity.setTotalAmount("1TB");
                 storageEntity.setAlertAmount("900GB");
+                storageEntity.setLogSaveTime("6");
             } else {
                 storageEntity = storageEntityList.get(0);
             }
@@ -948,7 +949,8 @@ public class UserController {
             storageEntity.setGongaoAmount(GetStorageDesc(d5));
             storageEntity.setLogAmount(GetStorageDesc(d6));
 
-            storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5 + d6));
+           // storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5 + d6));
+            storageEntity.setCurrentUsed(GetStorageDesc(d6));
 //
             storageRepository.save(storageEntity);
 

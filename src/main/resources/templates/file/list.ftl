@@ -283,6 +283,8 @@
                             return '公告文件';
                         if (value==6)
                             return '新建项目';
+                        if (value==7)
+                            return '更新项目';
                     }
 
                 },
@@ -296,8 +298,10 @@
                             return '上传';
                         if (value == "ATTACHMENT")
                             return '附件';
-                        if (value=="CREATE")
+                        if (value == "CREATE")
                             return '新建';
+                        if (value == "UPDATE")
+                            return '更新';
                     }
                 },
                 {
@@ -340,7 +344,7 @@
                     field: 'operate',
                     title: '操作',
                     formatter: function (value, row, index) {
-                        if (row.fileClassify == 6) {
+                        if (row.fileClassify >= 6) {
                             return '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + 1 + ',' + row.fileClassify + ')" style="color: green;">通过</a>&nbsp;&nbsp;' +
                                     '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;&nbsp;' +
                                     '<a href="ReviewProject?pid='+row.fileId+'" target="_blank" style="color: purple">查看</a>'

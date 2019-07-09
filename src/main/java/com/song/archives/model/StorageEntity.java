@@ -32,6 +32,8 @@ public class StorageEntity {
 
     private String alertAmount;
 
+    private String logSaveTime;
+
     public long getId() {
         return id;
     }
@@ -137,5 +139,15 @@ public class StorageEntity {
 
     public void setAlertAmount(String alertAmount) {
         this.alertAmount = alertAmount;
+    }
+
+    @Basic
+    @Column(name = "logSaveTime")
+    public String getLogSaveTime() {
+        return logSaveTime;
+    }
+
+    public void setLogSaveTime(String logSaveTime) {
+        this.logSaveTime = logSaveTime;
     }
 }

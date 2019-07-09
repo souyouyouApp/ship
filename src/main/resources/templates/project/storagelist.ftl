@@ -9,7 +9,7 @@
 <script src="static/js/jquery.form.js"></script>
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">存储空间管理</h1>
+        <h1 class="page-header">日志存储空间管理</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -28,41 +28,43 @@
         <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>修改预警值</button></label></h4>
     <br>
 
-    <h4>当前已使用的存储空间值： <label>${storageinfo.currentUsed}</label></h4>
+    <h4>当前已使用的日志存储空间值： <label>${storageinfo.currentUsed}</label></h4>
 
     <br>
 
-    <h4>日志保存时长： <input type="number" value="6"> 月
+    <h4>日志保存时长： <input type="number" id="txtLogSaveTime" name="txtLogSaveTime" value="${storageinfo.logSaveTime}"> 月<button id="btn_logSaveTime" onclick="UpdateLogSaveTime()" type="button" class="btn btn-primary" value="">修改</button>
 
+        <h4>日志存储空间满时，将自动覆盖最早存储的日志数据</h4>
+    <#---->
 </div>
-<h5>空间占用明细如下表所示：</h5>
-<table width="100%" class="table table-striped table-bordered table-hover" id="table" data-toolbar="#toolbar">
-    <thead>
-    <tr>
-    <#--<th data-field="id" data-checkbox="true"></th>-->
-        <#--<th>MYSQL数据库大小</th>-->
-        <#--<th>项目文件大小</th>-->
-        <#--<th>案例库文件大小</th>-->
-        <#--<th>资料库文件大小</th>-->
-        <#--<th>专家库文件大小</th>-->
-        <#--<th>公告文件大小</th>-->
-        <th>日志空间大小</th>
-    </tr>
-    </thead>
+<#--<h5>空间占用明细如下表所示：</h5>-->
+<#--<table width="100%" class="table table-striped table-bordered table-hover" id="table" data-toolbar="#toolbar">-->
+    <#--<thead>-->
+    <#--<tr>-->
+    <#--&lt;#&ndash;<th data-field="id" data-checkbox="true"></th>&ndash;&gt;-->
+        <#--&lt;#&ndash;<th>MYSQL数据库大小</th>&ndash;&gt;-->
+        <#--&lt;#&ndash;<th>项目文件大小</th>&ndash;&gt;-->
+        <#--&lt;#&ndash;<th>案例库文件大小</th>&ndash;&gt;-->
+        <#--&lt;#&ndash;<th>资料库文件大小</th>&ndash;&gt;-->
+        <#--&lt;#&ndash;<th>专家库文件大小</th>&ndash;&gt;-->
+        <#--&lt;#&ndash;<th>公告文件大小</th>&ndash;&gt;-->
+        <#--<th>日志空间大小</th>-->
+    <#--</tr>-->
+    <#--</thead>-->
 
-    <tr>
-    <#--<th data-field="id" data-checkbox="true"></th>-->
-        <#--<td>${storageinfo.dbAmount}</td>-->
-        <#--<td>${storageinfo.projectAmount}</td>-->
-        <#--<td>${storageinfo.anliAmount}</td>-->
-        <#--<td>${storageinfo.ziliaoAmount}</td>-->
-        <#--<td>${storageinfo.expertAmount}</td>-->
-        <#--<td>${storageinfo.gongaoAmount}</td>-->
-        <td>${storageinfo.logAmount}</td>
-    </tr>
-    <tbody>
-    </tbody>
-</table>
+    <#--<tr>-->
+    <#--&lt;#&ndash;<th data-field="id" data-checkbox="true"></th>&ndash;&gt;-->
+        <#--&lt;#&ndash;<td>${storageinfo.dbAmount}</td>&ndash;&gt;-->
+        <#--&lt;#&ndash;<td>${storageinfo.projectAmount}</td>&ndash;&gt;-->
+        <#--&lt;#&ndash;<td>${storageinfo.anliAmount}</td>&ndash;&gt;-->
+        <#--&lt;#&ndash;<td>${storageinfo.ziliaoAmount}</td>&ndash;&gt;-->
+        <#--&lt;#&ndash;<td>${storageinfo.expertAmount}</td>&ndash;&gt;-->
+        <#--&lt;#&ndash;<td>${storageinfo.gongaoAmount}</td>&ndash;&gt;-->
+        <#--<td>${storageinfo.logAmount}</td>-->
+    <#--</tr>-->
+    <#--<tbody>-->
+    <#--</tbody>-->
+<#--</table>-->
 
 
 <div class="modal fade" id="updatespace" role="dialog" aria-labelledby="updatespacelabel"
@@ -170,6 +172,33 @@
 
     })
 
+    function UpdateLogSaveTime() {
+
+        if (!$("#txtLogSaveTime").val()) {
+            layer.alert("请输入日志保存时长");
+            return;
+        }
+        if (!($("#txtLogSaveTime").val() >= 0 && $("#txtLogSaveTime").val() <= 12)) {
+
+            layer.alert("请输入小于12的数字");
+            return;
+        }
+
+        $.ajax({
+            type: "post",
+            url: "UpdateLogSaveTime",
+            data: {saveTime: $("#txtLogSaveTime").val()},
+            success: function (result) {
+                result = JSON.parse(result);
+                if (result.msg == "success") {
+                    layer.alert("修改成功！");
+                } else {
+                    layer.alert("修改失败,请稍后重试！")
+                }
+            }
+        });
+
+    }
     function UpdateAlertAmount() {
         $.ajax({
             type: "post",
@@ -177,6 +206,7 @@
             data: {amount:$("#newalert").val(),danwei:$("#seldalertanwei").val()},
             async: false,
             success: function (result) {
+                result=JSON.parse(result);
                 if (result.msg == "success") {
                     layer.alert("修改成功！");
                     $('.modal').map(function () {
@@ -199,7 +229,7 @@
             data: {amount:$("#newspace").val(),danwei:$("#seldanwei").val()},
             async: false,
             success: function (result) {
-                result=eval(result);
+                result=JSON.parse(result);
                 if (result.msg == "success") {
                     layer.alert("修改成功！");
                     $('.modal').map(function () {

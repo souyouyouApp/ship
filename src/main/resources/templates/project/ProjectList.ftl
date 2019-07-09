@@ -156,10 +156,24 @@
 </div>
 <!-- /.modal -->
 
+<#--<#foreach user in auditUsers>-->
+                                <#--<option value="${user.id?c}">${user.username!}</option>-->
+<#--</#foreach>-->
+
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script type="text/javascript">
 
-    var promodalContent = '<form><div class="form-group"><input id="importProjFile" name="importProjFile" type="file" multiple></div></form>';
+    var promodalContent = ' <form>\n' +
+            '                    <div class="form-group col-md-12"><input id="importProjFile" name="importProjFile" type="file" multiple></div>\n' +
+            '\n' +
+            '                    <div class="form-group col-md-12">\n' +
+            '                        <label>指定审核人员</label>\n' +
+            '                        <select name="pauditUser" id="pauditUser" class="form-control">\n' +
+            '                            <option value="-1" selected>请选择审核人员</option>\n' +
+            '                        </select>\n' +
+            '                    </div>\n' +
+            '\n' +
+            '                </form>';
 
     function DownProjectTemplate() {
         window.location.href = "downLoadDataTempate?fileName=项目模板.xlsx"
@@ -168,12 +182,7 @@
 
     }
 
-    function ImportProject() {
-
-        $("#importProjModal .modal-body").html(promodalContent);
-
-        $("#startImport").removeAttr("disabled");
-
+    function InitFileInput() {
         $('#importProjFile').fileinput({//初始化上传文件框
             showUpload: false,
             showRemove: false,
@@ -192,13 +201,14 @@
             msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
             dropZoneTitle: "请通过拖拽文件放到这里",
             dropZoneClickTitle: "或者点击此区域添加文件",
-            uploadExtraData: {},//这个是外带数据
+            uploadExtraData: {"proauditUser": $("#pauditUser").val()},//这个是外带数据
             showBrowse: false,
             browseOnZoneClick: true,
             slugCallback: function (filename) {
                 return filename.replace('(', '_').replace(']', '_');
             }
         });
+
 
         //上传文件成功，回调函数
         $('#importProjFile').on("fileuploaded", function (event, data, previewId, index) {
@@ -219,11 +229,44 @@
 
     }
 
+    function ImportProject() {
+
+        $("#importProjModal .modal-body").html(promodalContent);
+
+        $("#startImport").removeAttr("disabled");
+        LoadAuditUsers();
+        InitFileInput();
+
+    }
+
     $('#startImport').on('click', function () {// 提交图片信息 //
         //先上传文件，然后在回调函数提交表单
+
+        InitFileInput();
+        //alert($("#pauditUser").val());
         $('#importProjFile').fileinput('upload');
 
     });
+
+    function LoadAuditUsers() {
+
+        $.post("getAuditByClassifyForProject", {cl: -1}, function (result) {
+
+            result = JSON.parse(result);
+            var htmlstr = "";
+            $.each(result, function (i, item) {
+                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+            })
+
+            if (htmlstr != null && htmlstr.length > 0) {
+                $("#pauditUser").html("")
+                $("#pauditUser").append(htmlstr);
+            }
+        });
+
+    }
+
     $(document).ready(function () {
 
 //         var users =
@@ -237,6 +280,7 @@
 // //            })
 // //            return uname;
 //                 });
+      //  LoadAuditUsers();
 
         $('#table').bootstrapTable({
             url: 'LoadProjectList',         //请求后台的URL（*）

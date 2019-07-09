@@ -1,7 +1,10 @@
 package com.song.archives.controller;
 
 import com.song.archives.aspect.ArchivesLog;
-import com.song.archives.dao.*;
+import com.song.archives.dao.AuditInfoRepository;
+import com.song.archives.dao.FileInfoRepository;
+import com.song.archives.dao.NotifyRepository;
+import com.song.archives.dao.ProjectRepository;
 import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
 import com.song.archives.utils.ImageUploadUtil;
@@ -9,12 +12,10 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,9 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -133,7 +133,7 @@ public class ReviewController {
             }
 
 
-            if(null!=fileClassify&&fileClassify.equals(6)){
+            if(null!=fileClassify&&fileClassify>=6){
                 ProjectInfoEntity projectInfoEntity=projectRepository.findOne(auditInfo.getFileId());
                 projectInfoEntity.setProAuditState(auditResult);
                 projectRepository.save(projectInfoEntity);
@@ -264,15 +264,20 @@ public class ReviewController {
         Pageable pageable = new PageRequest(page, size, sort);
 
 
-        Specification<FileInfoEntity> specification = (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<AuditInfo> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(criteriaBuilder.equal(root.get("isAudit"),0));
-            predicates.add(criteriaBuilder.equal(root.get("fileClassify"),fileClassify));
+            if(fileClassify==6) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("fileClassify"), fileClassify));
+            }else
+            {
+                predicates.add(criteriaBuilder.equal(root.get("fileClassify"), fileClassify));
+            }
 //            predicates.add(criteriaBuilder.notEqual(root.get("audit"),1));
-            if (null != searchValue && !searchValue.equals("")){
-                predicates.add(criteriaBuilder.like(root.get("fileName"),"%"+searchValue+"%"));
+            if (null != searchValue && !searchValue.equals("")) {
+                predicates.add(criteriaBuilder.like(root.get("fileName"), "%" + searchValue + "%"));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));

@@ -150,6 +150,17 @@
             <div class="modal-footer">
 
                 <form>
+
+                    <div class="form-group col-md-6">
+                        <select class="form-control" id="seldzfile" name="seldzfile" onchange="LoadAuditUsers(this)">
+                            <option value="-1">--请指选择密级--</option>
+                        <#if (proClassLevel >= 4)> <option value="4">机密</option></#if>
+                   <#if (proClassLevel >= 3)> <option value="3">秘密</option></#if>
+                   <#if (proClassLevel >= 2)> <option value="2">内部</option></#if>
+                   <#if (proClassLevel >= 1)>  <option value="1">公开</option></#if>
+                        </select>
+                    </div>
+
                     <div class="form-group col-md-6">
                         <select name="eauditUser" id="eauditUser" class="form-control" onchange="SetEauditUser()">
                             <option value="-1">--请指定审核人员--</option>
@@ -158,15 +169,7 @@
         </#foreach>
                         </select>
                     </div>
-                    <div class="form-group col-md-6">
-                        <select class="form-control" id="seldzfile" name="seldzfile">
-                            <option value="-1">--请指选择密级--</option>
-                        <#if (proClassLevel >= 4)> <option value="4">机密</option></#if>
-                   <#if (proClassLevel >= 3)> <option value="3">秘密</option></#if>
-                   <#if (proClassLevel >= 2)> <option value="2">内部</option></#if>
-                   <#if (proClassLevel >= 1)>  <option value="1">公开</option></#if>
-                        </select>
-                    </div>
+
                 </form>
                 <button type="button" class="btn btn-default" onclick="RefreshFilelist()" data-dismiss="modal">关闭
                 </button>
@@ -268,4 +271,24 @@
     }
     $("#phaselist").removeAttr("disabled")
     $("#attachlist").removeAttr("disabled")
+
+    function LoadAuditUsers(obj) {
+
+        $.post("getAuditByClassifyForProject", {cl:$(obj).val()}, function (result) {
+
+            result = JSON.parse(result);
+            var htmlstr = "";
+            $.each(result, function (i, item) {
+                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+            })
+
+            if (htmlstr != null && htmlstr.length > 0) {
+                $("#eauditUser").html("")
+                $("#eauditUser").append(htmlstr);
+            }
+        });
+
+    }
+
     </script>
