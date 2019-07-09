@@ -37,10 +37,12 @@
 
 <div class="container">
     <div class="row">
+
         <div class="col-md-4 col-md-offset-4">
             <div class="login-panel panel panel-default" style="margin-top: 60%">
                 <div class="panel-heading">
-                    <h3 class="panel-title">登录</h3>
+
+                    <h4 style="margin-left: 15px"><span style="color: black; font-weight: bold">知识共享管理平台</span><span style="margin-left: 10px;color: red;">机密&nbsp;★ 版本 V1.0</span></h4>
                     <div class="panel-body">
                         <form id="loginForm">
                             <fieldset>

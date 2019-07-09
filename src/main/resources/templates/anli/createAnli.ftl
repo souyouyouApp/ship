@@ -971,11 +971,6 @@
             return false;
         }
 
-        if (typeId == '' || typeId == undefined) {
-            layer.msg('请选择案例类别');
-            return false;
-        }
-
         var bootstrapValidator = $("#"+type+"Form").data('bootstrapValidator');
         bootstrapValidator.validate();
 

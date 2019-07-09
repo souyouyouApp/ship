@@ -28,10 +28,10 @@ public interface UserRepository extends CrudRepository<User,Long> {
 
     List<User> findByIdIsIn(Long[] userids);
 
-    @Query(value = "SELECT * FROM `user` u JOIN user_role ur ON u.id = ur.user_id JOIN role_permission rp ON ur.role_id = rp.role_id JOIN permission p ON rp.permission_id = p.id AND p.identification = 'uploadfile:verify'",nativeQuery = true)
+    @Query(value = "SELECT * FROM `user` u JOIN user_role ur ON u.id = ur.user_id JOIN role_permission rp ON ur.role_id = rp.role_id JOIN permission p ON rp.permission_id = p.id AND p.identification = 'uploadfile:verify' group by ur.user_id",nativeQuery = true)
     List<User> findAuditUser();
 
-    @Query(value = "SELECT * FROM `user` u JOIN user_role ur ON (u.id = ur.user_id and u.permission_level >=:classify) JOIN role_permission rp ON ur.role_id = rp.role_id JOIN permission p ON rp.permission_id = p.id AND p.identification = 'uploadfile:verify'",nativeQuery = true)
+    @Query(value = "SELECT * FROM `user` u JOIN user_role ur ON (u.id = ur.user_id and u.permission_level >=:classify) JOIN role_permission rp ON ur.role_id = rp.role_id JOIN permission p ON rp.permission_id = p.id AND p.identification = 'uploadfile:verify' group by ur.user_id",nativeQuery = true)
     List<User> findAuditUserByClassify(@Param(value = "classify")Integer classify);
 
     @Query(value = "select * from user where type=:typeId",nativeQuery = true)

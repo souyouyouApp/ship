@@ -851,7 +851,7 @@
                                         if (fileType == 1) {
                                             // viewDiv += '<a href="getFile?mid=' + result.id + '" download="' + fileName + '"><span class="fa fa-download" style="margin-left: 6px"></span></a>';
                                             viewDiv += '<a href="javascript:void(0)" onclick="qryFileAuitResult('+fileId+',\''+fileName+'\',\''+mid+'\',\''+""+'\')"><span class="fa fa-download" style="margin-left: 6px"></span></a>';                                        } else {
-                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + fileId + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
+                                            viewDiv += '<a href="javascript:void(0)" onclick="viewFile(' + mid + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                                         }
 
                                     }

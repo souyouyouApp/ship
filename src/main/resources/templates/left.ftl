@@ -12,17 +12,17 @@
         <#--</div>-->
         <#--<!-- /input-group &ndash;&gt;-->
         <#--</li>-->
-            <li class="sidebar-search">
-                <div class="input-group custom-search-form">
-                    <input type="text" id="globalsearch"  name="globalsearch" class="form-control" placeholder="请输入搜索关键字...">
-                    <span class="input-group-btn">
-                                <button class="btn btn-default" id="btnstartsearch"  onclick="StartSearch()" type="button">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </span>
-                </div>
-                <!-- /input-group -->
-            </li>
+<#--            <li class="sidebar-search">-->
+<#--                <div class="input-group custom-search-form">-->
+<#--                    <input type="text" id="globalsearch"  name="globalsearch" class="form-control" placeholder="请输入搜索关键字...">-->
+<#--                    <span class="input-group-btn">-->
+<#--                                <button class="btn btn-default" id="btnstartsearch"  onclick="StartSearch()" type="button">-->
+<#--                                    <i class="fa fa-search"></i>-->
+<#--                                </button>-->
+<#--                            </span>-->
+<#--                </div>-->
+<#--                <!-- /input-group &ndash;&gt;-->
+<#--            </li>-->
             <li>
                 <a href="index"><i class="fa fa-laptop fa-fw"></i> 首页 </a>
             </li>
