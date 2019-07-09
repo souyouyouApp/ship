@@ -649,6 +649,7 @@ public class UserController {
                 session.setAttribute("user", user);
 
                 UpdateStorageInfo(user, session);
+                user.setPwdErrorTime(0);
 
                 msg = SUCCESS;
             }
