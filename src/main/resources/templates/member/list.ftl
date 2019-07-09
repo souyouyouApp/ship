@@ -294,6 +294,97 @@
 
 
     function updateUserInfo() {
+
+        var pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z0-9]).{8,30}');
+
+
+        if (!pwdRegex.test($("#password").val())) {
+            layer.msg("密码复杂度太低（密码中必须包含大字母、数字、特殊字符），长度最低为8位！");
+            return;
+        }
+
+        if(!$("#username").val()){
+            layer.msg("用户名不能为空");
+            return;
+        }
+
+        if(!$("#realName").val()){
+            layer.msg("真实姓名不能为空");
+            return;
+        }
+
+        if(!$("#idNo").val()){
+            layer.msg("身份证号不能为空");
+            return;
+        }
+
+        $('#updateForm').bootstrapValidator({
+            message: 'This value is not valid',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                username: {
+                    message: '用户名校验失败',
+                    validators: {
+                        notEmpty: {
+                            message: '用户名不能为空'
+                        }
+                    }
+                },
+                realName: {
+                    message: '真实姓名校验失败',
+                    validators: {
+                        notEmpty: {
+                            message: '真实姓名不能为空'
+                        }
+                    }
+                },
+                idNo: {
+                    message: '证件号码校验失败',
+                    validators: {
+                        regexp: {
+                            regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+                            message: '请输入正确的身份证号码'
+                        }
+                    }
+                },
+                password: {
+                    message: '密码校验失败',
+                    validators: {
+                        notEmpty: {
+                            message: '密码不能为空'
+                        }
+                    }
+                },
+
+                positions: {
+                    message: '职位不能为空',
+                    validators: {
+                        callback: {
+                            callback: function (value, validator) {
+                                if (value == -1) {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                },
+            }
+        });
+
+        var bootstrapValidator = $("#updateForm").data('bootstrapValidator');
+        bootstrapValidator.validate();
+
+        if (!bootstrapValidator.isValid()) {
+            return;
+        }
+
+
         $.post("updateUser", $("#updateForm").serialize(), function (result) {
             result = JSON.parse(result);
             if (result.msg == 'success') {
@@ -466,6 +557,15 @@
                     validators: {
                         notEmpty: {
                             message: '证件号码不能为空'
+                        },
+                        stringLength: {
+                            min: 15,
+                            max: 18,
+                            message: '请输入正确的身份证号码'
+                        },
+                        regexp: {
+                            regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+                            message: '请输入正确的身份证号码'
                         }
                     }
                 },

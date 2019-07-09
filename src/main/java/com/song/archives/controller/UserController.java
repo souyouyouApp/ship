@@ -356,6 +356,13 @@ public class UserController {
             user.setAvailable(user.getAvailable()?user.getAvailable():false);
             user.setRoles(user.getRoles().size()==0?oldUser.getRoles():user.getRoles());
 
+            if(user.getPositions()==null){
+                user.setPositions("");
+            }
+
+            if(user.getDescription()==null) {
+                user.setDescription("");
+            }
 
             if (!user.getUsername().equals(oldUser.getUsername())){
                 optDesc.append("将【用户名】由【"+oldUser.getUsername()+"】修改为【"+user.getUsername()+"】、");
