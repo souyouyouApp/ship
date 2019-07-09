@@ -706,6 +706,7 @@ public class ProjectController {
     public ModelAndView CreateProject() {
 
         List<User> auditUser = userRepository.findAuditUser();
+        //userRepository.findAuditUserByClassify()
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("project/CreateProject");
         modelAndView.addObject("levelId", getUser().getPermissionLevel());
@@ -748,7 +749,11 @@ public class ProjectController {
     public ModelAndView ProjectList() {
 
         ModelAndView modelAndView = new ModelAndView();
+
+        List<User> auditUser = userRepository.findAuditUser();
+
         modelAndView.setViewName("project/ProjectList");
+        modelAndView.addObject("auditUsers",auditUser);
         return modelAndView;
         //return "project/ProjectList";
     }
@@ -808,7 +813,18 @@ public class ProjectController {
 
         return model;
     }
+    @RequestMapping(value = "/getAuditByClassifyForProject")
+    @ResponseBody
+    public String getAuditByClassifyForProject(@RequestParam(value = "cl") Integer classify) {
 
+        if(classify==-1){
+
+            classify=getUser().getPermissionLevel();
+        }
+        List<User> auditUserByClassify = userRepository.findAuditUserByClassify(classify);
+
+        return JSONArray.fromObject(auditUserByClassify).toString();
+    }
     @RequestMapping(value = "LoadJianDingList")
     @ResponseBody
     @ArchivesLog(operationType = "LoadJianDingList", operationName = "查看拟鉴定奖列表")
@@ -1720,7 +1736,34 @@ public class ProjectController {
 //                    projectInfoEntity.setProRemark(projectInfoEntity.getProRemark().trim());
 //                }
                 projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
+                //projectRepository.save(projectInfoEntity);
+                projectInfoEntity.setProAuditState(0);
+                if(projectInfoEntity.getProauditUser()>0) {
+                    projectInfoEntity.setProAuditUserName(userRepository.findOne(Long.parseLong(projectInfoEntity.getProauditUser().toString())).getUsername());
+                }else
+                {
+                    List<User> auditUsers=userRepository.findAuditUserByClassify(projectInfoEntity.getClassificlevelId());
+                    if(auditUsers!=null&&auditUsers.size()>0) {
+                        projectInfoEntity.setProAuditUserName(auditUsers.get(0).getUsername());
+                        projectInfoEntity.setProauditUser(Integer.parseInt(auditUsers.get(0).getId().toString()));
+                    }
+                }
                 projectRepository.save(projectInfoEntity);
+
+                AuditInfo auditInfo = new AuditInfo();
+                auditInfo.setFileId(projectInfoEntity.getId());
+                auditInfo.setApplicant(getUser().getUsername());
+                auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                auditInfo.setFileName(projectInfoEntity.getProName());
+                auditInfo.setIsAudit(0);
+                auditInfo.setType("UPDATE");
+                auditInfo.setAuditUser(projectInfoEntity.getProauditUser().toString());
+
+                auditInfo.setFileClassify(7);
+                auditInfo.setClassificlevelId(projectInfoEntity.getClassificlevelId());
+
+                auditInfoRepository.save(auditInfo);
+
                 operationLogInfo = "用户[" + getUser().getRealName() + "]修改项目基本信息（项目名称：" + projectInfoEntity.getProName() + ")";
             }
 
@@ -2207,7 +2250,8 @@ public class ProjectController {
     @RequestMapping(value = "ImportProjectFiles")
     @ResponseBody
     @ArchivesLog(operationType = "ImportProjectFiles", operationName = "批量导入项目")
-    public synchronized String ImportProjectFiles(@RequestParam(value = "importProjFile") MultipartFile[] projectFile) {
+    public synchronized String ImportProjectFiles(@RequestParam(value = "importProjFile") MultipartFile[] projectFile,
+                                                  @RequestParam(value = "proauditUser") String proauditUser) {
         result = new JSONObject();
         StringBuilder resultBuilder = new StringBuilder();
         try {
@@ -2267,8 +2311,8 @@ public class ProjectController {
                         //5立项时间(YYYY-MM-DD)//6立项提取通知时间(天)//7开题时间(YYYY-MM-DD)//8开题提取通知时间(天)
                         //9中期检查时间(YYYY-MM-DD)//10中期检查提前通知时间（天）//11结题时间(YYYY-MM-DD)//12结题提前通知时间（天）
                         //13验收时间(YYYY-MM-DD)//14验收提前通知时间（天）
-                        //15项目承研单位//16主管部门//17参研单位//18项目负责人//19研究内容//20项目渠道//21总经费//22研究周期
-                        //23财务编号24首款25尾款//26备注
+                        //15项目承研单位//16主管部门//17参研单位//18项目负责人//19研究内容//20项目渠道//21总经费//22研究周期//23研究周期1
+                        //24财务编号25首款26尾款//27备注
                         try {
                             ProjectInfoEntity projectInfoEntity = new ProjectInfoEntity();
                             projectInfoEntity.setCreater(Integer.parseInt(getUser().getId().toString()));
@@ -2304,12 +2348,29 @@ public class ProjectController {
                             projectInfoEntity.setTotalFee(projectDatas.get(i)[21]);
 
                             projectInfoEntity.setYanjiuZhouQi(projectDatas.get(i)[22]);
-                            projectInfoEntity.setFinanceNo(projectDatas.get(i)[23]);
-                            projectInfoEntity.setFirstFee(projectDatas.get(i)[24]);
-                            projectInfoEntity.setEndFee(projectDatas.get(i)[25]);
-                            projectInfoEntity.setProRemark(projectDatas.get(i)[26]);
+                            projectInfoEntity.setYanjiuZhouQi1(projectDatas.get(i)[23]);
+                            projectInfoEntity.setFinanceNo(projectDatas.get(i)[24]);
+                            projectInfoEntity.setFirstFee(projectDatas.get(i)[25]);
+                            projectInfoEntity.setEndFee(projectDatas.get(i)[26]);
+                            projectInfoEntity.setProRemark(projectDatas.get(i)[27]);
+                            projectInfoEntity.setProAuditState(0);
+                            projectInfoEntity.setProauditUser(Integer.parseInt(proauditUser));
 
                             ProjectInfoEntity addProject = projectRepository.save(projectInfoEntity);
+
+                            AuditInfo auditInfo = new AuditInfo();
+                            auditInfo.setFileId(addProject.getId());
+                            auditInfo.setApplicant(getUser().getUsername());
+                            auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                            auditInfo.setFileName(addProject.getProName());
+                            auditInfo.setIsAudit(0);
+                            auditInfo.setType("CREATE");
+                            auditInfo.setAuditUser(addProject.getProauditUser().toString());
+
+                            auditInfo.setFileClassify(6);
+                            auditInfo.setClassificlevelId(addProject.getClassificlevelId());
+                            auditInfoRepository.save(auditInfo);
+
                             ChengYanDanWeiEntity chengYanDanWeiEntity = new ChengYanDanWeiEntity();
                             chengYanDanWeiEntity.setDanweiName(zhuYanDanwei);
                             //1 主//2联合 //3外协
@@ -2374,6 +2435,37 @@ public class ProjectController {
         return result.toString();
     }
 //
+@RequestMapping(value = "UpdateLogSaveTime")
+@ResponseBody
+@ArchivesLog(operationType = "UpdateLogSaveTime", operationName = "更新日志存储时长")
+public String UpdateLogSaveTime(@RequestParam(value = "saveTime") String saveTime) {
+
+    String res = "success";
+    result = new JSONObject();
+    try {
+        //StorageEntity storageEntity = storageRepository.findOne(1L);
+
+        List<StorageEntity> storageEntityList = (List<StorageEntity>) storageRepository.findAll();
+        if (storageEntityList != null && storageEntityList.size() > 0) {
+            storageEntityList.get(0).setLogSaveTime(saveTime);
+            storageRepository.save(storageEntityList.get(0));
+            res = "success";
+            operationLogInfo = "用户[" + getUser().getRealName() + "]更新日志存储时长为：" + saveTime + "月";
+        } else {
+            res = "error";
+        }
+
+
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        res = "error";
+    }
+
+    result.put("msg", res);
+
+    result.put("operationLog", operationLogInfo);
+    return result.toString();
+}
 @RequestMapping(value = "UpdateSpaceAmount")
 @ResponseBody
 @ArchivesLog(operationType = "UpdateSpaceAmount", operationName = "更新存储空间")
@@ -2383,16 +2475,20 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
     try {
         StorageEntity storageEntity = storageRepository.findOne(1L);
 
-        storageEntity.setTotalAmount(amount + danwei);
-        storageRepository.save(storageEntity);
+        List<StorageEntity> storageEntityList = (List<StorageEntity>) storageRepository.findAll();
+        if (storageEntityList != null && storageEntityList.size() > 0) {
+            storageEntityList.get(0).setTotalAmount(amount + danwei);
+            storageRepository.save(storageEntityList.get(0));
+        }
+
     } catch (Exception ex) {
         res = "error";
     }
 
     result.put("msg", res);
-    operationLogInfo = "用户[" + getUser().getRealName() + "]更新存储空间";
+    operationLogInfo = "用户[" + getUser().getRealName() + "]更新存储空间为："+amount+danwei;
     result.put("operationLog", operationLogInfo);
-    return res;
+    return result.toString();
 }
 
     @RequestMapping(value = "UpdateAlertAmount")
@@ -2422,9 +2518,9 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
             res = "error";
         }
         result.put("msg", res);
-        operationLogInfo = "用户[" + getUser().getRealName() + "]更新预警阈值";
+        operationLogInfo = "用户[" + getUser().getRealName() + "]更新预警阈值为："+amount+danwei;
         result.put("operationLog", operationLogInfo);
-        return res;
+        return result.toString();
     }
 
     @RequestMapping(value = "GetStorageInfo")
@@ -2441,6 +2537,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
             storageEntity.setId(1);
             storageEntity.setTotalAmount("1TB");
             storageEntity.setAlertAmount("900GB");
+            storageEntity.setLogSaveTime("6");
         }else
         {
             storageEntity=storageEntityList.get(0);
@@ -2463,8 +2560,8 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
         storageEntity.setGongaoAmount(GetStorageDesc(d5));
         storageEntity.setLogAmount(GetStorageDesc(d6));
 
-        storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5+d6));
-
+        //storageEntity.setCurrentUsed(GetStorageDesc(d0 + d1 + d2 + d3 + d4 + d5+d6));
+        storageEntity.setCurrentUsed(GetStorageDesc(d6));
         storageRepository.save(storageEntity);
 
 
