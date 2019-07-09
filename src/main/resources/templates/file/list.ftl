@@ -304,9 +304,6 @@
                             return '<a href="downLoadAttach?ids=' + row.fileId + '&type='+fileType+'" download="'+value+'">' + value + '</a>'
 
                         } else {
-                            // if (row.fileClassify == 7){
-                            //     return '<a href="ProjectDetail?pid='+row.fileId+'" target="_blank">' + value + '</a>';
-                            // }
                             if (row.fileType == "0"){
                                 return '<span>'+row.fileName+'</span><a href="javascript:void(0)" onclick="viewFile1('+row.fileCode+')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                             } else {
@@ -334,6 +331,8 @@
                             return '新建项目';
                         if (value==7)
                             return '更新项目';
+                        if (value==8)
+                            return '法律法规库';
                     }
 
                 },
@@ -395,12 +394,11 @@
                     formatter: function (value, row, index) {
                         if (row.fileClassify >= 6) {
                             return '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + 1 + ',' + row.fileClassify + ')" style="color: green;">通过</a>&nbsp;&nbsp;' +
-                                '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;&nbsp;' +
-                                '<a href="ReviewProject?pid='+row.fileId+'" target="_blank" style="color: purple">查看</a>'
+                                '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;&nbsp;';
 
                         } else {
                             return '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + 1 + ',' + row.fileClassify + ')" style="color: green;">通过</a>&nbsp;&nbsp;' +
-                                '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;'
+                                '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;';
 //                                '<a href="javascript:void(0)" onclick="deleteById('+row.id+')" style="color: brown;">删除</a>'
                         }
                     }

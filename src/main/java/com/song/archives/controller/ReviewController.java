@@ -133,7 +133,7 @@ public class ReviewController {
             }
 
 
-            if(null!=fileClassify&&fileClassify>=6){
+            if(null!=fileClassify&&fileClassify==6){
                 ProjectInfoEntity projectInfoEntity=projectRepository.findOne(auditInfo.getFileId());
                 projectInfoEntity.setProAuditState(auditResult);
                 projectRepository.save(projectInfoEntity);
@@ -269,12 +269,8 @@ public class ReviewController {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(criteriaBuilder.equal(root.get("isAudit"),0));
-            if(fileClassify==6) {
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("fileClassify"), fileClassify));
-            }else
-            {
-                predicates.add(criteriaBuilder.equal(root.get("fileClassify"), fileClassify));
-            }
+
+            predicates.add(criteriaBuilder.equal(root.get("fileClassify"), fileClassify));
 //            predicates.add(criteriaBuilder.notEqual(root.get("audit"),1));
             if (null != searchValue && !searchValue.equals("")) {
                 predicates.add(criteriaBuilder.like(root.get("fileName"), "%" + searchValue + "%"));

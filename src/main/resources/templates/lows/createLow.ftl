@@ -301,7 +301,7 @@
     }
 
     function paperFile() {
-        var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="fileLevel"name="classificlevel"class="form-control" onchange="qryAuditUser(this,'+"'auditUser'"+')">'+getOptions()+'</select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请选择审核人员</option></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden" name="fileClassify" value="7"/><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="FL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
+        var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form id="paperForm"><div class="form-group"><label for="select">密级</label><select id="fileLevel"name="classificlevel"class="form-control" onchange="qryAuditUser(this,'+"'auditUser'"+')">'+getOptions()+'</select></div><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser" class="form-control"><option value="-1">请选择审核人员</option></select></div><div class="form-group"><label>文件归档号</label><input class="form-control"name="filingNum"placeholder="请输入文件归档号"/></div><input type="hidden" name="fileClassify" value="8"/><div class="form-group"><label>责任人</label><input type="hidden"name="fileType"value="0"/><input type="hidden"name="category"value="FL"/><input type="hidden"name="creator"value=<@shiro.principal property="username"/>><input class="form-control"name="zrr"placeholder="请输入责任人"/></div></form></div></div></div>'
 
         $("#savePaperFile").removeAttr("disabled");
 
@@ -426,7 +426,7 @@
         var fileContent = '<form id="fileForm" action="uploadAatachment" enctype="multipart/form-data" method="post">' +
             '                    <input type="hidden" name="category" value="FL"/>' +
             '                    <input type="hidden" name="fileType" value="1"/>' +
-            '                    <input id="fileClassify" name="fileClassify" type="hidden" value="7"/>' +
+            '                    <input id="fileClassify" name="fileClassify" type="hidden" value="8"/>' +
             '                    <div class="form-group">' +
             '                        <select name="classificlevel" id="classificlevel" class="form-control" onchange="qryAuditUser(this,'+"'auditUser'"+')">' +
                 getOptions()+
@@ -470,7 +470,7 @@
                 'category': 'FL',
                 "fileType": '1',
                 'classificlevel': $("#classificlevel").val(),
-                'fileClassify': 7,
+                'fileClassify': 8,
             },//这个是外带数据
             showBrowse: false,
             browseOnZoneClick: true,
