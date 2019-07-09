@@ -555,14 +555,6 @@
                 idNo: {
                     message: '证件号码校验失败',
                     validators: {
-                        notEmpty: {
-                            message: '证件号码不能为空'
-                        },
-                        stringLength: {
-                            min: 15,
-                            max: 18,
-                            message: '请输入正确的身份证号码'
-                        },
                         regexp: {
                             regexp: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
                             message: '请输入正确的身份证号码'
