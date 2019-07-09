@@ -304,7 +304,7 @@ public class UserController {
     String saveUser(User user) {
 
         user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, user.getPassword(), user.getUsername(), 2).toHex());
-        user.setType(1);
+        user.setType(0);
         user.setAvailable(true);
 
         try {
@@ -357,7 +357,7 @@ public class UserController {
                 user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, user.getPassword(), user.getUsername(), 2).toHex());
             }
             user.setType(user.getType() == null?oldUser.getType():user.getType());
-            user.setAvailable(user.getAvailable()?user.getAvailable():false);
+            user.setAvailable(true);
             user.setRoles(user.getRoles().size()==0?oldUser.getRoles():user.getRoles());
 
             if(user.getPositions()==null){
@@ -377,7 +377,7 @@ public class UserController {
             }
 
             if (!user.getMobile().equals(oldUser.getMobile())){
-                optDesc.append("将【联系电话】由【"+oldUser.getMobile()+"】修改为【"+user.getRealName()+"】、");
+                optDesc.append("将【联系电话】由【"+oldUser.getMobile()+"】修改为【"+user.getMobile()+"】、");
             }
 
             if (!user.getDescription().equals(oldUser.getDescription())){

@@ -57,7 +57,7 @@ public class MenuController {
     @ArchivesLog(operationType = "findMenuById",operationName = "获取菜单")
     @RequestMapping(value = "/findMenuById")
     @ResponseBody
-    @RequiresRoles("administrator")
+//    @RequiresRoles("administrator")
     String findMenuById(@RequestParam(value = "mid") Long mid){
 
         MenuTypeEntity menu = menuRepository.findOne(mid);

@@ -464,22 +464,23 @@ public class DataController {
 
             FileInfoEntity infoEntity = fileInfoRepository.save(fileInfo);
 
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setFileId(infoEntity.getId());
+            auditInfo.setApplicant(getUser().getUsername());
+            auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            auditInfo.setFileName(infoEntity.getFileName());
+            auditInfo.setIsAudit(0);
+            auditInfo.setType("UPLOAD");
+            auditInfo.setFileClassify(fileInfo.getFileClassify());
+            auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+            auditInfo.setAuditUser(auditUser);
 
-            if (fileType.equals("1")){
-
-                AuditInfo auditInfo = new AuditInfo();
-                auditInfo.setFileId(infoEntity.getId());
-                auditInfo.setApplicant(getUser().getUsername());
-                auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                auditInfo.setFileName(infoEntity.getFileName());
-                auditInfo.setIsAudit(0);
-                auditInfo.setType("UPLOAD");
-                auditInfo.setFileClassify(fileInfo.getFileClassify());
-                auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
-                auditInfo.setAuditUser(auditUser);
-                auditInfoRepository.save(auditInfo);
+            if (!fileType.equals("1")){
+                auditInfo.setFileCode(fileInfo.getFileCode());
+                auditInfo.setFileType(fileInfo.getFileType());
             }
 
+            auditInfoRepository.save(auditInfo);
 
 
 

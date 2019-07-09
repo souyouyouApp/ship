@@ -304,8 +304,10 @@
                             return '<a href="downLoadAttach?ids=' + row.fileId + '&type='+fileType+'" download="'+value+'">' + value + '</a>'
 
                         } else {
-                            if (row.fileType == 0){
-
+                            // if (row.fileClassify == 7){
+                            //     return '<a href="ProjectDetail?pid='+row.fileId+'" target="_blank">' + value + '</a>';
+                            // }
+                            if (row.fileType == "0"){
                                 return '<span>'+row.fileName+'</span><a href="javascript:void(0)" onclick="viewFile1('+row.fileCode+')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                             } else {
                                 return '<a href="downLoadFile?fileId=' + row.fileId + '" download="'+row.fileName+'">' + value + '</a>';
@@ -393,48 +395,48 @@
                     formatter: function (value, row, index) {
                         if (row.fileClassify >= 6) {
                             return '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + 1 + ',' + row.fileClassify + ')" style="color: green;">通过</a>&nbsp;&nbsp;' +
-                                    '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;&nbsp;' +
-                                    '<a href="ReviewProject?pid='+row.fileId+'" target="_blank" style="color: purple">查看</a>'
+                                '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;&nbsp;' +
+                                '<a href="ReviewProject?pid='+row.fileId+'" target="_blank" style="color: purple">查看</a>'
 
                         } else {
                             return '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + 1 + ',' + row.fileClassify + ')" style="color: green;">通过</a>&nbsp;&nbsp;' +
-                                    '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;'
+                                '<a href="javascript:void(0)" onclick="auditById(' + row.id + ',' + -1 + ',' + row.fileClassify + ')" style="color: red">拒绝</a>&nbsp;'
 //                                '<a href="javascript:void(0)" onclick="deleteById('+row.id+')" style="color: brown;">删除</a>'
                         }
                     }
 
                 }]
-            })
+        })
 
         $("#table").colResizable({resizeMode:'flex'});
 
-    //请求服务数据时所传参数
-    function queryParams(params) {
-        params.searchValue = $("#searchContent").val();
-        params.pageSize = params.limit;
-        params.pageIndex = params.offset / params.limit + 1;
-        params.fileClassify = $("#fileClassify").val();
-        params.sortOrder = params.order;
-        params.sortName = params.sort;
+        //请求服务数据时所传参数
+        function queryParams(params) {
+            params.searchValue = $("#searchContent").val();
+            params.pageSize = params.limit;
+            params.pageIndex = params.offset / params.limit + 1;
+            params.fileClassify = $("#fileClassify").val();
+            params.sortOrder = params.order;
+            params.sortName = params.sort;
 
 
-        return params;
-    }
+            return params;
+        }
 
-    //请求成功方法
-    function responseHandler(result) {
-        result = result.result;
-        //如果没有错误则返回数据，渲染表格
-        return {
-            total: result[0].totalElements, //总页数,前面的key必须为"total"
-            rows: result[0].content //行数据，前面的key要与之前设置的dataField的值一致.
+        //请求成功方法
+        function responseHandler(result) {
+            result = result.result;
+            //如果没有错误则返回数据，渲染表格
+            return {
+                total: result[0].totalElements, //总页数,前面的key必须为"total"
+                rows: result[0].content //行数据，前面的key要与之前设置的dataField的值一致.
+            };
         };
-    };
 
-    //刷新表格数据,点击你的按钮调用这个方法就可以刷新
-    function refresh() {
-        $('#table').bootstrapTable('refresh', {url: 'users'});
-    }
+        //刷新表格数据,点击你的按钮调用这个方法就可以刷新
+        function refresh() {
+            $('#table').bootstrapTable('refresh', {url: 'users'});
+        }
     })
 
 

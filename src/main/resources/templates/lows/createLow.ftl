@@ -863,12 +863,6 @@
     }
 
 
-    var classificlevelId = '${info.classificlevelId!}';
-
-    if (classificlevelId != '') {
-        $("#classificlevelId").val(classificlevelId);
-    }
-
 
     if ('${info.type!}' != '') {
         $("#type").val('${info.type!}');
