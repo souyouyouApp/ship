@@ -165,6 +165,27 @@ public class DataController {
     /**
      * 查看纸质文件存档
      *
+     * @param fileCode
+     * @return
+     */
+    @ArchivesLog(operationType = "viewFile1", operationName = "查看纸质文件存档")
+    @RequestMapping(value = "/viewFile1")
+    @ResponseBody
+    public String viewFile1(@RequestParam(value = "fileCode") String fileCode) {
+
+
+        FileInfoEntity fileInfoEntity = fileInfoRepository.findByFileCode(fileCode);
+        JSONObject json = JSONObject.fromObject(fileInfoEntity);
+
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查看纸质文件存档【"+fileInfoEntity.getFileName()+"】";
+        json.put("operationLog",operationLogInfo);
+        return json.toString();
+    }
+
+
+    /**
+     * 查看纸质文件存档
+     *
      * @param mid
      * @return
      */
@@ -178,7 +199,7 @@ public class DataController {
         FileInfoEntity fileInfoEntity = fileInfoRepository.findByFileCode(moduleFileEntity.getFileCode());
         JSONObject json = JSONObject.fromObject(fileInfoEntity);
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】查看纸质文件存档";
+        operationLogInfo = "用户【"+getUser().getRealName()+"】查看纸质文件存档【"+fileInfoEntity.getFileName()+"】";
         json.put("operationLog",operationLogInfo);
         return json.toString();
     }
@@ -527,9 +548,10 @@ public class DataController {
         operation.setOperationEndTime(dateFormat.format(new Date()));
         operation.setOperationUserName(getUser().getUsername());
         operation.setOperationType("getFile");
+        operation.setOperationResult("成功");
 
 
-
+        operationRepository.save(operation);
 
 
         //判断文件是否存在如果不存在就返回默认图标
@@ -557,7 +579,6 @@ public class DataController {
             e.printStackTrace();
         }
 
-        operationRepository.save(operation);
 
 
     }
@@ -886,10 +907,12 @@ public class DataController {
             //下载单个文件
             if (null == classificlevelId || classificlevelId.equals(0)){
                 FileInfoEntity fileInfo = fileInfoRepository.findById(fileId);
+                auditInfo.setFileType(fileInfo.getFileType());
                 auditInfo.setFileId(fileInfo.getId());
                 auditInfo.setFileName(fileInfo.getFileName());
                 auditInfo.setFileClassify(fileInfo.getFileClassify());
                 auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+                auditInfo.setFileCode(fileInfo.getFileCode());
             //下载整个附件
             }else {
                 auditInfo.setClassificlevelId(classificlevelId);

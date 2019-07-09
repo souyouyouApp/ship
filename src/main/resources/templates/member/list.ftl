@@ -131,8 +131,8 @@
             pageNumber: 1,                       //初始化加载第一页，默认第一页
             pageSize: 10,                       //每页的记录行数（*）
             pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
-            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
-            strictSearch: true,
+            search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            strictSearch: false,
             showColumns: true,                  //是否显示所有的列
             showRefresh: true,                  //是否显示刷新按钮
             minimumCountColumns: 2,             //最少允许的列数
@@ -274,8 +274,8 @@
     function updateUser(id,username,idNo,realName,positions,mobile,permissionLevel,description) {
         var content = '<div class="panel-body"><div class="row"><div class="col-lg-10"><form role="form" id="updateForm">' +
                         '<input type="hidden" id="id" name="id" value="'+id+'"/> '+
-                '<div class="form-group"><label>用户名</label><input class="form-control" name="username" id="username" value="'+username+'" placeholder="请输入用户名" />' +
-                '</div><div class="form-group"><label>真实姓名</label><input class="form-control" name="realName" id="realName" value="'+realName+'" placeholder="请输入真实姓名" />' +
+                '<div class="form-group"><label>用户名</label><input class="form-control" name="username" id="username" readonly value="'+username+'"  />' +
+                '</div><div class="form-group"><label>真实姓名</label><input class="form-control" name="realName" id="realName" readonly value="'+realName+'" placeholder="请输入真实姓名" />' +
                 '</div><div class="form-group"><label>证件号码</label><input class="form-control" name="idNo" id="idNo" value="'+idNo+'" placeholder="请输入证件号码" />' +
                 '</div><div class="form-group"><label>密码</label><input class="form-control" type="password" name="password" id="password" placeholder="请输入密码" />' +
                 '</div><div class="form-group"><label for="select">职务</label><select id="positions" name="positions" value="'+positions+'" class="form-control">' +

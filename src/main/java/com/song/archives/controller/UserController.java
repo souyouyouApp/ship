@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -78,10 +79,10 @@ public class UserController {
     private String overDateStr;
     @Value("${project.timeOut}")
     private Long timeOut;
+    @Value("${mysqldump.path}")
+    private String mysqlDumpath;
 
     private Date overDate;
-
-    private String backUpFileName = "";
 
     private static Object spaceAlertLock=new Object();
 
@@ -131,9 +132,9 @@ public class UserController {
     public String exportMysql(){
         result = new JSONObject();
         boolean backFlag = false;
+        String backUpFileName  = new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".sql";
         try {
-            backUpFileName = new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".sql";
-            backFlag = MySQLDatabaseBackup.exportDatabaseTool("localhost","root","root",savePath,backUpFileName,"zscq");
+            backFlag = MySQLDatabaseBackup.exportDatabaseTool(mysqlDumpath,"localhost","root","root",savePath,backUpFileName ,"zscq");
             msg = SUCCESS;
             result.put("path",savePath+"/"+backUpFileName);
         } catch (InterruptedException e) {
@@ -156,6 +157,7 @@ public class UserController {
     @ArchivesLog(operationType = "logs", operationName = "日志列表")
     @RequestMapping(value = "logs")
     @ResponseBody
+    @RequiresRoles(value = {"securitor","comptroller"},logical = Logical.OR)
     String logs(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                 @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                 @RequestParam(value = "operationUsername", defaultValue = "") String operationUsername,
@@ -300,7 +302,7 @@ public class UserController {
     String saveUser(User user) {
 
         user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, user.getPassword(), user.getUsername(), 2).toHex());
-        user.setType(0);
+        user.setType(1);
         user.setAvailable(true);
 
         try {
@@ -469,6 +471,7 @@ public class UserController {
     @RequestMapping(value = "/users")
     @ResponseBody
     @ArchivesLog(operationType = "users", operationName = "查询用户信息")
+    @RequiresRoles(value = {"administrator","securitor"},logical = Logical.OR)
     String users(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
         page = page - 1;

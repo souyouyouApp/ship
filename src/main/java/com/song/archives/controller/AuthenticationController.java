@@ -251,6 +251,7 @@ public class AuthenticationController {
     @ArchivesLog(operationType = "roles", operationName = "查询角色信息")
     @RequestMapping(value = "/roles")
     @ResponseBody
+    @RequiresRoles("securitor")
     String roles(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
 

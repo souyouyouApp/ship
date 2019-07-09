@@ -21,12 +21,33 @@ public class AuditInfo implements Serializable {
     private String fileName;
     private Long fileId;
     private Integer classificlevelId;
+    private String fileType;
+    private String fileCode;
+
+    public String getFileCode() {
+        return fileCode;
+    }
+
+    public void setFileCode(String fileCode) {
+        this.fileCode = fileCode;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
     /**
      * 1 项目文件
      * 2 案例库文件
      * 3 资料库文件
      * 4 公告库文件
      */
+
+
     private Integer fileClassify;
 
     public Integer getClassificlevelId() {

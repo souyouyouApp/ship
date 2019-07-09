@@ -10,6 +10,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,6 +57,7 @@ public class MenuController {
     @ArchivesLog(operationType = "findMenuById",operationName = "获取菜单")
     @RequestMapping(value = "/findMenuById")
     @ResponseBody
+    @RequiresRoles("administrator")
     String findMenuById(@RequestParam(value = "mid") Long mid){
 
         MenuTypeEntity menu = menuRepository.findOne(mid);
@@ -129,6 +131,7 @@ public class MenuController {
     @ArchivesLog(operationType = "menus",operationName = "查询菜单")
     @RequestMapping(value = "/menus")
     @ResponseBody
+    @RequiresRoles("administrator")
     String menus(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                  @RequestParam(value = "menuType", defaultValue = "1") Integer menuType
@@ -212,6 +215,7 @@ public class MenuController {
     @ArchivesLog(operationType = "deleteMenu",operationName = "删除菜单")
     @RequestMapping(value = "/deleteMenu")
     @ResponseBody
+    @RequiresRoles("administrator")
     String deleteMenu(Long id){
         MenuTypeEntity menu = menuRepository.findOne(id);
         try {
@@ -242,6 +246,7 @@ public class MenuController {
     @ArchivesLog(operationType = "findChildMenu",operationName = "查询子菜单")
     @RequestMapping(value = "/findChildMenu")
     @ResponseBody
+    @RequiresRoles("administrator")
     String findChildMenu(Integer id){
 
         String childrenNames = "";

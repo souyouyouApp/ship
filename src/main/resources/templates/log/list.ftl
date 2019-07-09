@@ -48,8 +48,7 @@
                 &nbsp;
                 <div class="form-group">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">导出
-                            <span class="caret"></span>
+                        <button type="button" class="btn btn-default" onclick="backUp()">导出
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li>

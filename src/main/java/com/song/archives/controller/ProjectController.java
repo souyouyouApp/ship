@@ -10,6 +10,7 @@ import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -2524,6 +2525,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
     }
 
     @RequestMapping(value = "GetStorageInfo")
+    @RequiresRoles("administrator")
     public ModelAndView GetStorageInfo() {
 
         ModelAndView modelAndView = new ModelAndView();

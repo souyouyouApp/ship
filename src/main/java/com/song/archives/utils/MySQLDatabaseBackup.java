@@ -25,7 +25,7 @@ public class MySQLDatabaseBackup {
 	 * @param databaseName 要导出的数据库名
 	 * @return 返回true表示导出成功，否则返回false。
 	 */
-	public static boolean exportDatabaseTool(String hostIP, String userName, String password, String savePath, String fileName, String databaseName) throws InterruptedException {
+	public static boolean exportDatabaseTool(String dumpPath,String hostIP, String userName, String password, String savePath, String fileName, String databaseName) throws InterruptedException {
 		File saveFile = new File(savePath);
 		if (!saveFile.exists()) {// 如果目录不存在
 			saveFile.mkdirs();// 创建文件夹
@@ -38,7 +38,7 @@ public class MySQLDatabaseBackup {
 		BufferedReader bufferedReader = null;
 		try {
 			printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(savePath + fileName), "utf8"));
-			Process process = Runtime.getRuntime().exec(" C:\\Program Files\\MySQL\\MySQL Server 5.5\\bin\\mysqldump -h" + hostIP + " -u" + userName + " -p" + password + " --set-charset=UTF8 " + databaseName);
+			Process process = Runtime.getRuntime().exec(dumpPath+" -h" + hostIP + " -u" + userName + " -p" + password + " --set-charset=UTF8 " + databaseName);
 			InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), "utf8");
 			bufferedReader = new BufferedReader(inputStreamReader);
             String line;
@@ -68,7 +68,7 @@ public class MySQLDatabaseBackup {
 	
 	public static void main(String[] args){
 		try {
-			if (exportDatabaseTool("172.16.0.127", "root", "123456", "D:/backupDatabase", "2014-10-14.sql", "test")) {
+			if (exportDatabaseTool("11","172.16.0.127", "root", "123456", "D:/backupDatabase", "2014-10-14.sql", "test")) {
 				System.out.println("数据库成功备份！！！");
 			} else {
 				System.out.println("数据库备份失败！！！");

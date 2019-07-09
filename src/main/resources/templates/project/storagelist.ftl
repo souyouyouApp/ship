@@ -32,7 +32,7 @@
 
     <br>
 
-    <h4>日志保存时长： <input type="number" id="txtLogSaveTime" name="txtLogSaveTime" value="${storageinfo.logSaveTime}"> 月<button id="btn_logSaveTime" onclick="UpdateLogSaveTime()" type="button" class="btn btn-primary" value="">修改</button>
+    <h4>日志保存时长： <input type="number" id="txtLogSaveTime" name="txtLogSaveTime" value="${storageinfo.logSaveTime!}"> 月<button id="btn_logSaveTime" onclick="UpdateLogSaveTime()" type="button" class="btn btn-primary" value="">修改</button>
 
         <h4>日志存储空间满时，将自动覆盖最早存储的日志数据</h4>
     <#---->
