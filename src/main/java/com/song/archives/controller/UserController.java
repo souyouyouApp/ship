@@ -157,7 +157,7 @@ public class UserController {
     @ArchivesLog(operationType = "logs", operationName = "日志列表")
     @RequestMapping(value = "logs")
     @ResponseBody
-    @RequiresRoles(value = {"securitor","comptroller"},logical = Logical.OR)
+    @RequiresRoles(value = {"securitor","comptroller","superadmin"},logical = Logical.OR)
     String logs(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                 @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                 @RequestParam(value = "operationUsername", defaultValue = "") String operationUsername,
@@ -184,6 +184,8 @@ public class UserController {
             if (!startDate.equals("") && !endDate.equals("")){
                 predicates.add(criteriaBuilder.between(root.get("operationStartTime"),startDate,endDate));
             }
+
+            predicates.add(criteriaBuilder.notEqual(root.get("operationDescrib"),""));
 
 
             //审计员查看管理员和保密员的操作日志
