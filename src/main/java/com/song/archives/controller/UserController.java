@@ -132,15 +132,31 @@ public class UserController {
     public String exportMysql(){
         result = new JSONObject();
         boolean backFlag = false;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
+        OperationLog operationLog = new OperationLog();
+        operationLog.setOperationUserId(getUser().getId());
+        operationLog.setOperationType("backupLog");
+        operationLog.setOperationName("导出备份");
+        operationLog.setOperationStartTime(dateFormat.format(System.currentTimeMillis()));
+        operationLog.setOperationEndTime(dateFormat.format(System.currentTimeMillis()));
+
         String backUpFileName  = new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".sql";
         try {
             backFlag = MySQLDatabaseBackup.exportDatabaseTool(mysqlDumpath,"localhost","root","root",savePath,backUpFileName ,"zscq");
             msg = SUCCESS;
+            operationLog.setOperationResult("成功");
+            operationLog.setOperationDescrib("用户【"+getUser().getUsername()+"】导出日志【"+savePath+"/"+backUpFileName+"】");
             result.put("path",savePath+"/"+backUpFileName);
         } catch (InterruptedException e) {
             msg = "Error";
-            e.printStackTrace();
+            operationLog.setOperationResult("失败");
+            logger.error(e.getMessage());
         }
+
+        operationRepository.save(operationLog);
 
         result.put("msg",msg);
         result.put("result",backFlag);
@@ -185,7 +201,7 @@ public class UserController {
                 predicates.add(criteriaBuilder.between(root.get("operationStartTime"),startDate,endDate));
             }
 
-            predicates.add(criteriaBuilder.notEqual(root.get("operationDescrib"),""));
+//            predicates.add(criteriaBuilder.notEqual(root.get("operationDescrib"),""));
 
 
             //审计员查看管理员和保密员的操作日志
