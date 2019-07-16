@@ -136,8 +136,8 @@
         <div class="form-group">
             <label for="publishTime" class="col-sm-2 control-label">发布时间</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="publishTime" name="publishTime" placeholder="请输入发布时间"
-                       value="${info.publishTime!}" <#if info.creator != currentUser>readonly</#if>>
+                <input type="text" class="form-control" id="publishTime" name="publishTime" autocomplete="false" onclick="datePicker()" placeholder="请输入发布时间"
+                       value="${info.publishTime!}" <#if info.creator != currentUser>disabled</#if>>
             </div>
         </div>
 
@@ -285,6 +285,18 @@
 </div>
 <!-- /.modal -->
 <script type="text/javascript">
+
+    function datePicker() {
+        $('#publishTime').datetimepicker('show');
+    }
+
+    $('#publishTime').datetimepicker({
+        minView: "month",
+        // format : "yyyy-mm-dd",//日期格式
+        autoclose:true,//选中关闭
+        todayBtn: true//今日按钮
+    });
+
 
     function addInput(id, fileName, type) {
         var viewDiv = '';

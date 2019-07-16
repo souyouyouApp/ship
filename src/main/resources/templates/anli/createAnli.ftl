@@ -149,7 +149,7 @@
                         <div class="form-group">
                             <label for="closeTime" class="col-sm-1 control-label">结案时间</label>
                             <div class="col-sm-6">
-                                <input type="text" autocomplete="false" class="form-control" id="closeTime" name="closeTime" onclick="datePicker()" placeholder="结案时间" value="${info.closeTime!}" <#if info.creator != currentUser>readonly</#if>>
+                                <input type="text" autocomplete="false" class="form-control" id="closeTime" name="closeTime" onclick="datePicker()" placeholder="结案时间" value="${info.closeTime!}" <#if info.creator != currentUser>disabled</#if>>
 
                             </div>
                         </div>

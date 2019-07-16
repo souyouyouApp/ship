@@ -143,7 +143,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
         JSONObject jsonObject = new JSONObject();
 
         for (int i = 0; i < propertyNames.length; i++) {
-            if (propertyNames[i].equals("roles") || propertyNames[i].equals("relatedUserIds") || propertyNames[i].equals("relatedUserName"))
+            if (propertyNames[i].equals("roles") || propertyNames[i].equals("relatedUserIds") || propertyNames[i].equals("relatedUserName") || (entity instanceof OperationEntity))
                 continue;
             try {
                 jsonObject.put(propertyNames[i],state[i]);
@@ -178,7 +178,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
             desc = "查看公告【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof User && request.getRequestURI().equals("/userInfo")){
             desc = "查看用户【"+saveEntity.get("username")+"】,"+o.toString();
-        }else if (entity instanceof FileInfoEntity && request.getRequestURI().equals("/getFile")){
+        }else if (entity instanceof FileInfoEntity && (request.getRequestURI().equals("/getFile")||request.getRequestURI().equals("/downLoadFile"))){
             desc = "下载文件【"+saveEntity.get("fileName")+"】";
         }else {
             return super.onLoad(entity, id, state, propertyNames, types);

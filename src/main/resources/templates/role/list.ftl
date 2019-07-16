@@ -187,7 +187,9 @@
             if (result && result.length) {
                 var html = [];
                 html.push('<div class="checkbox"><label><input type="checkbox"  selectAllBox="">全选</label></div>');
+                debugger
                 $.each(result, function () {
+                    debugger
                     html.push("<div class='checkbox'><label>");
                     html.push("<input type='checkbox' selectBox='' id='");
                     html.push(this[0]);
