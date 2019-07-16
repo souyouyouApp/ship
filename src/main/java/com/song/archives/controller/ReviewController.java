@@ -67,7 +67,9 @@ public class ReviewController {
     @ResponseBody
     String auditCnt() {
 
-        Long proCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,7);
+        Long proCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,6)
+                +auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,7);
+        Long proFileCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,1);
         Long dataCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,3);
         Long anliCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,2);
         Long ggCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,4);
@@ -75,11 +77,12 @@ public class ReviewController {
         result = new JSONObject();
 
         result.put("proCnt",proCnt);
+        result.put("proFileCnt",proFileCnt);
         result.put("dataCnt",dataCnt);
         result.put("anliCnt",anliCnt);
         result.put("ggCnt",ggCnt);
         result.put("flCnt",flCnt);
-        result.put("totalCnt",proCnt+dataCnt+anliCnt+ggCnt+flCnt);
+        result.put("totalCnt",proCnt+proFileCnt+dataCnt+anliCnt+ggCnt+flCnt);
 
         return result.toString();
 

@@ -73,6 +73,9 @@
             if (res.flCnt > 0){
                 $('#flCnt').text(res.flCnt)
             }
+            if (res.proFileCnt > 0){
+                $('#proFileCnt').text(res.proFileCnt)
+            }
             console.log(result)
         })
         $.post("getNotify", {}, function (result) {

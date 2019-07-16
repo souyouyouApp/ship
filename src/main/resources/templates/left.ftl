@@ -160,7 +160,7 @@
                         <a href="javascript:void(0)" onclick="review(6)">项目审核<span id="proCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" onclick="review(1)">项目文件<span id="proCnt" style="color: red;margin-left: 20px;"></span></a>
+                        <a href="javascript:void(0)" onclick="review(1)">项目文件<span id="proFileCnt" style="color: red;margin-left: 20px;"></span></a>
                     </li>
 
                     <li>
