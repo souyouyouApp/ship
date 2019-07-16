@@ -17,7 +17,7 @@ public class ModuleFileEntity implements Serializable{
     private String fileCode;
     private Long userId;
     private String creator;
-    private Timestamp createTime;
+    private String createTime;
     private Long t_id;
 
 
@@ -61,11 +61,11 @@ public class ModuleFileEntity implements Serializable{
         this.creator = creator;
     }
 
-    public Timestamp getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 

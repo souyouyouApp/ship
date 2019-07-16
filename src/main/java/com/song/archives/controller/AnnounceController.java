@@ -73,7 +73,7 @@ public class AnnounceController {
     @ArchivesLog(operationType = "createAnnounce", description = "创建公告信息")
     @RequestMapping(value = "/createAnnounce")
     @ResponseBody
-    @Transactional
+//    @Transactional
     public String createAnnounce(AnnounceInfoEntity entity,
                                  @RequestParam(value = "mids[]",required = false) List<Long> mids,
                                  @RequestParam(value = "type",required = false) String type,

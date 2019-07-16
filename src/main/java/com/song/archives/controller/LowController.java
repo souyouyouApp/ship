@@ -102,7 +102,7 @@ public class LowController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "createLowPage", description = "新建法律法规页面",writeFlag = false)
+    @ArchivesLog(operationType = "createLowPage", description = "新建法律法规页面")
     @RequestMapping(value = "/createLowPage")
     public ModelAndView createLowPage(@RequestParam(value = "lid", required = false) Long lid) {
 

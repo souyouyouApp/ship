@@ -31,7 +31,7 @@ public class AnnounceInfoEntity implements Serializable{
     @Override
     public String toString() {
         return "{" +
-                ", 标题='" + title + '\'' +
+                "标题='" + title + '\'' +
                 ", 创建人='" + creator + '\'' +
                 ", 创建时间='" + createTime + '\'' +
                 ", 摘要='" + content + '\'' +

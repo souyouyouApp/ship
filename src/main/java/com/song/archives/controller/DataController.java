@@ -466,7 +466,7 @@ public class DataController {
             moduleFile.setFileCode(fileInfo.getFileCode());
             moduleFile.setUserId(getUser().getId());
             moduleFile.setCreator(getUser().getUsername());
-            moduleFile.setCreateTime(new Timestamp(System.currentTimeMillis()));
+            moduleFile.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
 
             ModuleFileEntity moduleFileEntity = moduleFileRespository.save(moduleFile);
 

@@ -149,8 +149,8 @@
                         <div class="form-group">
                             <label for="closeTime" class="col-sm-1 control-label">结案时间</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="closeTime" name="closeTime"
-                                       placeholder="请输入结案时间" value="${info.closeTime!}" <#if info.creator != currentUser>readonly</#if>>
+                                <input type="text" autocomplete="false" class="form-control" id="closeTime" name="closeTime" onclick="datePicker()" placeholder="结案时间" value="${info.closeTime!}" <#if info.creator != currentUser>readonly</#if>>
+
                             </div>
                         </div>
 
@@ -559,6 +559,18 @@
 </div>
 <!-- /.modal -->
 <script type="text/javascript">
+
+    function datePicker() {
+        $('#closeTime').datetimepicker('show');
+    }
+
+    $('#closeTime').datetimepicker({
+        minView: "month",
+        // format : "yyyy-mm-dd",//日期格式
+        autoclose:true,//选中关闭
+        todayBtn: true//今日按钮
+    });
+
 
 
     function addInput(id, fileName, type) {
@@ -1036,7 +1048,6 @@
 </script>
 
 <script type="text/javascript">
-
     function qryFileAuitResult(fileId,fileName,mid,auditUser) {
 
         $.ajax({

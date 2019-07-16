@@ -2624,7 +2624,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
                     auditInfoRepository.save(auditInfo);
 
                     ModuleFileEntity moduleFileEntity=new ModuleFileEntity();
-                    moduleFileEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    moduleFileEntity.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                     moduleFileEntity.setCreator(getUser().getUsername());
                     moduleFileEntity.setFileCode(addedFile.getFileCode());
                     moduleFileEntity.setT_id(pid);

@@ -2,6 +2,11 @@ package com.song.archives.config;
 
 import com.song.archives.model.*;
 import com.song.archives.utils.LoggerUtils;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+import net.sf.json.util.CycleDetectionStrategy;
+import net.sf.json.util.PropertySetStrategy;
 import org.apache.tomcat.jni.FileInfo;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
@@ -135,32 +140,44 @@ public class HibernateInterceptor extends EmptyInterceptor {
 
         HttpServletRequest request = getRequest();
         Map saveEntity = new HashMap();
+        JSONObject jsonObject = new JSONObject();
 
         for (int i = 0; i < propertyNames.length; i++) {
-            if (propertyNames[i].equals("roles"))
+            if (propertyNames[i].equals("roles") || propertyNames[i].equals("relatedUserIds") || propertyNames[i].equals("relatedUserName"))
                 continue;
-            System.out.println(entity.getClass());
+            try {
+                jsonObject.put(propertyNames[i],state[i]);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+//            System.out.println(entity.getClass());
             saveEntity.put(propertyNames[i],state[i]);
-
+//            System.out.println(propertyNames[i]+"----"+state[i]);
 
         }
+        Object o = new Object();
+        o = JSONObject.toBean(jsonObject, entity.getClass());
+//        if (!(entity instanceof User)){
+//
+//        }
+//        System.out.println(o.toString());
 
         String desc;
 
         if (entity instanceof ZiliaoInfoEntity && request.getRequestURI().equals("/createData")){
-            desc = "查看资料【"+saveEntity.get("title")+"】,"+saveEntity.toString();
+            desc = "查看资料【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof ProjectInfoEntity && request.getRequestURI().equals("/ProjectDetail")){
-            desc = "查看项目【"+saveEntity.get("proName")+"】,"+saveEntity.toString();
+            desc = "查看项目【"+saveEntity.get("proName")+"】,"+o.toString();
         }else if (entity instanceof AnliInfoEntity){
-            desc = "查看案例【"+saveEntity.get("title")+"】,"+saveEntity.toString();
+            desc = "查看案例【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof LowInfoEntity){
-            desc = "查看法律法规【"+saveEntity.get("title")+"】,"+saveEntity.toString();
+            desc = "查看法律法规【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof ExpertInfoEntity && request.getRequestURI().equals("/expert")){
-            desc = "查看专家【"+saveEntity.get("name")+"】,"+saveEntity.toString();
+            desc = "查看专家【"+saveEntity.get("name")+"】,"+o.toString();
         }else if (entity instanceof AnnounceInfoEntity && request.getRequestURI().equals("/createAnnoucePage")){
-            desc = "查看公告【"+saveEntity.get("title")+"】,"+saveEntity.toString();
+            desc = "查看公告【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof User && request.getRequestURI().equals("/userInfo")){
-            desc = "查看用户【"+saveEntity.get("username")+"】,"+saveEntity.toString();
+            desc = "查看用户【"+saveEntity.get("username")+"】,"+o.toString();
         }else if (entity instanceof FileInfoEntity && request.getRequestURI().equals("/getFile")){
             desc = "下载文件【"+saveEntity.get("fileName")+"】";
         }else {
