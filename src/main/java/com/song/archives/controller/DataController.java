@@ -847,7 +847,7 @@ public class DataController {
     }
 
 
-    @ArchivesLog(operationType = "getFileAuditResult", description = "查询审核结果")
+    @ArchivesLog(operationType = "getFileAuditResult", description = "查询审核结果",writeFlag = false)
     @RequestMapping(value = "/getFileAuditResult")
     @ResponseBody
     String getFileAuditResult(@RequestParam(value = "fileId") Long fileId,
@@ -915,7 +915,7 @@ public class DataController {
                 result.put("type",auditInfo.getType());
                 return result.toString();
             }else {
-                result.put("auditResult","2");
+                result.put("auditResult","0");
                 result.put("type",auditInfo.getType());
                 return result.toString();
             }

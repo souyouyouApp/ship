@@ -128,7 +128,7 @@
 
                 <div class="form-group">
                     <@shiro.hasPermission name="expert:export">
-                        <a href="javascript:void(0)" class="btn btn-primary"  onclick="exportData()">导出</a>
+<#--                        <a href="javascript:void(0)" class="btn btn-primary"  onclick="exportData()">导出</a>-->
                     </@shiro.hasPermission>
 
                     <#--<a href="javascript:void(0)" class="btn btn-primary"  onclick="importExpert()" data-toggle="modal" data-target="#fileuploadModal">导入</a>-->
@@ -201,6 +201,11 @@
 
         if (ids.length == 0 ){
             layer.msg("请勾选要删除的记录!");
+            return;
+        }
+
+        if (ids.length > 1 ){
+            layer.msg("每次只能删除一条记录!");
             return;
         }
 

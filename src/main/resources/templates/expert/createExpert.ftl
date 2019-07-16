@@ -432,7 +432,7 @@
     function createExpert() {
 
         if ($('#typeId').val() == ''){
-            layer.msg('请选择资料类别');
+            layer.msg('请选择专家类别');
             return false;
         }
 

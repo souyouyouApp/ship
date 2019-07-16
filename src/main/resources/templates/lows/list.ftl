@@ -196,6 +196,11 @@
             layer.msg("请勾选要删除的记录!");
             return;
         }
+
+        if (ids.length > 1 ){
+            layer.msg("每次只能删除一条记录!");
+            return;
+        }
         layer.confirm("确定删除已勾选记录？", function () {
 
             var load = layer.load();

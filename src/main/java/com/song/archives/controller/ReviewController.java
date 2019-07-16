@@ -67,11 +67,11 @@ public class ReviewController {
     @ResponseBody
     String auditCnt() {
 
-        Long proCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,1);
+        Long proCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,7);
         Long dataCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,3);
         Long anliCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,2);
         Long ggCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()), 0,4);
-        Long flCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()),0,7);
+        Long flCnt = auditInfoRepository.countByAuditUserAndIsAuditAndFileClassify(String.valueOf(getUser().getId()),0,8);
         result = new JSONObject();
 
         result.put("proCnt",proCnt);
@@ -133,7 +133,7 @@ public class ReviewController {
             }
 
 
-            if(null!=fileClassify&&fileClassify==6){
+            if(null!=fileClassify&&(fileClassify==6 || fileClassify ==7)){
                 ProjectInfoEntity projectInfoEntity=projectRepository.findOne(auditInfo.getFileId());
                 projectInfoEntity.setProAuditState(auditResult);
                 projectRepository.save(projectInfoEntity);
@@ -270,7 +270,12 @@ public class ReviewController {
 
             predicates.add(criteriaBuilder.equal(root.get("isAudit"),0));
 
-            predicates.add(criteriaBuilder.equal(root.get("fileClassify"), fileClassify));
+            if (fileClassify == 6 || fileClassify == 7){
+                predicates.add(criteriaBuilder.between(root.get("fileClassify"), fileClassify,fileClassify+1));
+            }else {
+                predicates.add(criteriaBuilder.equal(root.get("fileClassify"), fileClassify));
+            }
+
 //            predicates.add(criteriaBuilder.notEqual(root.get("audit"),1));
             if (null != searchValue && !searchValue.equals("")) {
                 predicates.add(criteriaBuilder.like(root.get("fileName"), "%" + searchValue + "%"));

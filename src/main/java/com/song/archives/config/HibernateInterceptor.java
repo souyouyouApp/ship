@@ -259,8 +259,15 @@ public class HibernateInterceptor extends EmptyInterceptor {
             desc = "新建公告【"+saveEntity.get("title")+"】,"+entity.toString();
         }else if (entity instanceof User){
             desc = "新建用户【"+saveEntity.get("username")+"】,"+entity.toString();
-        }else if (entity instanceof AuditInfo && (!request.getRequestURI().equals("/SaveProject") && !request.getRequestURI().equals("/UpdateProject") )){
-            desc = "上传文件【"+saveEntity.get("fileName")+"】提交审核申请,审核人【"+saveEntity.get("auditUser")+"】";
+        }else if (entity instanceof AuditInfo ){
+            if (request.getRequestURI().equals("/SaveProject")){
+                desc = request.getAttribute(LoggerUtils.LOGGER_DESC)+"并提交审核申请,审核人【"+saveEntity.get("auditUser")+"】";
+            }else if (request.getRequestURI().equals("/UpdateProject")){
+                desc = request.getAttribute(LoggerUtils.LOGGER_DESC)+"并提交审核申请,审核人【"+saveEntity.get("auditUser")+"】";
+            }else {
+                desc = "上传附件【"+saveEntity.get("fileName")+"】提交审核申请,审核人【"+saveEntity.get("auditUser")+"】";
+            }
+
         }else if (entity instanceof ChengYanDanWeiEntity){
             desc = "新建承研单位【"+saveEntity.get("danweiName")+"】,"+entity.toString();
         }else if (entity instanceof BaoJiangEntity){

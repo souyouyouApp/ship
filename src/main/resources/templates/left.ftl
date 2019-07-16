@@ -248,7 +248,7 @@
     lowMenu.title = lowTitle;
     lowMenu.id = 'lows';
     lowMenu.type = '5';
-    lowMenu.target = 'lowsList';
+    lowMenu.target = 'lowList';
 
     var menuArr = [];
     menuArr.push(dataMenu);

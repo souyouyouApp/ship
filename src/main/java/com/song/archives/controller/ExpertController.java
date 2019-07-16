@@ -144,7 +144,7 @@ public class ExpertController {
 
     }
 
-    @ArchivesLog(operationType = "importExpert", description = "新建专家页面")
+    @ArchivesLog(operationType = "importExpert", description = "导入专家",descFlag = true)
     @RequestMapping(value = "/importExpert")
     @ResponseBody
     public String importExpert(@RequestParam(value = "dataFile") MultipartFile file) throws IOException, InvalidFormatException {
@@ -205,12 +205,14 @@ public class ExpertController {
                     expert.setSslingyu(sslingyu);
                     expert.setAddress(address);
                     expert.setPostcode(postcode);
-                    expert.setPycishu(Integer.parseInt(pycishu));
+                    expert.setPycishu(Integer.parseInt(null==pycishu?"0":pycishu));
+                    expert.setCreator(getUser().getUsername());
 
 
                     expertRepository.save(expert);
                     successCnt++;
                 }catch (Exception e){
+                    e.printStackTrace();
                     failCnt++;
                 }
 

@@ -129,22 +129,22 @@
                 <#--</@shiro.hasPermission>-->
 
                 <@shiro.hasPermission name="datum:export">
-                    <div class="form-group">
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">导出
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" role="menu">
-                               <#-- <li>
-                                    <a href="javascript:void(0)" onclick="exportData()">列表数据</a>
-                                </li>-->
-                                <li>
-                                    <a href="javascript:void(0)" onclick="exportAttach()">附件打包</a>
+<#--                    <div class="form-group">-->
+<#--                        <div class="btn-group">-->
+<#--                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">导出-->
+<#--                                <span class="caret"></span>-->
+<#--                            </button>-->
+<#--                            <ul class="dropdown-menu" role="menu">-->
+<#--                               &lt;#&ndash; <li>-->
+<#--                                    <a href="javascript:void(0)" onclick="exportData()">列表数据</a>-->
+<#--                                </li>&ndash;&gt;-->
+<#--                                <li>-->
+<#--                                    <a href="javascript:void(0)" onclick="exportAttach()">附件打包</a>-->
 
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+<#--                                </li>-->
+<#--                            </ul>-->
+<#--                        </div>-->
+<#--                    </div>-->
                 </@shiro.hasPermission>
 
                 <@shiro.hasPermission name="datum:add">
@@ -212,6 +212,11 @@
 
         if (ids.length == 0 ){
             layer.msg("请勾选要删除的记录!");
+            return;
+        }
+
+        if (ids.length > 1 ){
+            layer.msg("每次只能删除一条记录!");
             return;
         }
         layer.confirm("确定删除已勾选记录？", function () {
