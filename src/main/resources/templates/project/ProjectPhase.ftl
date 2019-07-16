@@ -123,7 +123,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                 </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="ReqDownLoadAttachFile()" id="ReqDownLoadAttachFile">修改</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="ReqDownLoadAttachFile()" id="ReqDownLoadAttachFile">提交</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -271,7 +271,7 @@
     }
     $("#phaselist").removeAttr("disabled")
     $("#attachlist").removeAttr("disabled")
-
+    $("#selreqDown").removeAttr("disabled");
     function LoadAuditUsers(obj) {
 
         $.post("getAuditByClassifyForProject", {cl:$(obj).val()}, function (result) {
@@ -290,5 +290,7 @@
         });
 
     }
+
+
 
     </script>

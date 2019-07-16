@@ -35,12 +35,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.*;
 import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.zip.ZipOutputStream;
 
-import static com.song.archives.interceptor.LoggerInterceptor.LOGGER_ENTITY;
 import static com.song.archives.utils.FileUtils.zipFile;
 
 
@@ -234,6 +235,8 @@ public class DataController {
 
             } else if ("PJ".equals(type)) {
 
+           // FileInfoEntity fileInfoEntity=fileInfoRepository.findOne(id);
+           // fileName=fileInfoEntity.getFileName();
 
             } else if ("DT".equals(type)) {
                 ZiliaoInfoEntity ziliaoInfoEntity = dataRepository.findOne(id);
@@ -940,25 +943,36 @@ public class DataController {
 
         result = new JSONObject();
 
-        String[] fileIdArr=fileIds.split(",");
-        AuditInfo auditInfo = new AuditInfo();
-        for(String fileId:fileIdArr){
+        String[] fileIdArr = fileIds.split(",");
+        String auditResult = "0";
+        try {
+            for (String fileId : fileIdArr) {
 
-            FileInfoEntity fileInfo = fileInfoRepository.findById(Long.parseLong(fileId));
-            auditInfo.setFileId(fileInfo.getId());
-            auditInfo.setApplicant(getUser().getUsername());
-            auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            auditInfo.setFileName(fileInfo.getFileName());
-            auditInfo.setIsAudit(0);
-            auditInfo.setType("DOWNLOAD");
-            auditInfo.setAuditUser(auditUser);
-            auditInfo.setFileClassify(fileInfo.getFileClassify());
-            auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
+                FileInfoEntity fileInfo = fileInfoRepository.findById(Long.parseLong(fileId));
+                AuditInfo auditInfo = new AuditInfo();
+                auditInfo.setFileId(fileInfo.getId());
+                auditInfo.setApplicant(getUser().getUsername());
+                auditInfo.setApplicationTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                auditInfo.setFileName(fileInfo.getFileName());
+                auditInfo.setIsAudit(0);
+                auditInfo.setType("DOWNLOAD");
+                auditInfo.setAuditUser(auditUser);
+                auditInfo.setFileClassify(fileInfo.getFileClassify());
+                auditInfo.setClassificlevelId(fileInfo.getClassificlevelId());
 
-            auditInfoRepository.save(auditInfo);
+                AuditInfo lastAuditInfo = auditInfoRepository.findByFileIdAndApplicantAndType(fileInfo.getId(), getUser().getUsername(), "DOWNLOAD");
+                if (lastAuditInfo != null) {
+                    auditInfoRepository.delete(lastAuditInfo);
+                }
+                //auditInfoRepository.deleteByFileIdAndApplicantAndType(Long.parseLong(fileId),getUser().getUsername(),"DOWNLOAD");
+
+                auditInfoRepository.save(auditInfo);
+            }
+        } catch (Exception ex) {
+            auditResult = "-1";
         }
-        result.put("auditResult",auditInfo.getIsAudit());
-        result.put("type",auditInfo.getType());
+        result.put("auditResult", auditResult);
+        result.put("type", "DOWNLOAD");
         return result.toString();
     }
 

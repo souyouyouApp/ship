@@ -288,28 +288,40 @@
                          */
                         var fileType;
                         //AL：案例；GG：公告；PJ：项目 DT:资料
+                        //if ((row.fileClassify == 6 || row.fileClassify == 7)||((row.type=="UPLOAD"||row.type=="DOWNLOAD")&&row.fileClassify ==1))
+                        if (row.fileClassify == 6 || row.fileClassify == 7 || row.fileClassify == 1) {
 
-                        if (row.type == 'ATTACHMENT'){
-                            if (row.fileClassify == 1)
-                                fileType = 'PJ'
-                            if (row.fileClassify == 4)
-                                fileType = 'GG'
-                            if (row.fileClassify == 3)
-                                fileType = 'DT'
-                            if (row.fileClassify == 2)
-                                fileType = 'AL'
-                            if (row.fileClassify == 5)
-                                fileType = 'FL'
+                            if (row.fileClassify == 1) {
+                                return '<a href="ReviewProjectFiles?fid=' + row.fileId + '" target="_blank">' + value + '</a>';
 
-                            return '<a href="downLoadAttach?ids=' + row.fileId + '&type='+fileType+'" download="'+value+'">' + value + '</a>'
-
-                        } else {
-                            if (row.fileType == "0"){
-                                return '<span>'+row.fileName+'</span><a href="javascript:void(0)" onclick="viewFile1('+row.fileCode+')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                             } else {
-                                return '<a href="downLoadFile?fileId=' + row.fileId + '" download="'+row.fileName+'">' + value + '</a>';
+                                return '<a href="ReviewProject?pid=' + row.fileId + '" target="_blank">' + value + '</a>';
                             }
 
+                        } else {
+
+                            if (row.type == 'ATTACHMENT') {
+                                if (row.fileClassify == 1)
+                                    fileType = 'PJ'
+                                if (row.fileClassify == 4)
+                                    fileType = 'GG'
+                                if (row.fileClassify == 3)
+                                    fileType = 'DT'
+                                if (row.fileClassify == 2)
+                                    fileType = 'AL'
+                                if (row.fileClassify == 5)
+                                    fileType = 'FL'
+
+                                return '<a href="downLoadAttach?ids=' + row.fileId + '&type=' + fileType + '" download="' + value + '">' + value + '</a>'
+
+                            } else {
+                                if (row.fileType == "0") {
+                                    return '<span>' + row.fileName + '</span><a href="javascript:void(0)" onclick="viewFile1(' + row.fileCode + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
+                                } else {
+                                    return '<a href="downLoadFile?fileId=' + row.fileId + '" download="' + row.fileName + '">' + value + '</a>';
+                                }
+
+                            }
                         }
                     }
                 },

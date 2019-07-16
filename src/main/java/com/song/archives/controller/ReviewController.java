@@ -136,7 +136,7 @@ public class ReviewController {
             }
 
 
-            if(null!=fileClassify&&(fileClassify==6 || fileClassify ==7)){
+                    if(null!=fileClassify&&(fileClassify==6 || fileClassify ==7)){
                 ProjectInfoEntity projectInfoEntity=projectRepository.findOne(auditInfo.getFileId());
                 projectInfoEntity.setProAuditState(auditResult);
                 projectRepository.save(projectInfoEntity);

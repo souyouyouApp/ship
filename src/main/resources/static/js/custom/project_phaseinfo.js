@@ -429,7 +429,7 @@ function ReqDownLoadAttachFile() {
     var downloadok = [], downloadno = [];
 
     for (var i = 0; i < selectedObjs.length; i++) {
-        if (selectedObjs[i].audit != 1) {
+        if (selectedObjs[i].audit != 1 && selectedObjs[i].audit != -2 && selectedObjs[i].audit != 4) {
             downloadno.push(selectedObjs[i].id);
         } else {
             downloadok.push(selectedObjs[i].id);
@@ -437,7 +437,7 @@ function ReqDownLoadAttachFile() {
     }
 
     if (downloadno != null && downloadno.length > 0) {
-        layer.msg("请选择【正常】状态的文件提交申请，已通过下载审核的文件不需要重复提交！");
+        layer.msg("审核中的文件不能下载！");
         return;
     }
 

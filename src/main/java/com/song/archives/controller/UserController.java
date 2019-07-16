@@ -644,6 +644,7 @@ public class UserController {
 
                 UpdateStorageInfo(user, session);
                 user.setPwdErrorTime(0);
+                userRepository.save(user);
 
                 msg = SUCCESS;
             }
@@ -656,10 +657,10 @@ public class UserController {
             if(user.getPwdErrorTime()>=5){
                 msg = "账户密码错误超过5次，请十分钟后重试!";
                 user.setLastPwdLockTime(new Date());
-                userRepository.save(user);
             }else {
                 msg = "账户密码错误"+user.getPwdErrorTime()+"!";
             }
+            userRepository.save(user);
         } catch (DisabledAccountException e) {
             msg = "账户状态异常!";
         } catch (AuthenticationException e) {
