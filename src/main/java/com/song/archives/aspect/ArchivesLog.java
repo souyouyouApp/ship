@@ -10,9 +10,16 @@ public @interface ArchivesLog {
 
 
     /** 要的操作类型比如：add **/
-    public String operationType() default "";  
+    String operationType() default "";
 
     /** 要的具体比如：添加用户 **/
-    public String operationName() default "";
+    String description() default "";
+
+    /** 是否记录 **/
+    boolean writeFlag() default true;
+
+    /** 记录切面描述信息 **/
+    boolean descFlag() default false;
+
 
 }

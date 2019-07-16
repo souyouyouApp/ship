@@ -17,6 +17,15 @@ public class BaoJiangEntity implements Serializable {
     private Date    baojiangDate;
     private Long proId;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "奖励类型='" + jiangLiType + '\'' +
+                ", 申报等级='" + shenbaoDengji + '\'' +
+                ", 报奖时间=" + baojiangDate +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

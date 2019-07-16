@@ -24,6 +24,30 @@ public class LowInfoEntity implements Serializable{
     private String uploader;
     private String uploadTime;
     private String title;
+    private String creator;
+
+    @Override
+    public String toString() {
+        return "{" +
+                ", 发布部门='" + publishDept + '\'' +
+                ", 发布时间='" + publishTime + '\'' +
+                ", 关键词='" + keyword + '\'' +
+                ", 摘要='" + content + '\'' +
+                ", 密级=" + classificlevelId +
+                ", 上传人='" + uploader + '\'' +
+                ", 上传时间='" + uploadTime + '\'' +
+                ", 标题='" + title + '\'' +
+                ", 创建人='" + creator + '\'' +
+                '}';
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 
     public String getTitle() {
         return title;

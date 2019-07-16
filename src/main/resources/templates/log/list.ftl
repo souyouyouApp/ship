@@ -22,12 +22,12 @@
             <div class="form-inline" role="form">
                 <div class="form-group">
                     <span>姓名: </span>
-                    <input name="operationUsername" class="form-control w70" type="text" placeholder="操作人员"/>
+                    <input name="userName" class="form-control w70" type="text" placeholder="操作人员"/>
                 </div>
                 &nbsp;
                 <div class="form-group">
                     <span>操作内容: </span>
-                    <input name="operationDetail" class="form-control w70" type="text" placeholder="操作内容"/>
+                    <input name="description" class="form-control w70" type="text" placeholder="操作内容"/>
                 </div>
                 &nbsp;
                 <div class="form-group">
@@ -126,26 +126,31 @@
 //                    title: '编号'
 //                },
                 {
-                    field: 'operationDescrib',
+                    field: 'uri',
+                    title: '方法名称',
+                    sortable: true
+                },
+                {
+                    field: 'description',
                     title: '操作内容',
                     sortable: true
                 },
                 {
-                    field: 'operationResult',
+                    field: 'result',
                     title: '操作结果',
                     sortable: true
                 },
                 {
-                    field: 'operationStartTime',
+                    field: 'beginTime',
                     title: '操作时间'
                 },
                 {
-                    field: 'operationIp',
+                    field: 'ip',
                     title: '操作IP',
                     sortable: true
                 },
                 {
-                    field: 'operationUserName',
+                    field: 'userName',
                     title: '操作人员',
                     sortable: true
                 }]

@@ -10,6 +10,65 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "project_info", schema = "", catalog = "")
 public class ProjectInfoEntity implements Serializable{
+
+    @Override
+    public String toString() {
+        return "{" +
+                "项目编号='" + proNo + '\'' +
+                ", 项目名称='" + proName + '\'' +
+                ", 项目来源='" + proFrom + '\'' +
+                ", 乘研单位='" + mainDepartment + '\'' +
+                ", 项目负责人='" + proLeaders + '\'' +
+                ", 项目参与者='" + proJoiners + '\'' +
+                ", 主要完成人='" + proCompleteors + '\'' +
+                ", 总经费='" + totalFee + '\'' +
+                ", 是否立项=" + proPhase +
+                ", 立项时间='" + createPhasetime + '\'' +
+                ", 开题时间='" + openPhasetime + '\'' +
+                ", 中期检查时间='" + midcheckPhasetime + '\'' +
+                ", 结题时间='" + closePhasetime + '\'' +
+                ", 验收时间='" + endPhasetime + '\'' +
+//                ", receivedFee=" + receivedFee +
+//                ", noreceivedFee=" + noreceivedFee +
+                ", 是否报奖=" + isreportReward +
+                ", 报奖渠道=" + reportChannel +
+//                ", createphaseLxyjfid='" + createphaseLxyjfid + '\'' +
+//                ", createphaseJysfid='" + createphaseJysfid + '\'' +
+//                ", createphaseRwsfid='" + createphaseRwsfid + '\'' +
+//                ", createphaseOtherfid='" + createphaseOtherfid + '\'' +
+//                ", openphaseRwsfid='" + openphaseRwsfid + '\'' +
+//                ", openphaseKtbgfid='" + openphaseKtbgfid + '\'' +
+//                ", openphaseOtherfid='" + openphaseOtherfid + '\'' +
+//                ", midphaseYjbgfid='" + midphaseYjbgfid + '\'' +
+//                ", midphaseOtherfid='" + midphaseOtherfid + '\'' +
+//                ", closephaseYjbgfid='" + closephaseYjbgfid + '\'' +
+//                ", closephaseOtherfid='" + closephaseOtherfid + '\'' +
+//                ", closephaseGcfid='" + closephaseGcfid + '\'' +
+//                ", endphaseJdzsfid='" + endphaseJdzsfid + '\'' +
+//                ", endphaseSbsfid='" + endphaseSbsfid + '\'' +
+//                ", endphasePsjg='" + endphasePsjg + '\'' +
+                ", 项目研究内容='" + proResearchcontent + '\'' +
+                ", 项目备注='" + proRemark + '\'' +
+                ", 密级=" + classificlevelId +
+                ", 创建时间=" + createTime +
+                ", 立项提前通知时间=" + cpAlertdays +
+                ", 开题提前通知时间=" + opAlertdays +
+                ", 中期检查提前通知时间=" + mpAlertdays +
+                ", 结题提前通知时间=" + closepAlertdays +
+                ", 验收管理提前通知时间=" + epAlertdays +
+                ", 创建人='" + createrName + '\'' +
+                ", 研究周期开始时间='" + yanjiuZhouQi + '\'' +
+                ", 研究周期结束时间='" + yanjiuZhouQi1 + '\'' +
+                ", 项目方向='" + yanjiuFangXiang + '\'' +
+//                ", 项目审核人=" + proauditUser +
+                ", 审核人='" + proAuditUserName + '\'' +
+                ", 审核状态=" + proAuditState +
+                ", 财务编号='" + financeNo + '\'' +
+                ", 首款='" + firstFee + '\'' +
+                ", 尾款='" + endFee + '\'' +
+                '}';
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -28,6 +28,22 @@ public class AnnounceInfoEntity implements Serializable{
     private String relatedUserIds;
     private Integer classificlevelId;
 
+    @Override
+    public String toString() {
+        return "{" +
+                ", 标题='" + title + '\'' +
+                ", 创建人='" + creator + '\'' +
+                ", 创建时间='" + createTime + '\'' +
+                ", 摘要='" + content + '\'' +
+                ", 发起日期='" + sponsorDate + '\'' +
+                ", 截止日期='" + deadlineDate + '\'' +
+                ", 发布人='" + sponsor + '\'' +
+                ", 类别名称='" + typeName + '\'' +
+                ", 相关人员='" + relatedUserName + '\'' +
+                ", 密级=" + classificlevelId +
+                '}';
+    }
+
     public Integer getClassificlevelId() {
         return classificlevelId;
     }

@@ -1,6 +1,6 @@
 package com.song.archives.dao;
 
-import com.song.archives.model.OperationLog;
+import com.song.archives.model.OperationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,8 +12,9 @@ import java.util.List;
 /**
  * Created by souyouyou on 2018/2/2.
  */
-public interface OperationRepository extends CrudRepository<OperationLog,Long>,JpaSpecificationExecutor<OperationLog> {
+public interface OperationRepository extends CrudRepository<OperationEntity,Long>,JpaSpecificationExecutor<OperationEntity> {
 
-    Page<OperationLog> findAll(Specification<OperationLog> specification,Pageable pageable);
+    Page<OperationEntity> findAll(Specification<OperationEntity> specification,Pageable pageable);
+    Page<OperationEntity> findAll(Pageable pageable);
 
 }

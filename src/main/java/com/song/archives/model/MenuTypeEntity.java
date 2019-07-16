@@ -17,6 +17,15 @@ public class MenuTypeEntity implements Serializable{
     private Integer type;
     private Date createTime = new Date();
 
+    @Override
+    public String toString() {
+        return "{" +
+                "菜单名称='" + typeName + '\'' +
+                ", 菜单描述='" + typeDesc + '\'' +
+                ", 创建时间=" + createTime +
+                '}';
+    }
+
     @Basic
     @Column(name = "type")
     public Integer getType() {
@@ -79,13 +88,4 @@ public class MenuTypeEntity implements Serializable{
         this.createTime = createTime;
     }
 
-
-    @Override
-    public String toString() {
-        return "案例菜单【" +
-                "菜单名称:'" + typeName + '\'' +
-                ", 菜单描述:'" + typeDesc + '\'' +
-                ", 上级菜单:" + parentTypeid +
-                '】';
-    }
 }

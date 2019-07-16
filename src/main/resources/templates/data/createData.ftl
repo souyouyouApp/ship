@@ -113,7 +113,7 @@
             <label for="title" class="col-sm-2 control-label">标题</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="title" name="title" placeholder="请输入标题"
-                       value="${info.title!}">
+                       value="${info.title!}" <#if info.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -121,7 +121,7 @@
             <label for="author" class="col-sm-2 control-label">作者</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="author" name="author" placeholder="请输入作者"
-                       value="${info.author!}">
+                       value="${info.author!}" <#if info.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -129,22 +129,24 @@
             <label for="keyword" class="col-sm-2 control-label">关键词</label>
             <div class="col-sm-4">
                 <input type="text" class="form-control" id="keyword" name="keyword" placeholder="请输入关键词"
-                       value="${info.keyword!}">
+                       value="${info.keyword!}"  <#if info.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
         <div class="form-group">
             <label for="author" class="col-sm-2 control-label">创建时间</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="createTime" name="createTime"
-                       value="${info.createTime!}">
+                <input type="text" class="form-control" id="createTimes" name="createTimes"
+                       value="${info.createTimes!}" readonly>
+                <input type="hidden" id="publishDate" name="publishDate" value="${info.publishDate!}"/>
+                <input type="hidden" id="creator" name="creator" value="${info.creator!}"/>
             </div>
         </div>
 
         <div class="form-group">
             <label for="classificlevelId" class="col-sm-2 control-label">密级</label>
             <div class="col-sm-4">
-                <select name="classificlevelId" id="classificlevelId" class="form-control">
+                <select name="classificlevelId" id="classificlevelId" class="form-control"  <#if info.creator != currentUser>disabled</#if>>
                 <option value="-1">请选择密级</option>
                    <#if (levelId >= 4)> <option value="4">机密</option></#if>
                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
@@ -157,7 +159,7 @@
         <div class="form-group">
             <label for="ziliaoFrom" class="col-sm-2 control-label">来源</label>
             <div class="col-sm-4">
-                <select name="ziliaoFrom" id="ziliaoFrom" class="form-control">
+                <select name="ziliaoFrom" id="ziliaoFrom" class="form-control"  <#if info.creator != currentUser>disabled</#if>>
                 <#--<option value="-1">请选择来源</option>-->
                     <option value="互联网">互联网</option>
                     <option value="原创">原创</option>
@@ -183,7 +185,7 @@
 <#--                </select>-->
 <#--            </div>-->
 <#--        </div>-->
-
+        <#if info.creator == currentUser>
         <div class="form-group">
             <label for="ziliaoContent" class="col-sm-2 control-label">上传附件</label>
 
@@ -194,6 +196,7 @@
                    data-toggle="modal" data-target="#paperuploadModal">纸质</a>
             </div>
         </div>
+        </#if>
 
         <div class="form-group">
             <label for="ziliaoContent" class="col-sm-2 control-label">附件列表</label>
@@ -204,7 +207,7 @@
         <div class="form-group">
             <label for="ziliaoContent" class="col-sm-2 control-label">摘要</label>
             <div class="col-sm-10">
-                <textarea id="ckeditor" name="ckeditor" class="form-control" rows="10" cols="38"></textarea>
+                <textarea id="ckeditor" name="ckeditor" class="form-control" rows="10" cols="38"  <#if info.creator != currentUser>readonly</#if>></textarea>
                 <script type="text/javascript">CKEDITOR.replace('ckeditor')</script>
             </div>
         </div>
@@ -228,7 +231,7 @@
 
 
             <@shiro.hasPermission name="datum:save">
-                <a href="javascript:void(0)" class="btn btn-success" onclick="createData()">保存</a>
+                <#if info.creator == currentUser> <a href="javascript:void(0)" class="btn btn-success" onclick="createData()">保存</a></#if>
             </@shiro.hasPermission>
 
                 <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
@@ -296,7 +299,7 @@
         } else {
             viewDiv = '<a href="javascript:void(0)" onclick="viewFile(' + id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
         }
-        var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+        var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;margin-top:5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
         $("#attachment").append(childInput)
 
     }
@@ -529,7 +532,7 @@
                     var fileName = data.fileName;
 
                     var viewDiv = '审核中';
-                    var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+                    var childInput = '<div><input style="margin-bottom: 5px;margin-top:5px;overflow: hidden;text-overflow: ellipsis;width: 356.33px; white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
                     $("#attachment").append(childInput)
                     layer.msg("文件上传成功!");
 
@@ -705,7 +708,8 @@
             keyword:$('#keyword').val(),
             publishDate:$('#publishDate').val(),
             creator:$('#creator').val(),
-            createTime:$('#createTime').val()
+            createTimes:$('#createTimes').val(),
+            publishDate:$('#publishDate').val(),
         }
 
 
@@ -832,7 +836,7 @@
 
                             var fileType = result.fileType;
                             var mid = result.id;
-                            var viewDiv = '<@shiro.hasPermission name="datum:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
+                            var viewDiv = '<@shiro.hasPermission name="datum:delete"><#if info.creator == currentUser><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></#if></@shiro.hasPermission>';
                             $.ajax({
                                 type: "post",
                                 url: "getFileAuditResult",
@@ -861,7 +865,7 @@
                                 }
                             });
 
-                            var childInput = '<div><input style="margin-top: 5px;width:100px ;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
+                            var childInput = '<div><input style="margin-top: 5px;width:356.33px ;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
                             if (finalResult != -1){
                                 $("#attachment").append(childInput)
                             }

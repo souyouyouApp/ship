@@ -24,18 +24,9 @@ public class ZiliaoInfoEntity implements Serializable{
     @Lob
     private String ziliaoContent;
     private Integer classificlevelId;
-    private Integer isShare;
     private String creator;
-    private String createTime;
+    private String createTimes;
     private String keyword;
-
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
 
     public Long getId() {
         return id;
@@ -101,14 +92,6 @@ public class ZiliaoInfoEntity implements Serializable{
         this.classificlevelId = classificlevelId;
     }
 
-    public Integer getIsShare() {
-        return isShare;
-    }
-
-    public void setIsShare(Integer isShare) {
-        this.isShare = isShare;
-    }
-
     public String getCreator() {
         return creator;
     }
@@ -117,11 +100,34 @@ public class ZiliaoInfoEntity implements Serializable{
         this.creator = creator;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public String getCreateTimes() {
+        return createTimes;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setCreateTimes(String createTimes) {
+        this.createTimes = createTimes;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "标题='" + title + '\'' +
+                ", 作者='" + author + '\'' +
+                ", 发布日期='" + publishDate + '\'' +
+                ", 资料来源='" + ziliaoFrom + '\'' +
+                ", 摘要='" + ziliaoContent + '\'' +
+                ", 密级=" + classificlevelId +
+                ", 创建人='" + creator + '\'' +
+                ", 创建时间='" + createTimes + '\'' +
+                ", 关键词='" + keyword + '\'' +
+                '}';
     }
 }

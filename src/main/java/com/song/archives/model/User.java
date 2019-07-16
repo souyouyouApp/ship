@@ -165,16 +165,6 @@ public class User implements Serializable{
         this.roles = roles;
     }
 
-    @Override
-    public String toString() {
-        return "【" +
-                "用户名:'" + username + '\'' +
-                ", 手机号码:'" + mobile + '\'' +
-                ", 描述信息:'" + description + '\'' +
-                ", 职务:'" + positions + '\'' +
-                '】';
-    }
-
     public Date getLastUpdatepwd() {
         return lastUpdatepwd;
     }
@@ -197,5 +187,20 @@ public class User implements Serializable{
 
     public void setLastPwdLockTime(Date lastPwdLockTime) {
         this.lastPwdLockTime = lastPwdLockTime;
+    }
+
+
+    @Override
+    public String toString() {
+        return "{" +
+                "用户名='" + username + '\'' +
+                ", 手机号码='" + mobile + '\'' +
+                ", 描述='" + description + '\'' +
+                ", 职位='" + positions + '\'' +
+                ", 密级=" + permissionLevel +
+                ", 真实姓名='" + realName + '\'' +
+                ", 创建日期=" + createDate +
+                ", 证件号码='" + idNo + '\'' +
+                '}';
     }
 }

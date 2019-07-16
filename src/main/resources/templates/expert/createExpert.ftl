@@ -94,6 +94,8 @@
             <input type="hidden" name="id" id="id" value="${expert.id!}"/>
             <input type="hidden" id="keywordTid" name="keywordTid" value="${expert.id!}"/>
             <input type="hidden" id="keywordMid" name="keywordMid" value="4">
+            <input type="hidden" id="createTime" name="createTime" value="${expert.createTime!}">
+            <input type="hidden" id="creator" name="creator" value="${expert.creator!}">
             <label for="firstname" class="col-sm-2 control-label">类别</label>
             <div class="col-sm-4">
                 <div class="dropdown dropdowmspc" id="dropDown"></div>
@@ -141,14 +143,15 @@
         <div class="form-group">
             <label for="name" class="col-sm-2 control-label">姓名</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="name" name="name"  placeholder="请输入姓名" value="${expert.name!}">
+                <input type="text" class="form-control" id="name" name="name"  placeholder="请输入姓名"
+                       value="${expert.name!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
         <div class="form-group">
             <label for="gender" class="col-sm-2 control-label">性别</label>
             <div class="col-sm-4">
-                <select id="gender" name="gender" required class="form-control">
+                <select id="gender" name="gender" required class="form-control" <#if expert.creator != currentUser>disabled</#if>>
                     <option value="男">男</option>
                     <option value="女">女</option>
                 </select>
@@ -160,21 +163,21 @@
         <div class="form-group">
             <label for="idNo" class="col-sm-2 control-label">身份证号</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="idNo" name="idNo" required  placeholder="身份证号" value="${expert.idNo!}">
+                <input type="text" class="form-control" id="idNo" name="idNo" required  placeholder="身份证号" value="${expert.idNo!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
         <div class="form-group">
             <label for="birth" class="col-sm-2 control-label">出生日期</label>
             <div class="col-sm-4">
-                <input type="text" autocomplete="false" class="form-control" id="birth" name="birth" onclick="datePicker()"  placeholder="出生日期" value="${expert.birth!}">
+                <input type="text" autocomplete="false" class="form-control" id="birth" name="birth" onclick="datePicker()"  placeholder="出生日期" value="${expert.birth!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
         <div class="form-group">
             <label for="education" class="col-sm-2 control-label">学历</label>
             <div class="col-sm-4">
-                <select name="education" id="education" class="form-control">
+                <select name="education" id="education" class="form-control" <#if expert.creator != currentUser>disabled</#if>>
                     <#--<option value="-1">请选择学历</option>-->
                     <option value="博士">博士</option>
                     <option value="硕士">硕士</option>
@@ -187,7 +190,7 @@
         <div class="form-group">
             <label for="sxzhuanye" class="col-sm-2 control-label">业务专长</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="sxzhuanye" name="sxzhuanye" placeholder="请输入业务专长" value="${expert.sxzhuanye!}">
+                <input type="text" class="form-control" id="sxzhuanye" name="sxzhuanye" placeholder="请输入业务专长" value="${expert.sxzhuanye!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -195,14 +198,14 @@
         <div class="form-group">
             <label for="zhiwu" class="col-sm-2 control-label">职务</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="zhiwu" name="zhiwu" placeholder="请输入职务" value="${expert.zhiwu!}">
+                <input type="text" class="form-control" id="zhiwu" name="zhiwu" placeholder="请输入职务" value="${expert.zhiwu!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
         <div class="form-group">
             <label for="zhicheng" class="col-sm-2 control-label">职称</label>
             <div class="col-sm-4">
-                <select name="zhicheng" id="zhicheng" class="form-control">
+                <select name="zhicheng" id="zhicheng" class="form-control" <#if expert.creator != currentUser>disabled</#if>>
                     <#--<option value="-1">请选择职称</option>-->
                     <option value="工程师">工程师</option>
                     <option value="高级工程师">高级工程师</option>
@@ -220,7 +223,7 @@
         <div class="form-group">
             <label for="profile" class="col-sm-2 control-label">个人简介</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="profile" name="profile" placeholder="请输入个人简介" value="${expert.profile!}">
+                <input type="text" class="form-control" id="profile" name="profile" placeholder="请输入个人简介" value="${expert.profile!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -228,14 +231,14 @@
         <div class="form-group">
             <label for="szdanwei" class="col-sm-2 control-label">所在单位</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="szdanwei" name="szdanwei" placeholder="请输入所在单位" value="${expert.szdanwei!}">
+                <input type="text" class="form-control" id="szdanwei" name="szdanwei" placeholder="请输入所在单位" value="${expert.szdanwei!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
         <div class="form-group">
             <label for="szbumen" class="col-sm-2 control-label">所在部门</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="szbumen" name="szbumen" placeholder="请输入所在部门" value="${expert.szbumen!}">
+                <input type="text" class="form-control" id="szbumen" name="szbumen" placeholder="请输入所在部门" value="${expert.szbumen!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -243,7 +246,7 @@
         <div class="form-group">
             <label for="sslingyu" class="col-sm-2 control-label">单位所属领域</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="sslingyu" name="sslingyu" placeholder="请输入单位所属领域" value="${expert.sslingyu!}">
+                <input type="text" class="form-control" id="sslingyu" name="sslingyu" placeholder="请输入单位所属领域" value="${expert.sslingyu!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -251,7 +254,7 @@
         <div class="form-group">
             <label for="address" class="col-sm-2 control-label">通信地址</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="address" name="address" placeholder="请输入通信地址" value="${expert.address!}">
+                <input type="text" class="form-control" id="address" name="address" placeholder="请输入通信地址" value="${expert.address!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -259,7 +262,7 @@
         <div class="form-group">
             <label for="postcode" class="col-sm-2 control-label">邮编</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="postcode" name="postcode" placeholder="请输入邮编" value="${expert.postcode!}">
+                <input type="text" class="form-control" id="postcode" name="postcode" placeholder="请输入邮编" value="${expert.postcode!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -267,7 +270,7 @@
         <div class="form-group">
             <label for="mobile" class="col-sm-2 control-label">手机</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="mobile" name="mobile" placeholder="请输入手机" value="${expert.mobile!}">
+                <input type="text" class="form-control" id="mobile" name="mobile" placeholder="请输入手机" value="${expert.mobile!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -275,7 +278,7 @@
         <div class="form-group">
             <label for="phone" class="col-sm-2 control-label">座机</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="phone" name="phone" placeholder="请输入座机" value="${expert.phone!}">
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="请输入座机" value="${expert.phone!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -283,7 +286,7 @@
         <div class="form-group">
             <label for="faxcode" class="col-sm-2 control-label">传真</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="faxcode" name="faxcode" placeholder="请输入传真" value="${expert.faxcode!}">
+                <input type="text" class="form-control" id="faxcode" name="faxcode" placeholder="请输入传真" value="${expert.faxcode!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -291,14 +294,14 @@
         <div class="form-group">
             <label for="email" class="col-sm-2 control-label">电子邮件</label>
             <div class="col-sm-4">
-                <input type="email" class="form-control" id="email" name="email" placeholder="请输入电子邮件" value="${expert.email!}">
+                <input type="email" class="form-control" id="email" name="email" placeholder="请输入电子邮件" value="${expert.email!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
         <div class="form-group">
             <label for="zjpingjia" class="col-sm-2 control-label">最佳评价</label>
             <div class="col-sm-4">
-                <select name="zjpingjia" id="zjpingjia" class="form-control">
+                <select name="zjpingjia" id="zjpingjia" class="form-control" <#if expert.creator != currentUser>disabled</#if>>
                     <#--<option value="-1">请选择最佳评价</option>-->
                     <option value="优">优</option>
                     <option value="良">良</option>
@@ -313,7 +316,7 @@
         <div class="form-group">
             <label for="pycishu" class="col-sm-2 control-label">专家聘用次数</label>
             <div class="col-sm-4">
-                <input type="number" class="form-control" id="pycishu" name="pycishu" placeholder="专家聘用次数" value="${expert.pycishu!}">
+                <input type="number" class="form-control" id="pycishu" name="pycishu" placeholder="专家聘用次数" value="${expert.pycishu!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -321,7 +324,7 @@
         <div class="form-group">
             <label for="remark" class="col-sm-2 control-label">备注信息</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control" id="remark" name="remark" placeholder="备注信息" value="${expert.remark!}">
+                <input type="text" class="form-control" id="remark" name="remark" placeholder="备注信息" value="${expert.remark!}" <#if expert.creator != currentUser>readonly</#if>>
             </div>
         </div>
 
@@ -341,7 +344,9 @@
             </@shiro.lacksPermission>
 
             <@shiro.hasPermission name="expert:save">
+                <#if expert.creator == currentUser>
                 <a href="javascript:void(0)" class="btn btn-success" onclick="createExpert()">保存</a>
+                </#if>
             </@shiro.hasPermission>
 
                 <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>

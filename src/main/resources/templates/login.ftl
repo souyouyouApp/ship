@@ -90,7 +90,7 @@
         }
 
 
-        $("#loginBtn").click(login);
+        // $("#loginBtn").click(login);
         //
         // document.onkeydown = function(e){
         //     var ev = document.all ? window.event : e;
@@ -104,13 +104,7 @@
             $.post("sign_in",$("#loginForm").serialize(),function(result){
                 result = JSON.parse(result);
                 if(result && (result.msg == 'success'||result.msg[0] == 'success')){
-                    
-                    if (new Date().getMonth()+1 == 6) {
-                        layer.msg("系统密钥已过期");
-                        return;
-                    }else {
-                        window.location.href = "index";
-                    }
+                    window.location.href = "index";
                 }else {
                     $(".alert-error").removeAttr("style");
                     $("strong").text(result.msg)

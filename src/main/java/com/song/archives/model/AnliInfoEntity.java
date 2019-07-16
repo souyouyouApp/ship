@@ -18,7 +18,7 @@ public class AnliInfoEntity implements Serializable {
     private String title;
     private Integer classificlevelId;
     private String creator;
-    private String createTime;
+    private String createTimes;
     @Lob
     private String content;
 
@@ -36,12 +36,24 @@ public class AnliInfoEntity implements Serializable {
 
     private String type;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    @Override
+    public String toString() {
+        return "{" +
+                "标题='" + title + '\'' +
+                ", 密级=" + classificlevelId +
+                ", 创建人='" + creator + '\'' +
+                ", 创建时间='" + createTimes + '\'' +
+                ", 摘要='" + content + '\'' +
+                ", 国别='" + nationality + '\'' +
+                ", 案例名称='" + caseName + '\'' +
+                ", 结案时间='" + closeTime + '\'' +
+                ", 终审法院='" + finalAppeal + '\'' +
+                ", 项目名称='" + projectName + '\'' +
+                ", 项目来源='" + projectSource + '\'' +
+                ", 主要负责人='" + principal + '\'' +
+                ", 参与人='" + participant + '\'' +
+                ", 状态='" + judicialStatus + '\'' +
+                '}';
     }
 
     public Long getId() {
@@ -84,12 +96,12 @@ public class AnliInfoEntity implements Serializable {
         this.creator = creator;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public String getCreateTimes() {
+        return createTimes;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setCreateTimes(String createTimes) {
+        this.createTimes = createTimes;
     }
 
     public String getContent() {
@@ -170,5 +182,13 @@ public class AnliInfoEntity implements Serializable {
 
     public void setJudicialStatus(String judicialStatus) {
         this.judicialStatus = judicialStatus;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

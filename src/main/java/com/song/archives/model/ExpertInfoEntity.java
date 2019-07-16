@@ -39,10 +39,46 @@ public class ExpertInfoEntity implements Serializable{
     @Lob
     private String pic;
     private Integer classiclevelId;
-    private Timestamp createTime;
+    private String createTime;
     private String idNo;
     private String remark;
+    private String creator;
 
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "姓名='" + name + '\'' +
+                ", 性别='" + gender + '\'' +
+                ", 出生日期='" + birth + '\'' +
+                ", 学历='" + education + '\'' +
+                ", 业务专长='" + sxzhuanye + '\'' +
+                ", 所属专业='" + cszhuanye + '\'' +
+                ", 职务='" + zhiwu + '\'' +
+                ", 支撑='" + zhicheng + '\'' +
+                ", 所在单位='" + szdanwei + '\'' +
+                ", 所在部门='" + szbumen + '\'' +
+                ", 所属领域='" + sslingyu + '\'' +
+                ", 通信地址='" + address + '\'' +
+                ", 邮编='" + postcode + '\'' +
+                ", 手机='" + mobile + '\'' +
+                ", 座机='" + phone + '\'' +
+                ", 传真='" + faxcode + '\'' +
+                ", 电子邮件='" + email + '\'' +
+                ", 最佳评价='" + zjpingjia + '\'' +
+                ", 专家聘用次数=" + pycishu +
+                ", 创建时间=" + createTime +
+                ", 证件号码='" + idNo + '\'' +
+                ", 备注信息='" + remark + '\'' +
+                '}';
+    }
 
     public String getIdNo() {
         return idNo;
@@ -252,11 +288,11 @@ public class ExpertInfoEntity implements Serializable{
         this.classiclevelId = classiclevelId;
     }
 
-    public Timestamp getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

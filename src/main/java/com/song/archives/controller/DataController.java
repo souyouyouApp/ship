@@ -5,6 +5,7 @@ import com.song.archives.dao.*;
 import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
 import com.song.archives.utils.ImageUploadUtil;
+import com.song.archives.utils.LoggerUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -21,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
+import static com.song.archives.interceptor.LoggerInterceptor.LOGGER_ENTITY;
 import static com.song.archives.utils.FileUtils.zipFile;
 
 
@@ -57,10 +58,10 @@ public class DataController {
 
     private String msg = "failed";
 
-    private String operationLogInfo = "";
-
     private JSONObject result;
 
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -113,7 +114,7 @@ public class DataController {
      * @param fileCode
      * @return
      */
-    @ArchivesLog(operationType = "findModuleFileByFileCode", operationName = "查询资料文件")
+    @ArchivesLog(operationType = "findModuleFileByFileCode", description = "查询资料文件")
     @RequestMapping(value = "/findModuleFileByFileCode")
     @ResponseBody
     public String findModuleFileByFileCode(@RequestParam(value = "fileCode") String fileCode) {
@@ -126,13 +127,12 @@ public class DataController {
 
         JSONObject json = JSONObject.fromObject(moduleFileEntity, jsonConfig);
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】查询资料文件";
-        json.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         json.put("fileType", fileInfoEntity.getFileType());
         return json.toString();
     }
 
-    @ArchivesLog(operationType = "findFileByZid", operationName = "查询资料文件")
+    @ArchivesLog(operationType = "findFileByZid", description = "查询资料文件",writeFlag = false)
     @RequestMapping(value = "/findFileByZid")
     @ResponseBody
     public String findFileByZid(@RequestParam(value = "zid") Long zid,
@@ -149,7 +149,7 @@ public class DataController {
     }
 
 
-    @ArchivesLog(operationType = "findTidByFileId", operationName = "查询资料文件")
+    @ArchivesLog(operationType = "findTidByFileId", description = "查询资料文件")
     @RequestMapping(value = "/findTidByFileId")
     @ResponseBody
     public String findTidByFileId(@RequestParam(value = "fileId") Long fileId) {
@@ -168,7 +168,7 @@ public class DataController {
      * @param fileCode
      * @return
      */
-    @ArchivesLog(operationType = "viewFile1", operationName = "查看纸质文件存档")
+    @ArchivesLog(operationType = "viewFile1", description = "查看纸质文件存档")
     @RequestMapping(value = "/viewFile1")
     @ResponseBody
     public String viewFile1(@RequestParam(value = "fileCode") String fileCode) {
@@ -177,8 +177,7 @@ public class DataController {
         FileInfoEntity fileInfoEntity = fileInfoRepository.findByFileCode(fileCode);
         JSONObject json = JSONObject.fromObject(fileInfoEntity);
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】查看纸质文件存档【"+fileInfoEntity.getFileName()+"】";
-        json.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         return json.toString();
     }
 
@@ -189,7 +188,7 @@ public class DataController {
      * @param mid
      * @return
      */
-    @ArchivesLog(operationType = "viewFile", operationName = "查看纸质文件存档")
+    @ArchivesLog(operationType = "viewFile", description = "查看纸质文件存档")
     @RequestMapping(value = "/viewFile")
     @ResponseBody
     public String viewFile(@RequestParam(value = "mid") Long mid) {
@@ -199,23 +198,19 @@ public class DataController {
         FileInfoEntity fileInfoEntity = fileInfoRepository.findByFileCode(moduleFileEntity.getFileCode());
         JSONObject json = JSONObject.fromObject(fileInfoEntity);
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】查看纸质文件存档【"+fileInfoEntity.getFileName()+"】";
-        json.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
+
         return json.toString();
     }
 
 
-    @ArchivesLog(operationType = "downLoadAttach", operationName = "下载附件")
+    @ArchivesLog(operationType = "downLoadAttach", description = "下载附件")
     @RequestMapping(value = "/downLoadAttach")
     @ResponseBody
     public String downLoadAttach(HttpServletResponse response,
                                  @RequestParam(value = "ids") Long[] ids,
                                  @RequestParam(value = "type") String type) {
 
-
-
-        OperationLog operation = new OperationLog();
-        operation.setOperationStartTime(dateFormat.format(new Date()));
 
         List<File> files = new ArrayList<>();
 
@@ -264,12 +259,7 @@ public class DataController {
 
 
 
-            operation.setOperationDescrib("用户【"+getUser().getRealName()+"】下载文件【"+logFileName+"】");
-            operation.setOperationUserId(getUser().getId());
-            operation.setOperationEndTime(dateFormat.format(new Date()));
-            operation.setOperationUserName(getUser().getUsername());
-            operation.setOperationType("getFile");
-            operation.setOperationResult("成功");
+            LoggerUtils.setLoggerSuccess(request);
 
             //按照个例打包成一个文件
             File caseZip = new File(filePath + "/" + fileName + ".zip");
@@ -285,9 +275,8 @@ public class DataController {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                operation.setOperationResult("失败");
             }
-            operationRepository.save(operation);
+//            operationRepository.save(operation);
 
         }
 
@@ -321,7 +310,7 @@ public class DataController {
      * @param mids
      * @return
      */
-    @ArchivesLog(operationType = "createZiliao", operationName = "创建资料信息")
+    @ArchivesLog(operationType = "createZiliao", description = "创建资料信息")
     @RequestMapping(value = "/createZiliao")
     @ResponseBody
     @Transactional
@@ -332,12 +321,6 @@ public class DataController {
         result = new JSONObject();
 
         String operationType = "";
-
-        if (entity.getId() == null || entity.getId().equals(0L)){
-            operationType = "新建资料";
-        }else {
-            operationType = "更新资料";
-        }
 
         try {
 
@@ -358,11 +341,6 @@ public class DataController {
             }
 
             if (entity != null) {
-                    entity.setAuthor(entity.getAuthor());
-                    entity.setPublishDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
-                    entity.setCreator(getUser().getUsername());
-                    entity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
-
                     String content = entity.getZiliaoContent();
 
                     if (StringUtils.isNotEmpty(content) && StringUtils.isNotBlank(content)) {
@@ -376,13 +354,10 @@ public class DataController {
 
         } catch (Exception e) {
             logger.error("创建资料信息:" + e.getMessage());
-            msg = "Exception";
+            msg = "创建资料信息异常";
         }
 
-
-
-        operationLogInfo = "用户【"+getUser().getRealName()+"】"+operationType+"【"+entity.getTitle()+"】";
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
 
 
@@ -402,7 +377,7 @@ public class DataController {
      * @param fileType
      * @return
      */
-    @ArchivesLog(operationType = "uploadAatachment", operationName = "上传附件")
+    @ArchivesLog(operationType = "uploadAatachment", description = "上传附件")
     @RequestMapping(value = "/uploadAatachment")
     @ResponseBody
     public String uploadAatachment(@RequestParam(value = "dataFile", required = false) MultipartFile multipartFile,
@@ -501,11 +476,10 @@ public class DataController {
 
         } catch (IOException e) {
             logger.error("上传附件:" + e.getMessage());
-            msg = "IOException";
+            msg = "上传附件异常";
         }
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】上传附件【"+fileName+"】";
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
 
         return result.toString();
@@ -518,13 +492,11 @@ public class DataController {
      * @param type
      * @param response
      */
-    @ArchivesLog(operationType = "getFile", operationName = "获取文件")
+    @ArchivesLog(operationType = "getFile", description = "获取文件")
     @RequestMapping(value = "/getFile")
     public void getFile(@RequestParam(value = "mid") Long mid,
                         @RequestParam(value = "type", required = false) String type,
                         HttpServletResponse response) {
-        OperationLog operation = new OperationLog();
-        operation.setOperationStartTime(dateFormat.format(new Date()));
 
 
         File file;
@@ -544,15 +516,8 @@ public class DataController {
 
         }
 
-        operation.setOperationDescrib("用户【"+getUser().getRealName()+"】下载文件【"+fileName+"】");
-        operation.setOperationUserId(getUser().getId());
-        operation.setOperationEndTime(dateFormat.format(new Date()));
-        operation.setOperationUserName(getUser().getUsername());
-        operation.setOperationType("getFile");
-        operation.setOperationResult("成功");
 
-
-        operationRepository.save(operation);
+//        operationRepository.save(operation);
 
 
         //判断文件是否存在如果不存在就返回默认图标
@@ -571,9 +536,7 @@ public class DataController {
             OutputStream out = response.getOutputStream();
             out.write(data);
             out.flush();
-            operation.setOperationResult("成功");
         } catch (FileNotFoundException e) {
-            operation.setOperationResult("失败");
             logger.error("获取文件:" + e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
@@ -591,7 +554,7 @@ public class DataController {
      * @param response
      * @return
      */
-    @ArchivesLog(operationType = "uploadImage", operationName = "上传编辑图片")
+    @ArchivesLog(operationType = "uploadImage", description = "上传编辑图片")
     @RequestMapping(value = "/uploadImage")
     @ResponseBody
     public String uploadImage(HttpServletRequest request, HttpServletResponse response) {
@@ -611,10 +574,9 @@ public class DataController {
 
         } catch (Exception e) {
             logger.error("上传编辑图片:" + e.getMessage());
-            msg = "Exception";
+            msg = "上传编辑图片异常";
         }
-        operationLogInfo = "用户【"+getUser().getRealName()+"】上传编辑图片";
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
         return result.toString();
     }
@@ -624,7 +586,7 @@ public class DataController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "createData", operationName = "新建资料页面")
+    @ArchivesLog(operationType = "createData", description = "新建资料页面")
     @RequestMapping(value = "/createData")
     public ModelAndView createData(@RequestParam(value = "zid", required = false) Long zid) {
 
@@ -634,7 +596,9 @@ public class DataController {
 
         if (null == zid) {
             ziliaoInfoEntity = new ZiliaoInfoEntity();
-            ziliaoInfoEntity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+            ziliaoInfoEntity.setCreateTimes(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+            ziliaoInfoEntity.setPublishDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            ziliaoInfoEntity.setCreator(getUser().getUsername());
         } else {
             ziliaoInfoEntity = dataRepository.findOne(zid);
         }
@@ -647,6 +611,8 @@ public class DataController {
         modelAndView.addObject("mid",5);
         modelAndView.addObject("levelId",getUser().getPermissionLevel());
         modelAndView.addObject("auditUsers",auditUser);
+        modelAndView.addObject("currentUser",getUser().getUsername());
+        LoggerUtils.setLoggerSuccess(request);
         return modelAndView;
     }
 
@@ -656,7 +622,7 @@ public class DataController {
      * @param response
      * @throws IOException
      */
-    @ArchivesLog(operationType = "downLoadDataTempate", operationName = "下载资料模板")
+    @ArchivesLog(operationType = "downLoadDataTempate", description = "下载资料模板")
     @RequestMapping(value = "/downLoadDataTempate")
     public void downLoadDataTempate(HttpServletResponse response,
                                     @RequestParam(value = "fileName") String fileName) throws IOException {
@@ -690,7 +656,7 @@ public class DataController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "dataList", operationName = "资料列表")
+    @ArchivesLog(operationType = "dataList", description = "资料列表",writeFlag = false)
     @RequestMapping(value = "/dataList")
     ModelAndView dataList(@RequestParam(value = "typeId", required = false) Integer typeId) {
         ModelAndView modelAndView = new ModelAndView();
@@ -699,7 +665,7 @@ public class DataController {
         ziliaoInfoEntity.setTypeId(typeId);
         modelAndView.addObject(ziliaoInfoEntity);
 
-
+        LoggerUtils.setLoggerSuccess(request);
         return modelAndView;
     }
 
@@ -709,18 +675,16 @@ public class DataController {
      * @param ids
      * @return
      */
-    @ArchivesLog(operationType = "delData", operationName = "删除资料")
+    @ArchivesLog(operationType = "delData", description = "删除资料")
     @RequestMapping(value = "/delData")
     @ResponseBody
     String delData(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除资料【";
 
         try{
 
             if (null != ids && ids.length >0){
                 for (Long id:ids){
                     ZiliaoInfoEntity entity = dataRepository.findOne(id);
-                    operationLogInfo += entity.getTitle() + ",";
                     dataRepository.delete(entity);
 
                 }
@@ -729,14 +693,13 @@ public class DataController {
 
         }catch (Exception e){
             logger.error(e.getMessage());
-            msg = "delete data failed";
+            msg = "删除资料异常";
 
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
@@ -748,7 +711,7 @@ public class DataController {
          * @param searchValue
          * @return
          */
-    @ArchivesLog(operationType = "datas", operationName = "查询资料列表")
+    @ArchivesLog(operationType = "datas", description = "查询资料列表",descFlag = true)
     @RequestMapping(value = "/datas")
     @ResponseBody
     String datas(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
@@ -836,7 +799,7 @@ public class DataController {
             msg = SUCCESS;
         } catch (Exception e) {
             logger.error("资料列表数据:" + e.getMessage());
-            msg = "Exception";
+            msg = "查询资料列表异常";
         }
 
 
@@ -846,9 +809,8 @@ public class DataController {
 
         JSONArray json = JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询资料列表";
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         result.put("result", json);
         return result.toString();
     }
@@ -885,7 +847,7 @@ public class DataController {
     }
 
 
-    @ArchivesLog(operationType = "getFileAuditResult", operationName = "查询审核结果")
+    @ArchivesLog(operationType = "getFileAuditResult", description = "查询审核结果")
     @RequestMapping(value = "/getFileAuditResult")
     @ResponseBody
     String getFileAuditResult(@RequestParam(value = "fileId") Long fileId,
@@ -969,7 +931,7 @@ public class DataController {
     }
 
 
-    @ArchivesLog(operationType = "ReqFileDownLoad", operationName = "请求下载项目文件")
+    @ArchivesLog(operationType = "ReqFileDownLoad", description = "请求下载项目文件")
     @RequestMapping(value = "/ReqFileDownLoad")
     @ResponseBody
     String ReqFileDownLoad(@RequestParam(value = "fileId") String fileIds,

@@ -1,6 +1,6 @@
 package com.song;
 
-import com.song.archives.model.OperationLog;
+import com.song.archives.interceptor.LoggerInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -11,9 +11,12 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.MultipartConfigElement;
@@ -58,18 +61,19 @@ public class Application extends SpringBootServletInitializer {
 		});
 	}
 
-	@Bean(name="operationLog")
-//    @Scope("request")
-	public OperationLog generateDemo() {
-		return new OperationLog();
-	}
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(Application.class);
 	}
 
-
+	@Configuration
+	public class WebConfig extends WebMvcConfigurerAdapter {
+		@Override
+		public void addInterceptors(InterceptorRegistry registry) {
+			registry.addInterceptor(new LoggerInterceptor()).addPathPatterns("/**");
+		}
+	}
 
 
 }

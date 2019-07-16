@@ -5,7 +5,7 @@ import com.song.archives.dao.*;
 import com.song.archives.model.MenuTypeEntity;
 import com.song.archives.model.NotifyEntity;
 import com.song.archives.model.User;
-import com.song.archives.utils.ImageUploadUtil;
+import com.song.archives.utils.LoggerUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -27,8 +27,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,15 +44,17 @@ public class MenuController {
 
     private String msg = "failed";
 
-    private String operationLogInfo = "";
 
     private JSONObject result = new JSONObject();
+
+    @Autowired
+    private HttpServletRequest request;
 
 
     @Autowired
     private MenuRepository menuRepository;
 
-    @ArchivesLog(operationType = "findMenuById",operationName = "获取菜单")
+    @ArchivesLog(operationType = "findMenuById", description = "获取菜单",writeFlag = false)
     @RequestMapping(value = "/findMenuById")
     @ResponseBody
 //    @RequiresRoles("administrator")
@@ -65,7 +65,7 @@ public class MenuController {
         return JSONObject.fromObject(menu).toString();
     }
 
-    @ArchivesLog(operationType = "findMenuByTypeAndParentId",operationName = "获取菜单")
+    @ArchivesLog(operationType = "findMenuByTypeAndParentId", description = "获取菜单",writeFlag = false)
     @RequestMapping(value = "/findMenuByTypeAndParentId")
     @ResponseBody
     String findMenuByTypeAndParentId(@RequestParam(value = "type") Integer type,
@@ -78,12 +78,10 @@ public class MenuController {
             msg = SUCCESS;
         }catch (Exception e){
             logger.error("查询菜单:"+e.getMessage());
-            msg = "Exception";
+            msg = "查询菜单Exception";
         }
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】获取菜单";
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
         result.put("result", JSONArray.fromObject(menus));
         return result.toString();
     }
@@ -92,7 +90,7 @@ public class MenuController {
      * 菜单列表
      * @return
      */
-    @ArchivesLog(operationType = "menuList",operationName = "菜单列表")
+    @ArchivesLog(operationType = "menuList", description = "菜单列表")
     @RequestMapping(value = "/menuList/{menuType}")
     ModelAndView menuList(@PathVariable Integer menuType){
 
@@ -128,7 +126,7 @@ public class MenuController {
      * @param size
      * @return
      */
-    @ArchivesLog(operationType = "menus",operationName = "查询菜单")
+    @ArchivesLog(operationType = "menus", description = "查询菜单列表",descFlag = true)
     @RequestMapping(value = "/menus")
     @ResponseBody
     @RequiresRoles("administrator")
@@ -159,9 +157,8 @@ public class MenuController {
         }
 
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】查询菜单";
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("result", JSONArray.fromObject(menus));
         return result.toString();
     }
@@ -170,7 +167,7 @@ public class MenuController {
      * 查询菜单无分页
      * @return
      */
-    @ArchivesLog(operationType = "menusNoPage",operationName = "查询菜单")
+    @ArchivesLog(operationType = "menusNoPage", description = "查询菜单")
     @RequestMapping(value = "/menusNoPage")
     @ResponseBody
     String menusNoPage(@RequestParam(value = "menuType")Integer menuType){
@@ -179,7 +176,6 @@ public class MenuController {
                 menuRepository.findAllByType(menuType);
 
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
         result.put("result", JSONArray.fromObject(menus));
         return result.toString();
     }
@@ -189,7 +185,7 @@ public class MenuController {
      * @param entity
      * @return
      */
-    @ArchivesLog(operationType = "saveMenu",operationName = "保存菜单")
+    @ArchivesLog(operationType = "saveMenu", description = "保存菜单")
     @RequestMapping(value = "/saveMenu")
     @ResponseBody
     String saveMenu(MenuTypeEntity entity){
@@ -198,12 +194,11 @@ public class MenuController {
             menuRepository.save(entity);
             msg = SUCCESS;
         }catch (Exception e){
-            msg = "save AnliTypeMenu failed";
+            msg = "保存菜单异常";
         }
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】新建菜单【"+entity.getTypeName()+"】";
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
         return result.toString();
     }
 
@@ -212,7 +207,7 @@ public class MenuController {
      * @param id
      * @return
      */
-    @ArchivesLog(operationType = "deleteMenu",operationName = "删除菜单")
+    @ArchivesLog(operationType = "deleteMenu", description = "删除菜单")
     @RequestMapping(value = "/deleteMenu")
     @ResponseBody
     @RequiresRoles("administrator")
@@ -229,12 +224,11 @@ public class MenuController {
             msg = SUCCESS;
         }catch (Exception e){
             logger.error("删除菜单:"+e.getMessage());
-            msg = "Exception";
+            msg = "删除菜单异常";
         }
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】删除菜单【"+menu.getTypeName()+"】";
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 
@@ -243,7 +237,7 @@ public class MenuController {
      * @param id
      * @return
      */
-    @ArchivesLog(operationType = "findChildMenu",operationName = "查询子菜单")
+    @ArchivesLog(operationType = "findChildMenu", description = "查询子菜单")
     @RequestMapping(value = "/findChildMenu")
     @ResponseBody
     @RequiresRoles("administrator")
@@ -266,14 +260,12 @@ public class MenuController {
 
         }catch (Exception e){
             logger.error("查询子菜单异常:"+e.getMessage());
-            msg = "Exception";
+            msg = "查询子菜单异常";
         }
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】查询子菜单"+"】";
 
         result.put("childrenNames",childrenNames);
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
         return result.toString();
     }
 
@@ -293,7 +285,7 @@ public class MenuController {
     @Autowired
     private NotifyRepository notifyRepository;
 
-    @ArchivesLog(operationType = "updateNotify", operationName = "更新用户通知消息")
+    @ArchivesLog(operationType = "updateNotify", description = "更新用户通知消息")
     @RequestMapping(value = "/updateNotify")
     @ResponseBody
     public String updateNotify(@RequestParam(value = "id")Long id) {
@@ -314,7 +306,7 @@ public class MenuController {
         return result.toString();
     }
 
-    @ArchivesLog(operationType = "getNotify", operationName = "获取用户通知信息")
+    @ArchivesLog(operationType = "getNotify", description = "获取用户通知信息",writeFlag = false)
     @RequestMapping(value = "/getNotify")
     @ResponseBody
     public String getNotify() {
@@ -330,14 +322,13 @@ public class MenuController {
             msg = "Exception";
         }
 //        operationLogInfo = "用户【"+getUser().getUsername()+"】获取用户通知信息";
-        result.put("operationLog",operationLogInfo);
         result.put("msg", msg);
         result.put("result", JSONArray.fromObject(notifyEntities));
         return result.toString();
     }
 
 
-    @ArchivesLog(operationType = "main", operationName = "视图跳转")
+    @ArchivesLog(operationType = "main", description = "主页面",writeFlag = false)
     @RequestMapping(value = "main")
     public ModelAndView main() {
         ModelAndView mav = new ModelAndView();

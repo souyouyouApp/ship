@@ -12,7 +12,6 @@ public class Role implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
     @Column(unique = true)
     /*角色标识 程序中判断使用,如"admin"*/
     private String identification;
@@ -36,13 +35,6 @@ public class Role implements Serializable{
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getIdentification() {
         return identification;
@@ -78,10 +70,9 @@ public class Role implements Serializable{
 
     @Override
     public String toString() {
-        return "【" +
-                "角色名称:'" + name + '\'' +
-                ", 角色标识:'" + identification + '\'' +
-                ", 角色描述:'" + description + '\'' +
-                '】';
+        return "{" +
+                ", 角色标识='" + identification + '\'' +
+                ", 角色描述='" + description + '\'' +
+                '}';
     }
 }

@@ -62,7 +62,6 @@ public class AuthRealm extends AuthorizingRealm {
 
         if(user.getRoles() != null){
             for(Role role:user.getRoles()){
-                System.out.println(role.getName());
                 authorizationInfo.addRole(role.getIdentification());
                 for(Permission p:role.getPermissions()){
                     authorizationInfo.addStringPermission(p.getIdentification());

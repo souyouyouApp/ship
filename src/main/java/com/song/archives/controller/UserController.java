@@ -5,11 +5,9 @@ import com.song.archives.dao.NotifyRepository;
 import com.song.archives.dao.OperationRepository;
 import com.song.archives.dao.StorageRepository;
 import com.song.archives.dao.UserRepository;
-import com.song.archives.model.NotifyEntity;
-import com.song.archives.model.OperationLog;
-import com.song.archives.model.StorageEntity;
-import com.song.archives.model.User;
+import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
+import com.song.archives.utils.LoggerUtils;
 import com.song.archives.utils.MySQLDatabaseBackup;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -46,6 +44,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static com.song.archives.utils.LoggerUtils.LOGGER_RESULT;
+
 /**
  * Created by souyouyou on 2018/2/1.
  */
@@ -60,9 +60,10 @@ public class UserController {
 
     private String msg = "failed";
 
-    private String operationLogInfo = "";
-
     private JSONObject result = new JSONObject();
+
+    @Autowired
+    HttpServletRequest request;
 
     @Autowired
     private UserRepository userRepository;
@@ -92,13 +93,13 @@ public class UserController {
      * @param viewName
      * @return
      */
-    @ArchivesLog(operationType = "viewName", operationName = "视图跳转")
+    @ArchivesLog(operationType = "viewName", description = "视图跳转" , writeFlag = false)
     @RequestMapping(value = "/{viewName}")
     String viewJump(@PathVariable("viewName") String viewName) {
         return viewName;
     }
 
-    @ArchivesLog(operationType = "login", operationName = "登录页面")
+    @ArchivesLog(operationType = "login", description = "登录页面")
     @RequestMapping(value = "/")
     String login() {
         return "login";
@@ -109,19 +110,19 @@ public class UserController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "logList", operationName = "日志页面")
+    @ArchivesLog(operationType = "logList", description = "日志页面",writeFlag = false)
     @RequestMapping(value = "logList")
     String logList() {
         return "log/list";
     }
 
-    @ArchivesLog(operationType = "userInfo", operationName = "用户基本信息")
+    @ArchivesLog(operationType = "userInfo", description = "用户基本信息")
     @RequestMapping(value = "userInfo")
-    @RequiresRoles("administrator")
     public ModelAndView userInfo(@RequestParam(value = "uId") Long uId) {
         ModelAndView mav = new ModelAndView("member/info");
         User userInfo = userRepository.findOne(uId);
         mav.addObject("userInfo",userInfo);
+        LoggerUtils.setLoggerSuccess(request);
         return mav;
     }
 
@@ -129,6 +130,7 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/backupLog")
+    @ArchivesLog(description = "备份日志",operationType = "backupLog",descFlag = true)
     public String exportMysql(){
         result = new JSONObject();
         boolean backFlag = false;
@@ -136,27 +138,21 @@ public class UserController {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
-        OperationLog operationLog = new OperationLog();
-        operationLog.setOperationUserId(getUser().getId());
-        operationLog.setOperationType("backupLog");
-        operationLog.setOperationName("导出备份");
-        operationLog.setOperationStartTime(dateFormat.format(System.currentTimeMillis()));
-        operationLog.setOperationEndTime(dateFormat.format(System.currentTimeMillis()));
 
         String backUpFileName  = new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".sql";
         try {
             backFlag = MySQLDatabaseBackup.exportDatabaseTool(mysqlDumpath,"localhost","root","root",savePath,backUpFileName ,"zscq");
             msg = SUCCESS;
-            operationLog.setOperationResult("成功");
-            operationLog.setOperationDescrib("用户【"+getUser().getUsername()+"】导出日志【"+savePath+"/"+backUpFileName+"】");
+
             result.put("path",savePath+"/"+backUpFileName);
         } catch (InterruptedException e) {
             msg = "Error";
-            operationLog.setOperationResult("失败");
             logger.error(e.getMessage());
         }
 
-        operationRepository.save(operationLog);
+        LoggerUtils.setLoggerReturn(request,msg);
+
+//        operationRepository.save(operationLog);
 
         result.put("msg",msg);
         result.put("result",backFlag);
@@ -170,14 +166,14 @@ public class UserController {
      * @param size
      * @return
      */
-    @ArchivesLog(operationType = "logs", operationName = "日志列表")
+    @ArchivesLog(operationType = "logs", description = "查询日志列表", descFlag = true)
     @RequestMapping(value = "logs")
     @ResponseBody
     @RequiresRoles(value = {"securitor","comptroller","superadmin"},logical = Logical.OR)
     String logs(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                 @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
-                @RequestParam(value = "operationUsername", defaultValue = "") String operationUsername,
-                @RequestParam(value = "operationDetail", defaultValue = "") String operationDescrib,
+                @RequestParam(value = "userName", defaultValue = "") String userName,
+                @RequestParam(value = "description", defaultValue = "") String description,
                 @RequestParam(value = "startDate", defaultValue = "") String startDate,
                 @RequestParam(value = "endDate", defaultValue = "") String endDate) {
         page = page - 1;
@@ -185,20 +181,20 @@ public class UserController {
         Pageable pageable = new PageRequest(page, size, sort);
 
 
-        Specification<OperationLog> specification = (root, criteriaQuery, criteriaBuilder) -> {
+        Specification<OperationEntity> specification = (root, criteriaQuery, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            if (!operationUsername.equals("")) {
-                predicates.add(criteriaBuilder.like(root.get("operationUserName"), "%" + operationUsername + "%"));
+            if (!userName.equals("")) {
+                predicates.add(criteriaBuilder.like(root.get("userName"), "%" + userName + "%"));
             }
 
-            if (!operationDescrib.equals("")) {
-                predicates.add(criteriaBuilder.like(root.get("operationDescrib"), "%" + operationDescrib + "%"));
+            if (!description.equals("")) {
+                predicates.add(criteriaBuilder.like(root.get("description"), "%" + description + "%"));
             }
 
             if (!startDate.equals("") && !endDate.equals("")){
-                predicates.add(criteriaBuilder.between(root.get("operationStartTime"),startDate,endDate));
+                predicates.add(criteriaBuilder.between(root.get("beginTime"),startDate,endDate));
             }
 
 //            predicates.add(criteriaBuilder.notEqual(root.get("operationDescrib"),""));
@@ -206,18 +202,22 @@ public class UserController {
 
             //审计员查看管理员和保密员的操作日志
             if (getUser().getUsername().equals("comptroller")){
-                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("operationUserName"));
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("userName"));
                 in.value("securitor");
                 in.value("administrator");
+                in.value("安全保密员");
+                in.value("系统管理员");
                 predicates.add(in);
             }
 
             //保密员查看用户和审计员的日志
             if (getUser().getUsername().equals("securitor")){
 
-                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("operationUserName"));
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(root.get("userName"));
                 in.value("administrator");
                 in.value("securitor");
+                in.value("系统管理员");
+                in.value("安全保密员");
 
                 predicates.add(in.not());
 
@@ -228,11 +228,9 @@ public class UserController {
 
         };
 
-        Page<OperationLog> operationLogs = operationRepository.findAll(specification, pageable);
-
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询日志";
+        Page<OperationEntity> operationLogs = operationRepository.findAll(specification, pageable);
+        LoggerUtils.setLoggerSuccess(request);
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(operationLogs));
         return result.toString();
     }
@@ -244,7 +242,7 @@ public class UserController {
      * @param status
      * @return
      */
-    @ArchivesLog(operationType = "operateUser", operationName = "修改账户状态")
+    @ArchivesLog(operationType = "operateUser", description = "修改账户状态")
     @RequestMapping(value = "operateUser")
     @ResponseBody
     String operateUser(@RequestParam(value = "uid") Long id,
@@ -258,27 +256,27 @@ public class UserController {
             user.setAvailable(status);
             userRepository.save(user);
 
-            operationLogInfo = "用户【" + getUser().getRealName() + "】修改用户【" + user.getUsername() + "】状态为:" + status;
+            LoggerUtils.setLoggerSuccess(request);
             msg = SUCCESS;
 
         } catch (Exception e) {
             logger.error("修改账户状态:" + e.getMessage());
+            LoggerUtils.setLoggerFailed(request);
             msg = "Exception";
         }
 
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
 
         return result.toString();
     }
 
     @RequestMapping(value = "updatePassword")
     @ResponseBody
+    @ArchivesLog(operationType = "updatePassword", description = "更新用户密码",descFlag = true)
     public String updatePwd(@RequestParam(value = "oldPwd")String oldPwd,
                             @RequestParam(value = "newPwd")String newPwd,
                             @RequestParam(value = "repeatPwd")String repeatPwd){
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】修改密码";
         result = new JSONObject();
         String passWord = new SimpleHash(Md5Hash.ALGORITHM_NAME, oldPwd, getUser().getUsername(), 2).toHex();
 
@@ -288,21 +286,23 @@ public class UserController {
 
             if (!newPwd.equals(repeatPwd)){
                 msg = "新密码与确认密码不一致";
-            }
+            }else {
 
-            User user = getUser();
-            user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, repeatPwd, getUser().getUsername(), 2).toHex());
-            user.setLastUpdatepwd(new Date());
-            userRepository.save(user);
-            msg = SUCCESS;
+                User user = getUser();
+                user.setPassword(new SimpleHash(Md5Hash.ALGORITHM_NAME, repeatPwd, getUser().getUsername(), 2).toHex());
+                user.setLastUpdatepwd(new Date());
+                userRepository.save(user);
+                msg = SUCCESS;
+            }
 
         }
 
-
-
-
+        if (msg.equals(SUCCESS)){
+            LoggerUtils.setLoggerSuccess(request);
+        }else {
+            LoggerUtils.setLoggerFailed(request,msg);
+        }
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
 
         return result.toString();
 
@@ -314,7 +314,7 @@ public class UserController {
      * @param user
      * @return
      */
-    @ArchivesLog(operationType = "saveUser", operationName = "新建用户")
+    @ArchivesLog(operationType = "saveUser", description = "新建用户")
     @RequestMapping(value = "saveUser")
     @ResponseBody
     String saveUser(User user) {
@@ -327,26 +327,27 @@ public class UserController {
             User existUser= userRepository.findByUsername(user.getUsername());
             if(existUser!=null){
                 msg="用户名已经存在";
-                operationLogInfo = "用户【" + getUser().getRealName() + "】新建用户【" + user.getRealName()+"】,用户名已经存在";
             }else {
                 user.setLastUpdatepwd(new Date());
                 userRepository.save(user);
-                operationLogInfo = "用户【" + getUser().getRealName() + "】新建用户【" + user.getRealName()+"】成功";
                 msg = "success";
             }
 
         } catch (Exception e) {
-            msg = "save user failed";
+            msg = "新建用户异常";
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】新建用户【" + user.getRealName()+"】";
+        if (msg.equals(SUCCESS)){
+            LoggerUtils.setLoggerSuccess(request);
+        }else {
+            LoggerUtils.setLoggerFailed(request,msg);
+        }
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
 
-    @ArchivesLog(operationType = "updateUser", operationName = "更新用户信息")
+    @ArchivesLog(operationType = "updateUser", description = "更新用户信息")
     @RequestMapping(value = "updateUser")
     @ResponseBody
     @Transactional
@@ -376,52 +377,23 @@ public class UserController {
             user.setAvailable(true);
             user.setRoles(user.getRoles().size()==0?oldUser.getRoles():user.getRoles());
 
-            if(user.getPositions()==null){
-                user.setPositions("");
-            }
-
-            if(user.getDescription()==null) {
-                user.setDescription("");
-            }
-
-            if (!user.getUsername().equals(oldUser.getUsername())){
-                optDesc.append("将【用户名】由【"+oldUser.getUsername()+"】修改为【"+user.getUsername()+"】、");
-            }
-
-            if (!user.getRealName().equals(oldUser.getRealName())){
-                optDesc.append("将【真实姓名】由【"+oldUser.getRealName()+"】修改为【"+user.getRealName()+"】、");
-            }
-
-            if (!user.getMobile().equals(oldUser.getMobile())){
-                optDesc.append("将【联系电话】由【"+oldUser.getMobile()+"】修改为【"+user.getMobile()+"】、");
-            }
-
-            if (!user.getDescription().equals(oldUser.getDescription())){
-                optDesc.append("将【描述】由【"+oldUser.getDescription()+"】修改为【"+user.getDescription()+"】、");
-            }
-
-            if (!user.getPositions().equals(oldUser.getPositions())){
-                optDesc.append("将【职务】由【"+oldUser.getPositions()+"】修改为【"+user.getPositions()+"】、");
-            }
-
-            if (!user.getIdNo().equals(oldUser.getIdNo())){
-                optDesc.append("将【证件号码】由【"+oldUser.getIdNo()+"】修改为【"+user.getIdNo()+"】、");
-            }
 
             userRepository.save(user);
-            msg = "success";
+            msg = SUCCESS;
         } catch (Exception e) {
-            msg = "update user failed";
+            msg = "更新用户信息异常";
         }
-        operationLogInfo = "用户【" + getUser().getRealName() + "】更新用户【" + user.getUsername()+"】信息, "+optDesc.toString();
-
+        if (msg.equals(SUCCESS)){
+            LoggerUtils.setLoggerSuccess(request);
+        }else {
+            LoggerUtils.setLoggerFailed(request,msg);
+        }
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
 
-    @ArchivesLog(operationType = "getUserInfo", operationName = "获取用户信息")
+    @ArchivesLog(operationType = "getUserInfo", description = "获取用户信息")
     @RequestMapping(value = "getUserInfo")
     @ResponseBody
     String getUserInfo(Long uid) {
@@ -438,18 +410,16 @@ public class UserController {
      * @param uids
      * @return
      */
-    @ArchivesLog(operationType = "deleteUserByIds", operationName = "删除勾选用户")
+    @ArchivesLog(operationType = "deleteUserByIds", description = "删除勾选用户")
     @RequestMapping(value = "deleteUserByIds")
     @ResponseBody
     String deleteUserByIds(Long[] uids) {
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除用户【";
         try {
             if (uids != null && uids.length > 0) {
 
                 for (Long uid : uids) {
                     User userObj = userRepository.findOne(uid);
-                    operationLogInfo += userObj.getUsername() + ",";
                     userRepository.delete(userObj);
                 }
             }
@@ -457,12 +427,16 @@ public class UserController {
             msg = SUCCESS;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            msg = "delete user failed";
+            msg = "删除用户异常";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
+
+        if (msg.equals(SUCCESS)){
+            LoggerUtils.setLoggerSuccess(request);
+        }else {
+            LoggerUtils.setLoggerFailed(request,msg);
+        }
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
@@ -472,7 +446,7 @@ public class UserController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "memberList", operationName = "用户列表")
+    @ArchivesLog(operationType = "memberList", description = "用户列表",writeFlag = false)
     @RequestMapping(value = "/memberList")
     String memberList() {
         return "member/list";
@@ -488,7 +462,7 @@ public class UserController {
      */
     @RequestMapping(value = "/users")
     @ResponseBody
-    @ArchivesLog(operationType = "users", operationName = "查询用户信息")
+    @ArchivesLog(operationType = "users", description = "查询用户列表",descFlag = true)
     @RequiresRoles(value = {"administrator","securitor"},logical = Logical.OR)
     String users(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
@@ -512,16 +486,15 @@ public class UserController {
 
         List<User> users = userRepository.findAll(specification, pageable);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询用户列表";
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         result.put("result", JSONArray.fromObject(users));
         return result.toString();
     }
 
     @RequestMapping(value = "/getlallusers")
     @ResponseBody
-    @ArchivesLog(operationType = "getlallusers", operationName = "查询所有用户信息")
+    @ArchivesLog(operationType = "getlallusers", description = "查询所有用户信息")
    public String GetAllUsers() {
 
         Specification<User> specification = (root, criteriaQuery, criteriaBuilder) -> {
@@ -541,14 +514,14 @@ public class UserController {
 
         Iterable<User> users = userRepository.findAll(specification);
 
-
+        LoggerUtils.setLoggerSuccess(request);
         return JSONArray.fromObject(users).toString();
     }
 
 
     @RequestMapping(value = "/getusersByClassLevel")
     @ResponseBody
-    @ArchivesLog(operationType = "getusersByClassLevel", operationName = "根据密级查询所有用户信息")
+    @ArchivesLog(operationType = "getusersByClassLevel", description = "根据密级查询所有用户信息")
     public String GetUsersByClassLevel(@RequestParam(value = "cl") Integer cl) {
 
         Specification<User> specification = (root, criteriaQuery, criteriaBuilder) -> {
@@ -617,7 +590,7 @@ public class UserController {
      */
     @RequestMapping(value = "/sign_in")
     @ResponseBody
-    @ArchivesLog(operationType = "sign_in", operationName = "登录系统")
+    @ArchivesLog(operationType = "sign_in", description = "登录系统",descFlag = true)
     String sign_in(@RequestParam("username") String username,
                    @RequestParam("password") String password, HttpSession session) {
 
@@ -691,8 +664,9 @@ public class UserController {
             msg = "账户状态异常!";
         } catch (AuthenticationException e) {
             logger.error("认证失败 : " + e.getMessage());
-            msg = "登录异常!";
+            msg = "账户认证失败!";
         }
+
 
        // operationLogInfo = "用户【" + getUser().getRealName() + "】登录系统";
 
@@ -700,8 +674,11 @@ public class UserController {
         if (overDate.before(new Date())){
             msg = "系统密钥已过期";
         }
-
-        result.put("operationLog", "用户【"+username+"】登录系统");
+        if (!msg.equals(SUCCESS)){
+            request.setAttribute(LOGGER_RESULT,"【"+username+"】"+msg);
+        }else {
+            LoggerUtils.setLoggerSuccess(request);
+        }
         result.put("msg", msg);
         return JSONObject.fromObject(result).toString();
 
@@ -710,7 +687,7 @@ public class UserController {
     @RequestMapping(value = "/getAuditByClassify")
     @ResponseBody
     public String getAuditByClassify(Integer classify){
-        List<User> auditUserByClassify = userRepository.findAuditUserByClassify(classify);
+        List<User> auditUserByClassify = userRepository.findAuditUserByClassify(classify,getUser().getId());
 
         return JSONArray.fromObject(auditUserByClassify).toString();
     }
@@ -804,7 +781,7 @@ public class UserController {
 
     @RequestMapping(value = "/UniformLogin")
     @ResponseBody
-    @ArchivesLog(operationType = "UniformLogin", operationName = "认证网关登录")
+    @ArchivesLog(operationType = "UniformLogin", description = "认证网关登录",descFlag = true)
    public ModelAndView UniformLogin(HttpServletRequest request, HttpSession session) {
 
 
@@ -894,6 +871,7 @@ public class UserController {
             if (null == idNo || idNo.equals("")){
                 mav = new ModelAndView("login");
                 logger.error("网关授权认证未通过,证件号码为空");
+                msg = "网关授权认证未通过,证件号码为空";
                 return mav;
             }
 
@@ -903,12 +881,14 @@ public class UserController {
             if (null == user1){
                 mav = new ModelAndView("login");
                 logger.error("网关授权认证未通过,未查找与【"+tStrResidenterCardNumber+"】到匹配的用户信息");
+                msg = "网关授权认证未通过,未查找与【"+tStrResidenterCardNumber+"】到匹配的用户信息";
                 return mav;
             }
             overDate = DateUtil.parseStrToDate(overDateStr, "yyyy-MM-dd", null);
             if (overDate.before(new Date())){
                 mav = new ModelAndView("login");
                 logger.error("系统密钥已过期");
+                msg = "系统密钥已过期";
                 mav.addObject("error","系统密钥已过期");
                 return mav;
             }
@@ -940,7 +920,11 @@ public class UserController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
+        if (!msg.equals(SUCCESS)){
+            request.setAttribute(LOGGER_RESULT,msg);
+        }else {
+            LoggerUtils.setLoggerSuccess(request);
+        }
         return mav;
 
     }
@@ -1023,11 +1007,12 @@ public class UserController {
     }
 
     @RequestMapping(value = "/sign_out")
-    @ArchivesLog(operationType = "sign_out", operationName = "登出")
+    @ArchivesLog(operationType = "sign_out", description = "退出系统",descFlag = true)
     public String sign_out() {
 
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
+        LoggerUtils.setLoggerSuccess(request);
         return "login";
 
     }

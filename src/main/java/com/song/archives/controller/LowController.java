@@ -4,7 +4,7 @@ import com.song.archives.aspect.ArchivesLog;
 import com.song.archives.dao.*;
 import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
-import com.song.archives.utils.ImageUploadUtil;
+import com.song.archives.utils.LoggerUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -24,23 +24,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.io.*;
-import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.zip.ZipOutputStream;
 
 import static com.song.archives.utils.FileUtils.zipFile;
 
@@ -59,40 +51,16 @@ public class LowController {
 
     private String msg = "failed";
 
-    private String operationLogInfo = "";
-
     private JSONObject result;
 
-
     @Autowired
-    private MenuRepository menuRepository;
-
-    @Autowired
-    private FileInfoRepository fileInfoRepository;
+    private HttpServletRequest request;
 
     @Autowired
     private ModuleFileRespository moduleFileRespository;
 
     @Autowired
-    private DataRepository dataRepository;
-
-    @Autowired
     private LowRepository lowRepository ;
-
-    @Autowired
-    private AnnounceRepository announceRepository;
-
-    @Autowired
-    private MsgAttachRepository msgAttachRepository;
-
-    @Autowired
-    private OperationRepository operationRepository;
-
-    @Autowired
-    private AuditInfoRepository auditInfoRepository;
-
-    @Autowired
-    private ExpertRepository expertRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -114,7 +82,7 @@ public class LowController {
      * 法律法规列表页面
      * @return
      */
-    @ArchivesLog(operationType = "lowList",operationName = "法律法规列表页面")
+    @ArchivesLog(operationType = "lowList", description = "法律法规列表页面",writeFlag = false)
     @RequestMapping(value = "/lowList")
     ModelAndView lowList(@RequestParam(value = "typeId", required = false) Integer typeId){
         ModelAndView modelAndView = new ModelAndView();
@@ -122,6 +90,8 @@ public class LowController {
         ZiliaoInfoEntity ziliaoInfoEntity = new ZiliaoInfoEntity();
         ziliaoInfoEntity.setTypeId(typeId);
         modelAndView.addObject(ziliaoInfoEntity);
+
+        LoggerUtils.setLoggerSuccess(request);
 
         return modelAndView;
     }
@@ -132,35 +102,16 @@ public class LowController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "createLowPage", operationName = "新建法律法规页面")
+    @ArchivesLog(operationType = "createLowPage", description = "新建法律法规页面",writeFlag = false)
     @RequestMapping(value = "/createLowPage")
-    public ModelAndView createData(@RequestParam(value = "lid", required = false) Long lid) {
-
-//        ZiliaoInfoEntity ziliaoInfoEntity;
-//
-//        List<User> auditUser = userRepository.findAuditUser();
-//
-//        if (null == zid) {
-//            ziliaoInfoEntity = new ZiliaoInfoEntity();
-//            ziliaoInfoEntity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
-//        } else {
-//            ziliaoInfoEntity = dataRepository.findOne(zid);
-//        }
-//
-//
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("data/createData");
-//        modelAndView.addObject("info", ziliaoInfoEntity);
-//        modelAndView.addObject("proentity",ziliaoInfoEntity);
-//        modelAndView.addObject("mid",5);
-//
-//        modelAndView.addObject("auditUsers",auditUser);
+    public ModelAndView createLowPage(@RequestParam(value = "lid", required = false) Long lid) {
 
         LowInfoEntity lowInfoEntity;
 
         if (null == lid){
             lowInfoEntity = new LowInfoEntity();
             lowInfoEntity.setUploader(getUser().getRealName());
+            lowInfoEntity.setCreator(getUser().getUsername());
             lowInfoEntity.setUploadTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
         }else {
             lowInfoEntity = lowRepository.findOne(lid);
@@ -173,6 +124,8 @@ public class LowController {
         modelAndView.addObject("info",lowInfoEntity);
         modelAndView.addObject("levelId",getUser().getPermissionLevel());
         modelAndView.addObject("auditUsers",auditUser);
+        modelAndView.addObject("currentUser",getUser().getUsername());
+
         return modelAndView;
     }
 
@@ -184,7 +137,7 @@ public class LowController {
      * @param mids
      * @return
      */
-    @ArchivesLog(operationType = "createLow", operationName = "创建法律法规库信息")
+    @ArchivesLog(operationType = "createLow", description = "创建法律法规库信息")
     @RequestMapping(value = "/createLow")
     @ResponseBody
     @Transactional
@@ -193,15 +146,6 @@ public class LowController {
                                @RequestParam(value = "type",required = false) String type) {
 
         result = new JSONObject();
-
-        String operationType = "";
-
-        if (entity.getId() == null){
-            operationType = "新建法律法规";
-        }else {
-            operationType = "更新法律法规";
-        }
-
         try {
 
             if (null != entity.getId()) {
@@ -221,9 +165,6 @@ public class LowController {
             }
 
             if (entity != null) {
-                entity.setUploader(getUser().getRealName());
-                entity.setUploadTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
-
                 String content = entity.getContent();
 
                 if (StringUtils.isNotEmpty(content) && StringUtils.isNotBlank(content)) {
@@ -237,11 +178,11 @@ public class LowController {
 
         } catch (Exception e) {
             logger.error("创建法律法规:" + e.getMessage());
-            msg = "Exception";
+            msg = "创建法律法规异常";
         }
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】"+operationType+"【"+entity.getType()+"】";
-        result.put("operationLog",operationLogInfo);
+
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
 
 
@@ -251,7 +192,7 @@ public class LowController {
 
 
 
-    @ArchivesLog(operationType = "lows", operationName = "查询资料列表")
+    @ArchivesLog(operationType = "lows", description = "查询法律法规列表",descFlag = true)
     @RequestMapping(value = "/lows")
     @ResponseBody
     String lows(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
@@ -276,7 +217,6 @@ public class LowController {
 
             predicatesWhereArr.add(criteriaBuilder.lessThanOrEqualTo(root.get("classificlevelId"),getUser().getPermissionLevel()));
 
-
             Predicate whereEquals = criteriaBuilder.and(predicatesWhereArr.toArray(new Predicate[predicatesWhereArr.size()]));
 
 
@@ -292,9 +232,9 @@ public class LowController {
 
             List<Predicate> predicateArr = new ArrayList<>();
 
-            if (predicates.size() > 0){
-                predicateArr.add(whereLike);
-            }
+//            predicateArr.add(whereLike);
+            predicateArr.add(whereEquals);
+
 
             return criteriaQuery.where(predicateArr.toArray(new Predicate[predicateArr.size()])).getRestriction();
         };
@@ -304,8 +244,8 @@ public class LowController {
             lows = lowRepository.findAll(specification,pageable);
             msg = SUCCESS;
         } catch (Exception e) {
-            logger.error("资料列表数据:" + e.getMessage());
-            msg = "Exception";
+            logger.error("查询法律法规列表异常数据:" + e.getMessage());
+            msg = "查询法律法规列表异常";
         }
 
 
@@ -315,9 +255,8 @@ public class LowController {
 
         JSONArray json = JSONArray.fromObject(lows, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询法律法规列表";
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         result.put("result", json);
         return result.toString();
     }
@@ -328,18 +267,16 @@ public class LowController {
      * @param ids
      * @return
      */
-    @ArchivesLog(operationType = "delLow", operationName = "删除法律法规")
+    @ArchivesLog(operationType = "delLow", description = "删除法律法规")
     @RequestMapping(value = "/delLow")
     @ResponseBody
     String delData(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除法律法规【";
 
         try{
 
             if (null != ids && ids.length >0){
                 for (Long id:ids){
                     LowInfoEntity entity = lowRepository.findOne(id);
-                    operationLogInfo += entity.getType() + ",";
                     lowRepository.delete(entity);
 
                 }
@@ -348,14 +285,13 @@ public class LowController {
 
         }catch (Exception e){
             logger.error(e.getMessage());
-            msg = "delete low failed";
+            msg = "删除法律法规异常";
 
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 

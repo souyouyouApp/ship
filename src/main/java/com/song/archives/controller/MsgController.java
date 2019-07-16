@@ -11,7 +11,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.CycleDetectionStrategy;
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -63,7 +62,7 @@ public class MsgController {
     private NotifyRepository notifyRepository;
 
 
-    @ArchivesLog(operationType = "msgGroupList" , operationName = "发件页面")
+    @ArchivesLog(operationType = "msgGroupList" , description = "发件页面")
     @RequestMapping("msgGroupList")
     public ModelAndView newMessage(){
 
@@ -273,7 +272,7 @@ public class MsgController {
 
 
 
-    @ArchivesLog(operationType = "delGroup", operationName = "删除聊天室")
+    @ArchivesLog(operationType = "delGroup", description = "删除聊天室")
     @RequestMapping(value = "/delGroup")
     @ResponseBody
     String delGroup(Long[] ids) {

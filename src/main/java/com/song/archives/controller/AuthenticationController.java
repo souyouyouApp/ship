@@ -7,6 +7,7 @@ import com.song.archives.dao.UserRepository;
 import com.song.archives.model.Permission;
 import com.song.archives.model.Role;
 import com.song.archives.model.User;
+import com.song.archives.utils.LoggerUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -18,12 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.persistence.Lob;
+import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,9 +43,10 @@ public class AuthenticationController {
 
     private String msg = "failed";
 
-    private String operationLogInfo = "";
-
     private JSONObject result = new JSONObject();
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private UserRepository userRepository;
@@ -62,12 +64,11 @@ public class AuthenticationController {
      * @param role
      * @return
      */
-    @ArchivesLog(operationType = "saveRole", operationName = "新建角色")
+    @ArchivesLog(operationType = "saveRole", description = "新建角色")
     @RequestMapping(value = "saveRole")
     @ResponseBody
     String saveRole(Role role) {
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】新建角色【"+role.getDescription()+"】";
 
         try {
             roleRepository.save(role);
@@ -78,7 +79,7 @@ public class AuthenticationController {
         }
 
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 
@@ -88,12 +89,10 @@ public class AuthenticationController {
      * @param rids
      * @return
      */
-    @ArchivesLog(operationType = "deleteRoleByIds", operationName = "删除角色")
+    @ArchivesLog(operationType = "deleteRoleByIds", description = "删除角色")
     @RequestMapping(value = "deleteRoleByIds")
     @ResponseBody
     String deleteRoleByIds(Long[] rids) {
-
-        operationLogInfo = "用户【"+getUser().getRealName()+"】删除角色【";
 
         try {
             if (rids != null && rids.length > 0) {
@@ -101,7 +100,6 @@ public class AuthenticationController {
                 for (Long rid : rids) {
                     Role role = roleRepository.findOne(rid);
                     List<User> users = userRepository.findUsersByRoleId(rid);
-                    operationLogInfo += role.getDescription()+",";
                     for (User user : users) {
                         user.getRoles().remove(role);
                         userRepository.save(user);
@@ -113,12 +111,12 @@ public class AuthenticationController {
             msg = SUCCESS;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            msg = "delete role failed";
+            msg = "删除角色异常";
         }
 
-        operationLogInfo = operationLogInfo.substring(0,operationLogInfo.length()-1)+"】";
+        LoggerUtils.setLoggerReturn(request,msg);
+
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
         return result.toString();
 
     }
@@ -129,23 +127,22 @@ public class AuthenticationController {
      * @param permission
      * @return
      */
-    @ArchivesLog(operationType = "savePermission", operationName = "新建权限")
+    @ArchivesLog(operationType = "savePermission", description = "新建权限")
     @RequestMapping(value = "savePermission")
     @ResponseBody
     String savePermission(Permission permission) {
 
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】新建权限:"+permission.toString();
 
         try{
             permissionRepository.save(permission);
             msg = SUCCESS;
         }catch (Exception e){
-            msg = "Exception";
+            msg = "新建权限异常";
         }
 
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 
@@ -156,19 +153,16 @@ public class AuthenticationController {
      * @param pids
      * @return
      */
-    @ArchivesLog(operationType = "deletePermissionByIds", operationName = "删除权限")
+    @ArchivesLog(operationType = "deletePermissionByIds", description = "删除权限")
     @RequestMapping(value = "deletePermissionByIds")
     @ResponseBody
     String deletePermissionByIds(Long[] pids) {
-
-        operationLogInfo = "用户【"+getUser().getRealName()+"】删除权限【";
 
         try {
             if (pids != null && pids.length > 0) {
 
                 for (Long pid : pids) {
                     Permission permission = permissionRepository.findOne(pid);
-                    operationLogInfo += permission.getName()+",";
 
                     List<Role> roles = roleRepository.findRolesByPermissionId(pid);
 
@@ -182,12 +176,11 @@ public class AuthenticationController {
             msg = SUCCESS;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            msg = "delete permission failed";
+            msg = "删除权限异常";
         }
 
-        operationLogInfo = operationLogInfo.substring(0,operationLogInfo.length()-1)+"】";
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 
@@ -197,7 +190,7 @@ public class AuthenticationController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "permissionList", operationName = "权限列表")
+    @ArchivesLog(operationType = "permissionList", description = "权限列表",writeFlag = false)
     @RequestMapping(value = "/permissionList")
     String permissionList() {
         return "permission/list";
@@ -210,13 +203,12 @@ public class AuthenticationController {
      * @param size
      * @return
      */
-    @ArchivesLog(operationType = "permissions", operationName = "查询权限信息")
+    @ArchivesLog(operationType = "permissions", description = "查询权限列表",descFlag = true)
     @RequestMapping(value = "/permissions")
     @ResponseBody
     String permisssions(@RequestParam(value = "pageIndex", defaultValue = "1") Integer page,
                         @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询权限列表";
 
         page = page - 1;
         Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -224,7 +216,7 @@ public class AuthenticationController {
         List<Permission> permissions = permissionRepository.findAll(pageable);
 
         result.put("msg", SUCCESS);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         result.put("result", JSONArray.fromObject(permissions).toString());
         return result.toString();
     }
@@ -235,7 +227,7 @@ public class AuthenticationController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "roleList", operationName = "角色列表")
+    @ArchivesLog(operationType = "roleList", description = "角色列表",writeFlag = false)
     @RequestMapping(value = "/roleList")
     String roleList() {
         return "role/list";
@@ -248,14 +240,12 @@ public class AuthenticationController {
      * @param size
      * @return
      */
-    @ArchivesLog(operationType = "roles", operationName = "查询角色信息")
+    @ArchivesLog(operationType = "roles", description = "查询角色列表",descFlag = true)
     @RequestMapping(value = "/roles")
     @ResponseBody
     @RequiresRoles("securitor")
     String roles(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
                  @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
-
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询角色列表";
 
         page = page - 1;
         Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -263,7 +253,7 @@ public class AuthenticationController {
         List<Role> roles = roleRepository.findAll(pageable);
 
         result.put("msg", SUCCESS);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         result.put("result", JSONArray.fromObject(roles).toString());
         return result.toString();
     }
@@ -274,18 +264,17 @@ public class AuthenticationController {
      * @param id
      * @return
      */
-    @ArchivesLog(operationType = "findRoleByUserId", operationName = "查询用户角色")
+    @ArchivesLog(operationType = "findRoleByUserId", description = "查询用户角色")
     @RequestMapping(value = "/findRoleByUserId")
     @ResponseBody
     String findRoleByUserId(Long id) {
 
         User queryUser = userRepository.findOne(id);
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询【" + queryUser.getUsername() + "】拥有角色";
 
         List<Object> roles = userRepository.findRoleByUserId(id);
 
         result.put("msg", SUCCESS);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         result.put("result", JSONArray.fromObject(roles).toString());
         return result.toString();
 
@@ -299,13 +288,12 @@ public class AuthenticationController {
      * @param rids
      * @return
      */
-    @ArchivesLog(operationType = "saveRoles", operationName = "保存用户角色")
+    @ArchivesLog(operationType = "saveRoles", description = "保存用户角色")
     @RequestMapping(value = "/saveRoles")
     @ResponseBody
     String saveRoles(Long userId, Long[] rids) {
 
         User queryUser = userRepository.findOne(userId);
-        operationLogInfo = "用户【" + getUser().getRealName() + "】为【" + queryUser.getUsername() + "】分配角色 【";
 
         try {
             User user = userRepository.findOne(userId);
@@ -314,7 +302,6 @@ public class AuthenticationController {
 
             for (Long rid : rids) {
                 Role role = roleRepository.findOne(rid);
-                operationLogInfo += role.getIdentification() + ",";
                 roles.add(role);
             }
 
@@ -322,13 +309,12 @@ public class AuthenticationController {
             userRepository.save(user);
             msg = SUCCESS;
         } catch (Exception e) {
-            msg = "exception";
+            msg = "保存用户角色异常";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
 
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
 
     }
@@ -340,13 +326,14 @@ public class AuthenticationController {
      * @param rid
      * @return
      */
-    @ArchivesLog(operationType = "findPermissionByRoleId", operationName = "查询角色权限")
+    @ArchivesLog(operationType = "findPermissionByRoleId", description = "查询角色权限",descFlag = true)
     @RequestMapping(value = "/findPermissionByRoleId")
     @ResponseBody
     @RequiresRoles("securitor")
     String findPermissionByRoleId(String rid) {
 
         List<Object> permissions = permissionRepository.findPermissionByRoleId(rid);
+        LoggerUtils.setLoggerSuccess(request);
 
         return JSONArray.fromObject(permissions).toString();
 
@@ -360,7 +347,7 @@ public class AuthenticationController {
      * @param pids
      * @return
      */
-    @ArchivesLog(operationType = "savePermissions", operationName = "保存角色权限")
+    @ArchivesLog(operationType = "savePermissions", description = "保存角色权限",descFlag = true)
     @RequestMapping(value = "/savePermissions")
     @ResponseBody
     String savePermissions(Long roleId, Long[] pids) {
@@ -369,15 +356,12 @@ public class AuthenticationController {
         try {
             Role role = roleRepository.findOne(roleId);
 
-            operationLogInfo = "用户【" + getUser().getRealName() + "】为角色【" + role.getIdentification() + "】分配权限 【";
-
 
             Set<Permission> permissions = new HashSet<>();
 
             for (Long pid : pids) {
                 Permission permission = permissionRepository.findOne(pid);
                 permissions.add(permission);
-                operationLogInfo += permission.getName()+",";
             }
 
             role.setPermissions(permissions);
@@ -386,13 +370,12 @@ public class AuthenticationController {
             msg = SUCCESS;
 
         } catch (Exception e) {
-            msg = "Exception";
+            msg = "保存角色权限异常";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
+        LoggerUtils.setLoggerReturn(request,msg);
 
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
 
     }

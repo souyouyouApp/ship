@@ -4,6 +4,7 @@ import com.song.archives.aspect.ArchivesLog;
 import com.song.archives.dao.*;
 import com.song.archives.model.*;
 import com.song.archives.utils.ExcelUtil;
+import com.song.archives.utils.LoggerUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -52,7 +53,8 @@ public class ProjectController {
     private ProjectRepository projectRepository;
     @Autowired
     private FileInfoRepository fileInfoRepository;
-
+    @Autowired
+    private HttpServletRequest request;
     @Autowired
     private ReceiveLogRepository receiveLogRepository;
 
@@ -91,7 +93,6 @@ public class ProjectController {
     private String projectSearchFields;
 
     private String msg = "error";
-    private String operationLogInfo = "";
 
     private JSONObject result = new JSONObject();
 
@@ -178,7 +179,7 @@ public class ProjectController {
 
     @RequestMapping(value = "SaveCyDanwei")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveCyDanwei", operationName = "保存乘研单位信息")
+    @ArchivesLog(operationType = "SaveCyDanwei", description = "保存乘研单位信息")
     public String SaveCyDanwei(@RequestParam(value = "type") Integer type,
                                @RequestParam(value = "danweiName") String danweiName,
                                @RequestParam(value = "proid") Long proid,
@@ -190,7 +191,6 @@ public class ProjectController {
                                @RequestParam(value = "yanshouTime") String yanshouTime,
                                @RequestParam(value = "content") String content) {
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getRealName() + "】保存乘研单位信息：" + danweiName;
         try {
             ChengYanDanWeiEntity chengYanDanWeiEntity = null;
             if (editDanweiId > 0) {
@@ -213,25 +213,26 @@ public class ProjectController {
             chengYanDanWeiEntity.setContent(content);
 
             chengYanDanWeiRepository.save(chengYanDanWeiEntity);
-            result.put("msg", "success");
+            msg="success";
 
         }catch (Exception ex){
             logger.error(ex.getMessage());
-            result.put("msg", "error");
+            msg = "error";
         }
-
-        result.put("operationLog", operationLogInfo);
+        result.put("msg", msg);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
 
     }
 
     @RequestMapping(value = "GetCyDanweiList")
     @ResponseBody
-    @ArchivesLog(operationType = "GetCyDanweiList", operationName = "获取乘研单位信息列表")
+    @ArchivesLog(operationType = "GetCyDanweiList", description = "获取乘研单位信息列表")
     public String GetCyDanweiList(@RequestParam(value = "proid") long proid, @RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
 
         result = new JSONObject();
+        JSONArray cydanweiJson = null;
         try {
             currentpage = currentpage - 1;
             Sort sort = new Sort(Sort.Direction.ASC, "id");
@@ -253,25 +254,24 @@ public class ProjectController {
 
             jsonConfig.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
 
-            JSONArray cydanweiJson = JSONArray.fromObject(chengYanDanWeiEntityPage, jsonConfig);
+            cydanweiJson = JSONArray.fromObject(chengYanDanWeiEntityPage, jsonConfig);
+            msg="success";
 
-            result.put("result", cydanweiJson);
-            result.put("msg", "success");
         }catch(Exception ex){
             logger.error(ex.getMessage());
-            result.put("msg", "error");
+            msg="success";
         }
+        result.put("result", cydanweiJson);
+        result.put("msg", msg);
 
-        operationLogInfo="用户【"+getUser().getRealName()+"】获取乘研单位信息列表";
-        result.put("operationLog",operationLogInfo);
-
+        LoggerUtils.setLoggerReturn(request,msg);
 
         return result.toString();
     }
 
     @RequestMapping(value = "DeleteCyDanweiList")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteCyDanweiList", operationName = "删除乘研单位")
+    @ArchivesLog(operationType = "DeleteCyDanweiList", description = "删除乘研单位")
     public String DeleteCyDanweiList(@RequestParam(value = "cids") long[] cids) {
         result = new JSONObject();
 
@@ -287,21 +287,20 @@ public class ProjectController {
 
 
             result.put("msg", "success");
-
+            LoggerUtils.setLoggerSuccess(request);
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             result.put("msg", "error");
+            LoggerUtils.setLoggerFailed(request);
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除乘研单位:"+stringBuilder.toString();
-        result.put("operationLog", operationLogInfo);
         return result.toString();
 
     }
 
     @RequestMapping(value = "ReviewProjectFiles")
     @ResponseBody
-    @ArchivesLog(operationType = "ReviewProjectFiles", operationName = "查看待审核的项目文件")
+    @ArchivesLog(operationType = "ReviewProjectFiles", description = "查看待审核的项目文件")
     public String ReviewProjectFiles(HttpServletResponse response,
                                      @RequestParam(value = "fid") Long fid) {
 
@@ -336,7 +335,7 @@ public class ProjectController {
 
     @RequestMapping(value = "BatchDownProjectFiles")
     @ResponseBody
-    @ArchivesLog(operationType = "BatchDownProjectFiles", operationName = "下载项目文件")
+    @ArchivesLog(operationType = "BatchDownProjectFiles", description = "下载项目文件")
     public String BatchDownProjectFiles(HttpServletResponse response,
                                         @RequestParam(value = "proid") Long proid,
                                         @RequestParam(value = "ids") Long[] ids) {
@@ -370,17 +369,20 @@ public class ProjectController {
         }
         // 文件输出流
         try {
+            LoggerUtils.setLoggerSuccess(request);
             FileOutputStream outStream = new FileOutputStream(fileZip);
             // 压缩流
             ZipOutputStream toClient = new ZipOutputStream(outStream);
             //  toClient.setEncoding("gbk");
             zipFile(files, toClient);
+
             toClient.close();
             outStream.close();
 
             this.downloadFile(fileZip, response, true);
         } catch (Exception e) {
             e.printStackTrace();
+            LoggerUtils.setLoggerFailed(request);
         }
 
         return "";
@@ -412,7 +414,7 @@ public class ProjectController {
 
     @RequestMapping(value = "LoadAlertList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadAlertList", operationName = "加载提示信息")
+    @ArchivesLog(operationType = "LoadAlertList", description = "加载提示信息", writeFlag = false)
     public String LoadAlertList() {
         result = new JSONObject();
         StringBuilder pAlertHtml = new StringBuilder();
@@ -554,10 +556,8 @@ public class ProjectController {
             msg = "success";
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】加载提示信息";
         result.put("msg", msg);
         result.put("data", pAlertHtml.toString());
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
@@ -580,7 +580,7 @@ public class ProjectController {
 
     @RequestMapping(value = "LoadProjectProcess")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadProjectProcess", operationName = "加载项目进度")
+    @ArchivesLog(operationType = "LoadProjectProcess", description = "加载项目进度")
     public String LoadProjectProcess() throws ParseException {
 
         result = new JSONObject();
@@ -694,7 +694,6 @@ public class ProjectController {
             result.put("msg","error");
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】加载项目进度";
 
 
         result.put("proData", allProObj);
@@ -703,7 +702,7 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "CreateProject")
-    @ArchivesLog(operationType = "CreateProject", operationName = "新建项目")
+    @ArchivesLog(operationType = "CreateProject", description = "新建项目")
     public ModelAndView CreateProject() {
 
         List<User> auditUser = userRepository.findAuditUser();
@@ -716,7 +715,7 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "ReviewProject")
-    @ArchivesLog(operationType = "ReviewProject", operationName = "查看审核项目")
+    @ArchivesLog(operationType = "ReviewProject", description = "查看审核项目")
     public ModelAndView ReviewProject(@RequestParam(value = "pid", required = false) Long pid, HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("project/ReviewProjectBasicMain");
@@ -746,7 +745,7 @@ public class ProjectController {
         return modelAndView;
     }
     @RequestMapping(value = "/ProjectList")
-    @ArchivesLog(operationType = "ProjectList", operationName = "打开项目列表")
+    @ArchivesLog(operationType = "ProjectList", description = "查询项目列表")
     public ModelAndView ProjectList() {
 
         ModelAndView modelAndView = new ModelAndView();
@@ -755,12 +754,14 @@ public class ProjectController {
 
         modelAndView.setViewName("project/ProjectList");
         modelAndView.addObject("auditUsers",auditUser);
+        LoggerUtils.setLoggerSuccess(request);
+
         return modelAndView;
         //return "project/ProjectList";
     }
 
     @RequestMapping(value = "/ProjectDetail")
-    @ArchivesLog(operationType = "ProjectDetail", operationName = "查看项目详细信息")
+    @ArchivesLog(operationType = "ProjectDetail", description = "查看项目详细信息")
     public ModelAndView ProjectDetail(@RequestParam(value = "pid", required = false) Long pid, HttpServletRequest request) {
         ModelAndView model = new ModelAndView();
         model.setViewName("/project/ProjectDetail");
@@ -812,6 +813,8 @@ public class ProjectController {
 
         model.addObject("auditUsers",auditUser);
 
+        LoggerUtils.setLoggerSuccess(request);
+
         return model;
     }
     @RequestMapping(value = "/getAuditByClassifyForProject")
@@ -822,13 +825,13 @@ public class ProjectController {
 
             classify=getUser().getPermissionLevel();
         }
-        List<User> auditUserByClassify = userRepository.findAuditUserByClassify(classify);
+        List<User> auditUserByClassify = userRepository.findAuditUserByClassify(classify,getUser().getId());
 
         return JSONArray.fromObject(auditUserByClassify).toString();
     }
     @RequestMapping(value = "LoadJianDingList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadJianDingList", operationName = "查看拟鉴定奖列表")
+    @ArchivesLog(operationType = "LoadJianDingList", description = "查看拟鉴定奖列表")
     public String LoadJianDingList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                    @RequestParam(value = "proid") Long proid) {
@@ -853,19 +856,20 @@ public class ProjectController {
 
             jianDingEntityList= jianDingRepository.findAll(specification, pageable);
             result.put("msg", "success");
+            LoggerUtils.setLoggerSuccess(request);
         }catch(Exception ex) {
             logger.error(ex.getMessage());
             result.put("msg", "error");
+            LoggerUtils.setLoggerFailed(request);
         }
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查看拟鉴定奖列表";
-        result.put("operationLog", operationLogInfo);
+
         result.put("result", JSONArray.fromObject(jianDingEntityList));
         return result.toString();
     }
 
     @RequestMapping(value = "SaveBaojiang")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveBaojiang", operationName = "保存拟报奖信息")
+    @ArchivesLog(operationType = "SaveBaojiang", description = "保存拟报奖信息")
     public String SaveBaojiang(@RequestParam(value = "bjproid") Long proid,
                                @RequestParam(value = "bjjltype") String bjjltype,
                                @RequestParam(value = "bjdjtype") String bjdjtype,
@@ -884,8 +888,8 @@ public class ProjectController {
             msg = "error";
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】保存拟报奖信息";
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
+
         result.put("msg", msg);
         return result.toString();
 
@@ -893,7 +897,7 @@ public class ProjectController {
 
     @RequestMapping(value = "SaveHuojiang")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveHuojiang", operationName = "保存拟获奖信息")
+    @ArchivesLog(operationType = "SaveHuojiang", description = "保存拟获奖信息")
     public String SaveHuojiang(@RequestParam(value = "hjproid") Long proid,
                                @RequestParam(value = "hjjltype") String hjjltype,
                                @RequestParam(value = "hjdjtype") String hjdjtype,
@@ -913,15 +917,15 @@ public class ProjectController {
         } else {
             msg = "error";
         }
-        operationLogInfo = "用户【" + getUser().getRealName() + "】保存拟获奖信息";
-        result.put("operationLog", operationLogInfo);
+
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
         return result.toString();
     }
 
     @RequestMapping(value = "LoadNiBaoJiangList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadNiBaoJiangList", operationName = "查看拟报奖信息列表")
+    @ArchivesLog(operationType = "LoadNiBaoJiangList", description = "查看拟报奖信息列表",descFlag = true)
     public String LoadNiBaoJiangList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                      @RequestParam(value = "proid") Long proid) {
@@ -944,8 +948,7 @@ public class ProjectController {
         };
 
         List<BaoJiangEntity> baoJiangEntityList = baoJiangRepository.findAll(specification, pageable);
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查看拟报奖信息列表";
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         result.put("msg", "success");
         result.put("result", JSONArray.fromObject(baoJiangEntityList));
         return result.toString();
@@ -953,7 +956,7 @@ public class ProjectController {
 
     @RequestMapping(value = "LoadHuoJiangList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadHuoJiangList", operationName = "查看拟获奖信息列表")
+    @ArchivesLog(operationType = "LoadHuoJiangList", description = "查看拟获奖信息列表",descFlag = true)
     public String LoadHuoJiangList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                    @RequestParam(value = "proid") Long proid) {
@@ -977,8 +980,8 @@ public class ProjectController {
 
         List<HuoJiangEntity> huoJiangEntityList = huoJiangRepository.findAll(specification, pageable);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查看拟获奖信息列表";
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
+
         result.put("msg", "success");
         result.put("result", JSONArray.fromObject(huoJiangEntityList));
         return result.toString();
@@ -986,7 +989,7 @@ public class ProjectController {
 
     @RequestMapping(value = "/LoadReceiveLogList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadReceiveLogList", operationName = "查看收款记录列表")
+    @ArchivesLog(operationType = "LoadReceiveLogList", description = "查询收款记录列表",descFlag = true)
     public String LoadReceiveLogList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                      @RequestParam(value = "proid") Long proid) {
@@ -1012,16 +1015,15 @@ public class ProjectController {
         List<ReceivedLogEntity> receivedLogEntityList = receiveLogRepository.findAll(specification, pageable);
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目[" + projectInfoEntity.getProName() + "]已收账款列表操作";
+        LoggerUtils.setLoggerSuccess(request);
         result.put("msg", "success");
-        result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(receivedLogEntityList));
         return result.toString();
     }
 
     @RequestMapping(value = "/LoadYantaoLogList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadYantaoLogList", operationName = "查看收款记录列表")
+    @ArchivesLog(operationType = "LoadYantaoLogList", description = "查询研讨记录列表",descFlag = true)
     public String LoadYantaoLogList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                     @RequestParam(value = "proid") Long proid) {
@@ -1046,9 +1048,8 @@ public class ProjectController {
         List<YantaoLogEntity> yantaoLogEntityList = yantaoLogRepository.findAll(specification, pageable);
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目[" + projectInfoEntity.getProName() + "]研讨记录列表操作";
+        LoggerUtils.setLoggerSuccess(request);
         result.put("msg", "ok");
-        result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(yantaoLogEntityList));
         return result.toString();
     }
@@ -1056,7 +1057,7 @@ public class ProjectController {
 
     @RequestMapping(value = "/LoadCuishouLogList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadCuishouLogList", operationName = "查看催收记录列表")
+    @ArchivesLog(operationType = "LoadCuishouLogList", description = "查看催收记录列表",descFlag = true)
     public String LoadCuishouLogList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                      @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                      @RequestParam(value = "proid") Long proid) {
@@ -1080,16 +1081,15 @@ public class ProjectController {
 
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目[" + projectInfoEntity.getProName() + "]催收列表操作";
+        LoggerUtils.setLoggerSuccess(request);
         result.put("msg", "success");
-        result.put("operationLog", operationLogInfo);
         result.put("result", JSONArray.fromObject(cuishouLogEntityList));
         return result.toString();
     }
 
     @RequestMapping(value = "/GetProjectCount")
     @ResponseBody
-    @ArchivesLog(operationType = "GetProjectCount", operationName = "查询項目數量")
+    @ArchivesLog(operationType = "GetProjectCount", description = "查询項目數量", writeFlag = false)
     public String GetProjectCount() {
         result = new JSONObject();
         User user = getUser();
@@ -1110,7 +1110,6 @@ public class ProjectController {
 
 
         List<ProjectInfoEntity> projectInfoEntities = projectRepository.findAll(specification1);
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目数量";
         result.put("msg", "success");
         result.put("data", projectInfoEntities.size());
 
@@ -1185,7 +1184,7 @@ public class ProjectController {
 
     @RequestMapping(value = "/LoadProjectList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadProjectList", operationName = "加载项目列表")
+    @ArchivesLog(operationType = "LoadProjectList", description = "查询项目列表",descFlag = true)
     public String LoadProjectList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                   @RequestParam(value = "keywords", required = false) String keywords,
@@ -1338,24 +1337,24 @@ public class ProjectController {
 //                resultArr.add(itemObj);
                 result.put("result", projectJson);
                 result.put("msg", "success");
+
             }
 
 
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             result.put("msg", "error");
+            LoggerUtils.setLoggerFailed(request);
         }
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目列表";
-
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
 
         return result.toString();
     }
 
     @RequestMapping(value = "DeleteMoneyByIdsAndType")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteMoneyByIdsAndType", operationName = "删除已收账款记录")
+    @ArchivesLog(operationType = "DeleteMoneyByIdsAndType", description = "删除已收账款记录",descFlag = true)
     public String DeleteMoneyByIdsAndType(@RequestParam(value = "yids") long[] yids, @RequestParam(value = "ytype") Integer ytype, @RequestParam(value = "proid") Long proid) {
         result = new JSONObject();
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
@@ -1372,24 +1371,24 @@ public class ProjectController {
                         cuishouLogRepository.delete(yid);
                     }
                 }
-                operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的已收账款记录成功";
             }
             msg = "success";
 
         } catch (Exception e) {
             logger.error(e.getMessage());
             msg = "error";
-            operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的已收账款记录失败";
         }
 
+        LoggerUtils.setLoggerReturn(request,msg);
+
+
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
     @RequestMapping(value = "DeleteJdByIds")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteJdByIds", operationName = "删除拟鉴定记录")
+    @ArchivesLog(operationType = "DeleteJdByIds", description = "删除拟鉴定记录",descFlag = true)
     public String DeleteJdByIds(@RequestParam(value = "jdids") long[] jdids) {
         result = new JSONObject();
         msg = "success";
@@ -1400,15 +1399,15 @@ public class ProjectController {
             jianDingRepository.delete(jdid);
 //            }
         }
-        operationLogInfo = "用户【"+getUser().getRealName()+"】删除拟鉴定奖记录";
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
+
         return result.toString();
     }
 
     @RequestMapping(value = "DeleteBjByIds")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteBjByIds", operationName = "删除拟报奖记录")
+    @ArchivesLog(operationType = "DeleteBjByIds", description = "删除拟报奖记录",descFlag = true)
     public String DeleteBjByIds(@RequestParam(value = "bjids") long[] bjids) {
         result = new JSONObject();
         msg = "success";
@@ -1417,15 +1416,15 @@ public class ProjectController {
             baoJiangRepository.delete(bjid);
 
         }
-        operationLogInfo = "用户【"+getUser().getRealName()+"】删除拟报奖记录";
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
+
         result.put("msg", msg);
         return result.toString();
     }
 
     @RequestMapping(value = "DeleteHjByIds")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteHjByIds", operationName = "删除拟获奖记录")
+    @ArchivesLog(operationType = "DeleteHjByIds", description = "删除拟获奖记录",descFlag = true)
     public String DeleteHjByIds(@RequestParam(value = "hjids") long[] hjids) {
         result = new JSONObject();
         msg = "success";
@@ -1435,13 +1434,13 @@ public class ProjectController {
         }
 
         result.put("msg", msg);
-        operationLogInfo = "用户【"+getUser().getRealName()+"】删除拟获奖记录";
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
+
         return result.toString();
     }
     @RequestMapping(value = "DeleteYantaoByIds")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteYantaoByd", operationName = "删除研讨记录")
+    @ArchivesLog(operationType = "DeleteYantaoByd", description = "删除研讨记录",descFlag = true)
     public String DeleteYantaoByd(@RequestParam(value = "ytids") long[] ytids, @RequestParam(value = "proid") Long proid) {
         result = new JSONObject();
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
@@ -1475,34 +1474,30 @@ public class ProjectController {
 
 
                 }
-                operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的研讨记录成功";
             }
             msg = "success";
 
         } catch (Exception e) {
             logger.error(e.getMessage());
             msg = "error";
-            operationLogInfo = "用户【"+getUser().getRealName()+"】删除项目【" + projectInfoEntity.getProName() + "】的研讨记录失败";
         }
+        LoggerUtils.setLoggerReturn(request,msg);
 
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
     @RequestMapping(value = "DeleteFilesByIds")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteFilesByIds", operationName = "删除文件")
+    @ArchivesLog(operationType = "DeleteFilesByIds", description = "删除文件")
     public String DeleteFilesByIds(@RequestParam(value = "fids") long[] fids, @RequestParam(value = "pid") Long pid, @RequestParam(value = "attachfid",defaultValue = "-1") long attachfid, @RequestParam(value = "phaseid",defaultValue = "-1") long phaseid) {
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除文件【";
         try {
             if (fids != null && fids.length > 0) {
                 StringBuilder sb = new StringBuilder();
                 ProjectInfoEntity projectInfoEntity = projectRepository.findOne(pid);
                 for (Long fid : fids) {
                     FileInfoEntity fileInfoEntity = fileInfoRepository.findOne(fid);
-                    operationLogInfo += fileInfoEntity.getFileName() + ",";
                     if (fileInfoEntity.getFileType().equals("1")) {
                         File file = new File(fileInfoEntity.getFilePath());
                         if (file.exists()) {
@@ -1532,25 +1527,22 @@ public class ProjectController {
             msg = "error";
         }
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
     @RequestMapping(value = "DeleteProjectByIds")
     @ResponseBody
-    @ArchivesLog(operationType = "DeleteProjectByIds", operationName = "删除项目")
+    @ArchivesLog(operationType = "DeleteProjectByIds", description = "删除项目")
     public String DeleteProjectByIds(@RequestParam(value = "pids") long[] prids) {
 
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除项目【";
         try {
             if (prids != null && prids.length > 0) {
 
                 for (Long pid : prids) {
                     ProjectInfoEntity projectInfoEntity = projectRepository.findOne(pid);
-                    operationLogInfo += projectInfoEntity.getProName() + ",";
                     StringBuilder needToDelFids = new StringBuilder();
                     if (projectInfoEntity.getCreatephaseLxyjfid() != null && projectInfoEntity.getCreatephaseLxyjfid().length() > 0) {
                         needToDelFids.append(projectInfoEntity.getCreatephaseLxyjfid().split(","));
@@ -1647,15 +1639,14 @@ public class ProjectController {
             msg = "error";
         }
 
-        operationLogInfo += operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
     @RequestMapping(value = "SaveProject")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveProject", operationName = "保存项目")
+    @ArchivesLog(operationType = "SaveProject", description = "保存项目")
     public String SaveProject(ProjectInfoEntity projectInfoEntity) {
 
         result = new JSONObject();
@@ -1681,51 +1672,47 @@ public class ProjectController {
             auditInfoRepository.save(auditInfo);
 
 
-            operationLogInfo = "用户[" + getUser().getRealName() + "]新建项目成功（项目名称：" + projectInfoEntity.getProName() + ")";
             msg = "success";
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             msg = "error";
         }
+        LoggerUtils.setLoggerReturn(request,msg);
 
-        result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
         return JSONObject.fromObject(result).toString();
     }
 
     @RequestMapping(value = "LoadProjectPhases")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadProjectPhases", operationName = "加载项目阶段")
+    @ArchivesLog(operationType = "LoadProjectPhases", description = "加载项目阶段",writeFlag = false)
     public String LoadProjectPhases() {
         result = new JSONObject();
 
         List<ProjectPhaseEntity> projectPhaseEntities = projectPhaseRepository.findAll();
 
-        operationLogInfo = "用户[" + getUser().getRealName() + "]加载项目阶段";
         result.put("msg", "success");
         result.put("data", projectPhaseEntities);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         return JSONObject.fromObject(result).toString();
     }
 
     @RequestMapping(value = "GetFileTypeByPhaseId")
     @ResponseBody
-    @ArchivesLog(operationType = "GetFileTypeByPhaseId", operationName = "获取项目阶段的文件类型")
+    @ArchivesLog(operationType = "GetFileTypeByPhaseId", description = "获取项目阶段的文件类型",writeFlag = false)
     public String GetFileTypeByPhaseId(@RequestParam(value = "phaseId") long phaseid) {
         result = new JSONObject();
 
         List<PhaseFileTypeEntity> phaseFileTypeEntities = phaseFileTypeRepository.findAllByPhaseId(phaseid);
 
-        operationLogInfo = "用户[" + getUser().getRealName() + "]获取项目阶段的文件类型";
         result.put("msg", "success");
-        result.put("operationLog", operationLogInfo);
         result.put("data", phaseFileTypeEntities);
         return JSONObject.fromObject(result).toString();
     }
 
     @RequestMapping(value = "UpdateProject")
     @ResponseBody
-    @ArchivesLog(operationType = "UpdateProject", operationName = "更新项目信息")
+    @ArchivesLog(operationType = "UpdateProject", description = "更新项目信息")
     public String UpdateProject(ProjectInfoEntity projectInfoEntity) {
         result = new JSONObject();
         try {
@@ -1743,7 +1730,7 @@ public class ProjectController {
                     projectInfoEntity.setProAuditUserName(userRepository.findOne(Long.parseLong(projectInfoEntity.getProauditUser().toString())).getUsername());
                 }else
                 {
-                    List<User> auditUsers=userRepository.findAuditUserByClassify(projectInfoEntity.getClassificlevelId());
+                    List<User> auditUsers=userRepository.findAuditUserByClassify(projectInfoEntity.getClassificlevelId(),getUser().getId());
                     if(auditUsers!=null&&auditUsers.size()>0) {
                         projectInfoEntity.setProAuditUserName(auditUsers.get(0).getUsername());
                         projectInfoEntity.setProauditUser(Integer.parseInt(auditUsers.get(0).getId().toString()));
@@ -1765,7 +1752,6 @@ public class ProjectController {
 
                 auditInfoRepository.save(auditInfo);
 
-                operationLogInfo = "用户[" + getUser().getRealName() + "]修改项目基本信息（项目名称：" + projectInfoEntity.getProName() + ")";
             }
 
             msg = "success";
@@ -1774,14 +1760,14 @@ public class ProjectController {
             msg = "error";
         }
 
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
         return JSONObject.fromObject(result).toString();
     }
 
     @RequestMapping(value = "GetFilesById")
     @ResponseBody
-    @ArchivesLog(operationType = "GetFilesById", operationName = "根据文件ID获取文件")
+    @ArchivesLog(operationType = "GetFilesById", description = "根据文件ID获取文件")
     public String GetFilesById(@RequestParam(value = "fids") Long[] fids) {
         result = new JSONObject();
         msg = "success";
@@ -1794,9 +1780,6 @@ public class ProjectController {
             logger.error(ex.getMessage());
             msg = "error";
         }
-        operationLogInfo = "用户[" + getUser().getRealName() + "]根据文件ID获取文件";
-
-        result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
         result.put("data", JSONArray.fromObject(fileInfoEntities));
         return JSONObject.fromObject(result).toString();
@@ -1804,7 +1787,7 @@ public class ProjectController {
 
     @RequestMapping(value = "LoadProjectFiles")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadProjectFiles", operationName = "查询项目附件列表")
+    @ArchivesLog(operationType = "LoadProjectFiles", description = "查询项目附件列表",descFlag = true)
     public String LoadProjectFiles(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                    @RequestParam(value = "proId") long proid,
@@ -1812,7 +1795,6 @@ public class ProjectController {
                                    @RequestParam(value = "attachFileId", defaultValue = "-1") long attachFileId) {
         result = new JSONObject();
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne((long) proid);
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询项目附件列表";
         Page<FileInfoEntity> filelist = null;
         int classiclevel = getUser().getPermissionLevel() == null ? 1 : getUser().getPermissionLevel();
 
@@ -1929,14 +1911,14 @@ public class ProjectController {
             result.put("result", JSONArray.fromObject(filelist));
         }
         result.put("msg", "success");
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerSuccess(request);
         return result.toString();
 
     }
 
     @RequestMapping(value = "SaveJianDing")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveJianDing", operationName = "保存鉴定奖信息")
+    @ArchivesLog(operationType = "SaveJianDing", description = "保存鉴定奖信息",descFlag = true)
     public String SaveJianDing(@RequestParam(value = "jdProid") Long proid,
                                @RequestParam(value = "jiandingTime") String jianDingTime,
                                @RequestParam(value = "zhuchiBumen") String zhuchiBumen) throws ParseException {
@@ -1954,15 +1936,14 @@ public class ProjectController {
             msg = "error";
         }
         result.put("msg", msg);
-        operationLogInfo = "用户[" + getUser().getRealName() + "]保存鉴定奖信息";
+        LoggerUtils.setLoggerSuccess(request);
 
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
     @RequestMapping(value = "SaveYiShou")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveYiShou", operationName = "保存已收账款信息")
+    @ArchivesLog(operationType = "SaveYiShou", description = "保存已收账款信息",descFlag = true)
     public String SaveYiShou(@RequestParam(value = "receiveNum") Double receiveNum,
                              @RequestParam(value = "receiveTime") String receiveTime,
                              @RequestParam(value = "proid") Integer proid,
@@ -1992,22 +1973,20 @@ public class ProjectController {
                 projectInfoEntity.setReceivedFee(receiveNum);
                 projectInfoEntity.setNoreceivedFee(Double.parseDouble(projectInfoEntity.getTotalFee()) - projectInfoEntity.getReceivedFee());
                 projectRepository.save(projectInfoEntity);
-                operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "成功";
             }
 
         } catch (Exception ex) {
-            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]已收账款" + receiveNum.toString() + "失败";
             logger.error(ex.getMessage());
             msg = "error";
         }
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 
     @RequestMapping(value = "SaveYtRecored")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveYtRecored", operationName = "保存研讨信息")
+    @ArchivesLog(operationType = "SaveYtRecored", description = "保存研讨信息")
     public String SaveYtRecored(YantaoLogEntity yantaoLogEntity) {
         result = new JSONObject();
         msg = "success";
@@ -2018,22 +1997,20 @@ public class ProjectController {
             yantaoLogEntity.setCreateTime(Timestamp.valueOf(myFmt2.format(new Date())));
             yantaoLogRepository.save(yantaoLogEntity);
 
-            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]研讨记录成功";
         } catch (Exception ex) {
             msg = "error";
             logger.error(ex.getMessage());
-            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]研讨记录失败";
         }
 
 
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 
     @RequestMapping(value = "SaveCuiShou")
     @ResponseBody
-    @ArchivesLog(operationType = "SaveCuiShou", operationName = "保存催收款信息")
+    @ArchivesLog(operationType = "SaveCuiShou", description = "保存催收款信息",descFlag = true)
     public String SaveCuiShou(@RequestParam(value = "cuishouAmount") Double cuishouAmount,
                               @RequestParam(value = "cuishouTime") String cuishouTime,
                               @RequestParam(value = "cuishouAlertDays") Integer cuishouAlertDays,
@@ -2066,22 +2043,22 @@ public class ProjectController {
                 cuishouLogEntity.setJingbanrenId(jingbanName);
                 cuishouLogEntity.setJingbanrenName(userRepository.findOne(Long.parseLong(jingbanName)).getUsername());
                 cuishouLogRepository.save(cuishouLogEntity);
-                operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "成功";
             }
 
         } catch (Exception ex) {
-            operationLogInfo = "用户【" + getUser().getRealName() + "】添加项目[" + projectInfoEntity.getProName() + "]催收账款" + cuishouAmount.toString() + "失败";
             logger.error(ex.getMessage());
             msg = "error";
         }
+
+        LoggerUtils.setLoggerReturn(request,msg);
+
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
     @RequestMapping(value = "UpdateFilesClassId")
     @ResponseBody
-    @ArchivesLog(operationType = "UpdateFilesClassId", operationName = "更新文件密级")
+    @ArchivesLog(operationType = "UpdateFilesClassId", description = "更新文件密级",writeFlag = false)
     public String UpdateFilesClassId(@RequestParam(value = "fids") String fids,
                                      @RequestParam(value = "classid") Integer classid,
                                      @RequestParam(value = "eaudituser") Integer eaudituser) {
@@ -2100,7 +2077,6 @@ public class ProjectController {
                 fileInfoRepository.save(fileInfoEntity);
             }
         }
-        operationLogInfo = "用户【" + getUser().getRealName() + "】更新文件密级成功";
 
         result.put("msg", "success");
 
@@ -2110,7 +2086,7 @@ public class ProjectController {
 
     @RequestMapping(value = "UploadPaper")
     @ResponseBody
-    @ArchivesLog(operationType = "UploadPaper", operationName = "上传纸质文件")
+    @ArchivesLog(operationType = "UploadPaper", description = "上传纸质文件")
     public String UploadPaper(@RequestParam(value = "paperFileName") String paperFileName,
                               @RequestParam(value = "zrr") String zrrName,
                               @RequestParam(value = "paperClassicId") Integer cid,
@@ -2121,7 +2097,6 @@ public class ProjectController {
                               @RequestParam(value = "phaseid") Long phaseid,
                               @RequestParam(value = "editFileId", required = false) Long editFileId) {
         result = new JSONObject();
-        operationLogInfo = "用户【" + getUser().getRealName() + "】添加纸质文件";
         ProjectInfoEntity projectInfoEntity = projectRepository.findOne(proid);
         msg = "success";
         try {
@@ -2176,18 +2151,17 @@ public class ProjectController {
             }
         } catch (Exception ex) {
             msg = "error";
-            operationLogInfo = "用户【" + getUser().getRealName() + "】添加纸质文件发生异常";
         }
 
+        LoggerUtils.setLoggerReturn(request,msg);
 
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 
     @RequestMapping(value = "UpLoadYtFiles")
     @ResponseBody
-    @ArchivesLog(operationType = "UpLoadYtFiles", operationName = "上传研讨记录文件")
+    @ArchivesLog(operationType = "UpLoadYtFiles", description = "上传研讨记录文件")
     public synchronized String UpLoadYtFiles(@RequestParam(value = "ytfile") MultipartFile[] ytfile, @RequestParam(value = "pid") long pid) throws IOException {
 
         result = new JSONObject();
@@ -2228,29 +2202,27 @@ public class ProjectController {
                 FileInfoEntity addedFile = fileInfoRepository.save(fileInfoEntity);
                 addedFids.append(addedFile.getId());
 
-                operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】研讨记录附件成功";
 
             }
         } catch (Exception e) {
-            operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】研讨记录附件失败";
             e.printStackTrace();
             msg = "error";
 
         }
+        LoggerUtils.setLoggerReturn(request,msg);
 
         msg = "success";
         result.put("success", msg);
         result.put("ytfileid", addedFids.toString());
         result.put("ytfilename", filename);
         result.put("ytfilepath", savFilePath);
-        result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
         return result.toString();
     }
 
     @RequestMapping(value = "ImportProjectFiles")
     @ResponseBody
-    @ArchivesLog(operationType = "ImportProjectFiles", operationName = "批量导入项目")
+    @ArchivesLog(operationType = "ImportProjectFiles", description = "批量导入项目",descFlag = true)
     public synchronized String ImportProjectFiles(@RequestParam(value = "importProjFile") MultipartFile[] projectFile,
                                                   @RequestParam(value = "proauditUser") String proauditUser) {
         result = new JSONObject();
@@ -2426,19 +2398,19 @@ public class ProjectController {
             ex.printStackTrace();
             resultBuilder=new StringBuilder();
             resultBuilder.append("导入失败，请检查数据类型是否正确！");
+            msg = "error";
         }
-        operationLogInfo = "用户[" + getUser().getRealName() + "]批量导入项目";
+        LoggerUtils.setLoggerReturn(request,msg);
 
         result.put("msg1", resultBuilder.toString());
         result.put("success", "success");
         result.put("msg", "success");
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 //
 @RequestMapping(value = "UpdateLogSaveTime")
 @ResponseBody
-@ArchivesLog(operationType = "UpdateLogSaveTime", operationName = "更新日志存储时长")
+@ArchivesLog(operationType = "UpdateLogSaveTime", description = "更新日志存储时长",descFlag = true)
 public String UpdateLogSaveTime(@RequestParam(value = "saveTime") String saveTime) {
 
     String res = "success";
@@ -2451,7 +2423,6 @@ public String UpdateLogSaveTime(@RequestParam(value = "saveTime") String saveTim
             storageEntityList.get(0).setLogSaveTime(saveTime);
             storageRepository.save(storageEntityList.get(0));
             res = "success";
-            operationLogInfo = "用户[" + getUser().getRealName() + "]更新日志存储时长为：" + saveTime + "月";
         } else {
             res = "error";
         }
@@ -2462,14 +2433,16 @@ public String UpdateLogSaveTime(@RequestParam(value = "saveTime") String saveTim
         res = "error";
     }
 
+    LoggerUtils.setLoggerReturn(request,res);
+
+
     result.put("msg", res);
 
-    result.put("operationLog", operationLogInfo);
     return result.toString();
 }
 @RequestMapping(value = "UpdateSpaceAmount")
 @ResponseBody
-@ArchivesLog(operationType = "UpdateSpaceAmount", operationName = "更新存储空间")
+@ArchivesLog(operationType = "UpdateSpaceAmount", description = "更新存储空间",descFlag = true)
 public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@RequestParam(value = "danwei") String danwei) {
     String res = "success";
     result = new JSONObject();
@@ -2487,14 +2460,13 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
     }
 
     result.put("msg", res);
-    operationLogInfo = "用户[" + getUser().getRealName() + "]更新存储空间为："+amount+danwei;
-    result.put("operationLog", operationLogInfo);
+    LoggerUtils.setLoggerReturn(request,res);
     return result.toString();
 }
 
     @RequestMapping(value = "UpdateAlertAmount")
     @ResponseBody
-    @ArchivesLog(operationType = "UpdateAlertAmount", operationName = "更新预警阈值")
+    @ArchivesLog(operationType = "UpdateAlertAmount", description = "更新预警阈值",descFlag = true)
     public String UpdateAlertAmount(@RequestParam(value = "amount") String amount,@RequestParam(value = "danwei") String danwei) {
         String res = "success";
         result = new JSONObject();
@@ -2519,8 +2491,8 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
             res = "error";
         }
         result.put("msg", res);
-        operationLogInfo = "用户[" + getUser().getRealName() + "]更新预警阈值为："+amount+danwei;
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,res);
+
         return result.toString();
     }
 
@@ -2588,7 +2560,7 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
     }
     @RequestMapping(value = "UpLoadProjectFiles")
     @ResponseBody
-    @ArchivesLog(operationType = "UpLoadProjectFiles", operationName = "上传项目附件资料")
+    @ArchivesLog(operationType = "UpLoadProjectFiles", description = "上传项目附件资料")
     public synchronized String UpLoadProjectFiles(@RequestParam(value = "projectfile") MultipartFile[] projectfiles,
                                                   @RequestParam(value = "attachid") String attachid,
                                                   @RequestParam(value = "phaseid") String phaseid,
@@ -2673,10 +2645,8 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
 
                 projectRepository.save(projectInfoEntity);
 
-                operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】" + fileIdToNameMap.get(attachid) + "成功";
 
             } catch (Exception e) {
-                operationLogInfo = "用户[" + getUser().getRealName() + "]上传项目【" + projectInfoEntity.getProName() + "】" + fileIdToNameMap.get(attachid) + "失败";
                 e.printStackTrace();
                 msg = "error";
             }
@@ -2684,13 +2654,15 @@ public String UpdateSpaceAmount(@RequestParam(value = "amount") String amount,@R
 
         msg = "success";
         result.put("success", msg);
+
+        LoggerUtils.setLoggerReturn(request,msg);
+
         if (addedFids.length() > 0) {
             result.put("fid", addedFids.substring(0, addedFids.length() - 1));
         } else {
             result.put("fid", "0");
         }
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
 

@@ -6,6 +6,7 @@ import com.song.archives.dao.ModuleFileRespository;
 import com.song.archives.dao.UserRepository;
 import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
+import com.song.archives.utils.LoggerUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -27,8 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,9 +49,10 @@ public class AnnounceController {
 
     private String msg = "failed";
 
-    private String operationLogInfo = "";
-
     private JSONObject result;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     private UserRepository userRepository;
@@ -68,7 +70,7 @@ public class AnnounceController {
      * @param mids
      * @return
      */
-    @ArchivesLog(operationType = "createAnnounce",operationName = "创建公告信息")
+    @ArchivesLog(operationType = "createAnnounce", description = "创建公告信息")
     @RequestMapping(value = "/createAnnounce")
     @ResponseBody
     @Transactional
@@ -113,8 +115,6 @@ public class AnnounceController {
 
 
             if (entity != null){
-                entity.setCreator(getUser().getRealName());
-                entity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
 
                 String content = entity.getContent();
 
@@ -123,25 +123,16 @@ public class AnnounceController {
                 }
 
             }
-
-            String operationType = "";
-
-            if (id != null){
-                operationType = "更新公告";
-            }else {
-                operationType = "新建公告";
-            }
-
-            operationLogInfo = "用户【"+getUser().getRealName()+"】"+operationType+"【"+announceInfoEntity.getTitle()+"】";
-
-            result.put("operationLog",operationLogInfo);
-
+            LoggerUtils.setLoggerSuccess(request);
             announceRepository.save(entity);
             msg = SUCCESS;
 
+
         }catch (Exception e){
             logger.error("创建公告信息:"+e.getMessage());
+            e.printStackTrace();
             msg = "Exception";
+            LoggerUtils.setLoggerFailed(request);
         }
 
         result.put("msg",msg);
@@ -157,41 +148,36 @@ public class AnnounceController {
      * @param ids
      * @return
      */
-    @ArchivesLog(operationType = "delAnnounce", operationName = "删除公告")
+    @ArchivesLog(operationType = "delAnnounce", description = "删除公告")
     @RequestMapping(value = "/delAnnounce")
     @ResponseBody
     String delAnnounce(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除公告【";
 
         try{
 
             if (null != ids && ids.length >0){
                 for (Long id:ids){
                     AnnounceInfoEntity entity = announceRepository.findOne(id);
-                    operationLogInfo += entity.getTitle() + ",";
                     announceRepository.delete(entity);
 
                 }
             }
             msg = SUCCESS;
-
+            LoggerUtils.setLoggerSuccess(request);
         }catch (Exception e){
             logger.error(e.getMessage());
             msg = "delete announce failed";
-
+            LoggerUtils.setLoggerFailed(request);
         }
 
-
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
         return result.toString();
     }
     /**
      * 新建公告页面
      * @return
      */
-    @ArchivesLog(operationType = "createAnnoucePage",operationName = "新建公告页面")
+    @ArchivesLog(operationType = "createAnnoucePage", description = "新建公告页面")
     @RequestMapping(value = "/createAnnoucePage")
     public ModelAndView createAnliPage(@RequestParam(value = "aid",required = false) Long aid){
         ModelAndView modelAndView = new ModelAndView();
@@ -204,6 +190,8 @@ public class AnnounceController {
             announceInfoEntity = new AnnounceInfoEntity();
             modelAndView.addObject("uids",null);
             announceInfoEntity.setSponsorDate(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_FORMAT_YYYY_MM_DD));
+            announceInfoEntity.setCreator(getUser().getUsername());
+            announceInfoEntity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
         }else {
             announceInfoEntity = announceRepository.findOne(aid);
             modelAndView.addObject("uids",announceInfoEntity.getRelatedUserIds().split(","));
@@ -231,9 +219,10 @@ public class AnnounceController {
         modelAndView.addObject("mid",3);
         modelAndView.addObject("users",users);
         modelAndView.addObject("levelId",getUser().getPermissionLevel());
+        modelAndView.addObject("currentUser",getUser().getUsername());
         modelAndView.addObject("auditUsers",auditUser);
 
-
+        LoggerUtils.setLoggerSuccess(request);
 
         return modelAndView;
     }
@@ -246,7 +235,7 @@ public class AnnounceController {
      * @param searchValue
      * @return
      */
-    @ArchivesLog(operationType = "announces",operationName = "查询公告列表")
+    @ArchivesLog(operationType = "announces", description = "查询公告列表",descFlag = true)
     @RequestMapping(value = "/announces")
     @ResponseBody
     String announces(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
@@ -310,9 +299,11 @@ public class AnnounceController {
         try {
             datas = announceRepository.findAll(specification, pageable);
             msg = SUCCESS;
+            LoggerUtils.setLoggerSuccess(request);
         }catch (Exception e){
             logger.error("查询公告列表:"+e.getMessage());
             msg = "Exception";
+            LoggerUtils.setLoggerFailed(request);
         }
 
 
@@ -322,9 +313,7 @@ public class AnnounceController {
 
         JSONArray json =JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【"+getUser().getRealName()+"】查询公告列表";
         result.put("msg",msg);
-        result.put("operationLog",operationLogInfo);
         result.put("result", json);
         return result.toString();
     }
@@ -332,7 +321,7 @@ public class AnnounceController {
      * 公告列表页面
      * @return
      */
-    @ArchivesLog(operationType = "announceList",operationName = "公告列表页面")
+    @ArchivesLog(operationType = "announceList", description = "公告列表页面",writeFlag = false)
     @RequestMapping(value = "/announceList")
     ModelAndView announceList(@RequestParam(value = "typeId", required = false) Integer typeId){
         ModelAndView modelAndView = new ModelAndView();

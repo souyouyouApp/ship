@@ -62,7 +62,7 @@ public class ReviewController {
     private AuditInfoRepository auditInfoRepository;
 
 
-    @ArchivesLog(operationType = "auditCnt", operationName = "查询待审核文件")
+    @ArchivesLog(operationType = "auditCnt", description = "查询待审核文件",writeFlag = false)
     @RequestMapping(value = "/auditCnt")
     @ResponseBody
     String auditCnt() {
@@ -86,7 +86,7 @@ public class ReviewController {
     }
 
 
-    @ArchivesLog(operationType = "auditFileById", operationName = "审核文件")
+    @ArchivesLog(operationType = "auditFileById", description = "审核文件")
     @RequestMapping(value = "/auditFileById")
     @ResponseBody
     String auditFileById(@RequestParam(value = "fileId") Long fileId,
@@ -161,7 +161,7 @@ public class ReviewController {
 
 
 
-    @ArchivesLog(operationType = "deleteById", operationName = "删除文件")
+    @ArchivesLog(operationType = "deleteById", description = "删除文件")
     @RequestMapping(value = "/deleteById")
     @ResponseBody
     String deleteById(@RequestParam(value = "fileId") Long fileId) {
@@ -190,7 +190,7 @@ public class ReviewController {
 
 
 
-    @ArchivesLog(operationType = "delNotify", operationName = "删除通知信息")
+    @ArchivesLog(operationType = "delNotify", description = "删除通知信息")
     @RequestMapping(value = "/delNotify")
     @ResponseBody
     String delNotify(@RequestParam(value = "nId") Long nId) {
@@ -224,7 +224,7 @@ public class ReviewController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "reviewList", operationName = "文件列表")
+    @ArchivesLog(operationType = "reviewList", description = "文件列表")
     @RequestMapping(value = "/reviewList/{fileClassify}")
     ModelAndView reviewList(@PathVariable Integer fileClassify) {
         ModelAndView modelAndView = new ModelAndView();
@@ -247,7 +247,7 @@ public class ReviewController {
      * @param searchValue
      * @return
      */
-    @ArchivesLog(operationType = "files", operationName = "查询文件列表")
+    @ArchivesLog(operationType = "files", description = "查询审核列表",descFlag = true)
     @RequestMapping(value = "/files")
     @ResponseBody
     String files(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
@@ -302,7 +302,7 @@ public class ReviewController {
 
 
 
-    @ArchivesLog(operationType = "downLoadFile", operationName = "下载文件")
+    @ArchivesLog(operationType = "downLoadFile", description = "下载文件")
     @RequestMapping(value = "/downLoadFile")
     public void getFile(@RequestParam(value = "fileId") Long fileId,
                         HttpServletResponse response) {

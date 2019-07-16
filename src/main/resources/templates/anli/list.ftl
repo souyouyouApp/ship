@@ -378,7 +378,7 @@
                         return '<a href="javascrip:void(0)" onclick="detailView('+row.id+')">'+value+'</a>'
                     }
                 }, {
-                    field: 'createTime',
+                    field: 'createTimes',
                     title: '发表日期',
                     sortable: true,
                 }, {

@@ -10,7 +10,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import sun.jvm.hotspot.debugger.posix.elf.ELFException;
 
 import javax.persistence.criteria.Predicate;
 import java.io.File;
@@ -67,7 +65,7 @@ public class MessageController {
     private String filePath;
 
 
-    @ArchivesLog(operationType = "findMsgByMid",operationName = "查询消息")
+    @ArchivesLog(operationType = "findMsgByMid", description = "查询消息")
     @RequestMapping("findMsgByMid")
     @ResponseBody
     public String findMsgByMid(@RequestParam(value = "mid")Long mid){
@@ -81,7 +79,7 @@ public class MessageController {
         return json.toString();
     }
 
-    @ArchivesLog(operationType = "",operationName = "发件箱")
+    @ArchivesLog(operationType = "", description = "发件箱")
     @RequestMapping("outBoxList")
     public ModelAndView outBoxList(){
 
@@ -92,7 +90,7 @@ public class MessageController {
     }
 
 
-    @ArchivesLog(operationType = "",operationName = "草稿箱")
+    @ArchivesLog(operationType = "", description = "草稿箱")
     @RequestMapping("draftList")
     public ModelAndView draftList(){
 
@@ -103,7 +101,7 @@ public class MessageController {
     }
 
 
-    @ArchivesLog(operationType = "",operationName = "删除信息")
+    @ArchivesLog(operationType = "", description = "删除信息")
     @RequestMapping("deleteMsg")
     @ResponseBody
     public String deleteMsg(@RequestParam(value = "type") String type,
@@ -134,7 +132,7 @@ public class MessageController {
     }
 
 
-    @ArchivesLog(operationType = "",operationName = "消息详情")
+    @ArchivesLog(operationType = "", description = "消息详情")
     @RequestMapping("msgDetail1")
     public ModelAndView msgDetail(@RequestParam(value = "mid")Long mid,
                                   @RequestParam(value = "id",required = false)Long id,
@@ -179,7 +177,7 @@ public class MessageController {
         return modelAndView;
     }
 
-    @ArchivesLog(operationType = "",operationName = "发件列表")
+    @ArchivesLog(operationType = "", description = "发件列表")
     @RequestMapping("outBoxes")
     @ResponseBody
     public String outBoxes(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
@@ -212,7 +210,7 @@ public class MessageController {
     }
 
 
-    @ArchivesLog(operationType = "",operationName = "收件列表")
+    @ArchivesLog(operationType = "", description = "收件列表")
     @RequestMapping("inBoxes")
     @ResponseBody
     public String inBoxes(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
@@ -253,7 +251,7 @@ public class MessageController {
     }
 
 
-    @ArchivesLog(operationType = "",operationName = "草稿列表")
+    @ArchivesLog(operationType = "", description = "草稿列表")
     @RequestMapping("drafts")
     @ResponseBody
     public String drafts(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
@@ -294,7 +292,7 @@ public class MessageController {
     }
 
 
-    @ArchivesLog(operationType = "sendMessage" , operationName = "发送信息")
+    @ArchivesLog(operationType = "sendMessage" , description = "发送信息")
     @RequestMapping("sendMessage")
     @ResponseBody
     public String sendMessage(Message message,
@@ -359,7 +357,7 @@ public class MessageController {
     }
 
 
-    @ArchivesLog(operationType = "getContacts" , operationName = "获取联系人")
+    @ArchivesLog(operationType = "getContacts" , description = "获取联系人")
     @RequestMapping("getContacts")
     @ResponseBody
     public String getContacts(@RequestParam(value = "uid")Long uid){

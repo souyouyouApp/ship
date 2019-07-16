@@ -16,6 +16,14 @@ public class JianDingEntity implements Serializable {
     private String  zhuchiBumen;
     private Long jdproid;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "鉴定时间=" + jianDingTime +
+                ", 主持部门='" + zhuchiBumen + '\'' +
+                '}';
+    }
+
     public long getId() {
         return id;
     }

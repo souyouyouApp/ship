@@ -1,23 +1,18 @@
 package com.song.archives.controller;
 
 import com.song.archives.aspect.ArchivesLog;
-import com.song.archives.dao.AnliRepository;
 import com.song.archives.dao.ExpertRepository;
 import com.song.archives.dao.ModuleFileRespository;
 import com.song.archives.model.*;
+import com.song.archives.utils.DateUtil;
 import com.song.archives.utils.ExcelUtil;
+import com.song.archives.utils.LoggerUtils;
 import com.song.archives.utils.WebUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.util.CycleDetectionStrategy;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +27,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import sun.misc.BASE64Encoder;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -62,7 +52,9 @@ public class ExpertController {
 
     private String msg = "failed";
 
-    private String operationLogInfo = "";
+
+    @Autowired
+    private HttpServletRequest request;
 
     private JSONObject result;
 
@@ -78,18 +70,16 @@ public class ExpertController {
      * @param ids
      * @return
      */
-    @ArchivesLog(operationType = "delExpert", operationName = "删除专家")
+    @ArchivesLog(operationType = "delExpert", description = "删除专家")
     @RequestMapping(value = "/delExpert")
     @ResponseBody
     String delExpert(Long[] ids) {
-        operationLogInfo = "用户【" + getUser().getRealName() + "】删除专家【";
 
         try {
 
             if (null != ids && ids.length > 0) {
                 for (Long id : ids) {
                     ExpertInfoEntity entity = expertRepository.findOne(id);
-                    operationLogInfo += entity.getName() + ",";
                     expertRepository.delete(entity);
 
                 }
@@ -98,19 +88,18 @@ public class ExpertController {
 
         } catch (Exception e) {
             logger.error(e.getMessage());
-            msg = "delete expert failed";
+            msg = "删除专家异常";
 
         }
 
 
-        operationLogInfo = operationLogInfo.substring(0, operationLogInfo.length() - 1) + "】";
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         return result.toString();
     }
 
 
-    @ArchivesLog(operationType = "createExpert", operationName = "创建专家信息")
+    @ArchivesLog(operationType = "createExpert", description = "创建专家信息")
     @RequestMapping(value = "/createExpert")
     @ResponseBody
     @Transactional
@@ -121,23 +110,16 @@ public class ExpertController {
 
         result = new JSONObject();
 
-        String operateType = "";
 
 
         try {
             ExpertInfoEntity expertInfoEntity;
             expertInfoEntity = WebUtils.request2Bean(request, infoEntity.getClass());
 
-            if (null == id) {
-                expertInfoEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
-                operateType = "新建专家";
-            } else {
+            if (null != id) {
                 infoEntity = expertRepository.findOne(id);
                 expertInfoEntity.setPic(infoEntity.getPic());
-                expertInfoEntity.setId(id);
-                operateType = "更新专家";
-
-            }
+                expertInfoEntity.setId(id);            }
 
 
             if (null != file && !file.isEmpty()) {
@@ -151,11 +133,10 @@ public class ExpertController {
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("创建专家信息:" + e.getMessage());
-            msg = "IOException";
+            msg = "创建专家信息异常";
         }
+        LoggerUtils.setLoggerReturn(request,msg);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】"+operateType;
-        result.put("operationLog", operationLogInfo);
         result.put("msg", msg);
 
 
@@ -163,7 +144,7 @@ public class ExpertController {
 
     }
 
-    @ArchivesLog(operationType = "importExpert", operationName = "新建专家页面")
+    @ArchivesLog(operationType = "importExpert", description = "新建专家页面")
     @RequestMapping(value = "/importExpert")
     @ResponseBody
     public String importExpert(@RequestParam(value = "dataFile") MultipartFile file) throws IOException, InvalidFormatException {
@@ -180,6 +161,7 @@ public class ExpertController {
             if (null == experts || experts.isEmpty()){
                 msg = "文件不能为空";
                 result.put("msg",msg);
+                LoggerUtils.setLoggerFailed(request,msg);
                 return result.toString();
             }
 
@@ -237,9 +219,11 @@ public class ExpertController {
             msg = SUCCESS;
 
         } catch (Exception e) {
-            msg = "Exception";
+            msg = "导入专家异常";
             e.printStackTrace();
         }
+
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("msg", msg);
         result.put("result",String.format(successImport, successCnt)+""+String.format(failImport,failCnt));
 
@@ -254,7 +238,7 @@ public class ExpertController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "expert", operationName = "新建专家页面")
+    @ArchivesLog(operationType = "expert", description = "新建专家页面")
     @RequestMapping(value = "/expert")
     public ModelAndView expert(@RequestParam(value = "eid", required = false) Long eid) {
 
@@ -262,6 +246,8 @@ public class ExpertController {
 
         if (null == eid) {
             expertInfoEntity = new ExpertInfoEntity();
+            expertInfoEntity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI));
+            expertInfoEntity.setCreator(getUser().getUsername());
         } else {
             expertInfoEntity = expertRepository.findOne(eid);
         }
@@ -271,6 +257,11 @@ public class ExpertController {
         modelAndView.addObject("expert", expertInfoEntity);
         modelAndView.addObject("proentity", expertInfoEntity);
         modelAndView.addObject("mid", 4);
+        modelAndView.addObject("currentUser",getUser().getUsername());
+
+
+        LoggerUtils.setLoggerSuccess(request);
+
         return modelAndView;
     }
 
@@ -282,7 +273,7 @@ public class ExpertController {
      * @param typeId
      * @return
      */
-    @ArchivesLog(operationType = "experts", operationName = "查询专家列表")
+    @ArchivesLog(operationType = "experts", description = "查询专家列表",descFlag = true)
     @RequestMapping(value = "/experts")
     @ResponseBody
     String experts(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
@@ -355,13 +346,12 @@ public class ExpertController {
             msg = SUCCESS;
         } catch (Exception e) {
             logger.error("专家列表数据:" + e.getMessage());
-            msg = "Exception";
+            msg = "查询专家列表异常";
         }
 
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询专家列表";
         result.put("msg", msg);
-        result.put("operationLog", operationLogInfo);
+        LoggerUtils.setLoggerReturn(request,msg);
         result.put("result", JSONArray.fromObject(datas));
         return result.toString();
     }
@@ -371,7 +361,7 @@ public class ExpertController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "expertList", operationName = "专家列表")
+    @ArchivesLog(operationType = "expertList", description = "专家列表",writeFlag = false)
     @RequestMapping(value = "/expertList")
     ModelAndView expertList(@RequestParam(value = "typeId", required = false) Integer typeId) {
         ModelAndView modelAndView = new ModelAndView();
@@ -379,6 +369,8 @@ public class ExpertController {
         ZiliaoInfoEntity ziliaoInfoEntity = new ZiliaoInfoEntity();
         ziliaoInfoEntity.setTypeId(typeId);
         modelAndView.addObject(ziliaoInfoEntity);
+
+        LoggerUtils.setLoggerSuccess(request);
 
         return modelAndView;
     }

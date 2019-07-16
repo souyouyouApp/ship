@@ -9,6 +9,7 @@ import com.song.archives.model.ModuleFileEntity;
 import com.song.archives.model.User;
 import com.song.archives.model.ZiliaoInfoEntity;
 import com.song.archives.utils.DateUtil;
+import com.song.archives.utils.LoggerUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -30,8 +31,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,6 +56,9 @@ public class AnliController {
     private JSONObject result;
 
     @Autowired
+    private HttpServletRequest request;
+
+    @Autowired
     private AnliRepository anliRepository;
 
     @Autowired
@@ -70,7 +74,7 @@ public class AnliController {
      * @param mids
      * @return
      */
-    @ArchivesLog(operationType = "createAnli", operationName = "创建案例信息")
+    @ArchivesLog(operationType = "createAnli", description = "创建案例信息")
     @RequestMapping(value = "/createAnli")
     @ResponseBody
     @Transactional
@@ -102,9 +106,6 @@ public class AnliController {
 
 
             if (entity != null) {
-                entity.setCreator(getUser().getRealName());
-                entity.setCreateTime(DateUtil.parseDateToStr(new Date(), DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
-
                 String content = entity.getContent();
 
                 if (StringUtils.isNotEmpty(content) && StringUtils.isNotBlank(content)) {
@@ -112,25 +113,16 @@ public class AnliController {
                 }
 
             }
-
-            String operationType = "";
-
-            if (id != null){
-                operationType = "更新案例";
-            }else {
-                operationType = "新建案例";
-            }
-
-            operationLogInfo = "用户【" + getUser().getRealName() + "】"+operationType+"【"+entity.getTitle()+"】";
-
-            result.put("operationLog", operationLogInfo);
-
             anliRepository.save(entity);
+            LoggerUtils.setLoggerSuccess(request);
+
             msg = SUCCESS;
 
         } catch (Exception e) {
             logger.error("创建资料信息:" + e.getMessage());
             msg = "Exception";
+            LoggerUtils.setLoggerFailed(request);
+
         }
 
         result.put("msg", msg);
@@ -145,7 +137,7 @@ public class AnliController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "createAnliPage", operationName = "新建案例页面")
+    @ArchivesLog(operationType = "createAnliPage", description = "新建案例页面")
     @RequestMapping(value = "/createAnliPage")
     public ModelAndView createAnliPage(@RequestParam(value = "aid", required = false) Long aid) {
 
@@ -153,6 +145,8 @@ public class AnliController {
         List<User> auditUser = userRepository.findAuditUser();
         if (null == aid) {
             anliInfoEntity = new AnliInfoEntity();
+            anliInfoEntity.setCreateTimes(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
+            anliInfoEntity.setCreator(getUser().getUsername());
 
         } else {
             anliInfoEntity = anliRepository.findOne(aid);
@@ -165,6 +159,8 @@ public class AnliController {
         modelAndView.addObject("mid", 3);
         modelAndView.addObject("levelId", getUser().getPermissionLevel());
         modelAndView.addObject("auditUsers",auditUser);
+        modelAndView.addObject("currentUser",getUser().getUsername());
+        LoggerUtils.setLoggerSuccess(request);
 
         return modelAndView;
     }
@@ -174,7 +170,7 @@ public class AnliController {
      *
      * @return
      */
-    @ArchivesLog(operationType = "anliList", operationName = "案例列表")
+    @ArchivesLog(operationType = "anliList", description = "案例列表",writeFlag = false)
     @RequestMapping(value = "/anliList")
     ModelAndView anliList(@RequestParam(value = "typeId", required = false) Integer typeId) {
         ModelAndView modelAndView = new ModelAndView();
@@ -192,7 +188,7 @@ public class AnliController {
      * @param ids
      * @return
      */
-    @ArchivesLog(operationType = "delAnli", operationName = "删除案例")
+    @ArchivesLog(operationType = "delAnli", description = "删除案例")
     @RequestMapping(value = "/delAnli")
     @ResponseBody
     String delAnli(Long[] ids) {
@@ -209,10 +205,12 @@ public class AnliController {
                 }
             }
             msg = SUCCESS;
+            LoggerUtils.setLoggerSuccess(request);
 
         }catch (Exception e){
             logger.error(e.getMessage());
             msg = "delete anli failed";
+            LoggerUtils.setLoggerFailed(request);
 
         }
 
@@ -232,7 +230,7 @@ public class AnliController {
      * @param searchValue
      * @return
      */
-    @ArchivesLog(operationType = "anlis", operationName = "查询案例列表")
+    @ArchivesLog(operationType = "anlis", description = "查询案例列表",descFlag = true)
     @RequestMapping(value = "/anlis")
     @ResponseBody
     String anlis(@RequestParam(value = "pageIndex", defaultValue = "0") Integer page,
@@ -276,11 +274,13 @@ public class AnliController {
             Predicate whereLike = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
 
             List<Predicate> predicateArr = new ArrayList<>();
-            if (predicatesWhereArr.size() > 0){
-                predicateArr.add(whereEquals);
-            }
+
             if (predicates.size() > 0){
                 predicateArr.add(whereLike);
+            }
+
+            if (predicatesWhereArr.size() > 0){
+                predicateArr.add(whereEquals);
             }
 
 
@@ -294,6 +294,8 @@ public class AnliController {
         } catch (Exception e) {
             logger.error("案例列表数据:" + e.getMessage());
             msg = "Exception";
+            LoggerUtils.setLoggerFailed(request);
+
         }
 
 
@@ -303,7 +305,7 @@ public class AnliController {
 
         JSONArray json = JSONArray.fromObject(datas, jsonConfig);
 
-        operationLogInfo = "用户【" + getUser().getRealName() + "】查询案例列表";
+        LoggerUtils.setLoggerSuccess(request);
         result.put("msg", msg);
         result.put("operationLog", operationLogInfo);
         result.put("result", json);

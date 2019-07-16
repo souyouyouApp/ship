@@ -28,6 +28,20 @@ public class ChengYanDanWeiEntity {
     private String yanshouTime;
     private String content;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "单位名称='" + danweiName + '\'' +
+                ", 联系人='" + contractName + '\'' +
+                ", 联系电话='" + mobile + '\'' +
+                ", 单位类型=" + type +
+                ", 承研经费=" + fee +
+                ", 合同签订时间='" + contractTime + '\'' +
+                ", 验收时间='" + yanshouTime + '\'' +
+                ", 内容='" + content + '\'' +
+                '}';
+    }
+
     @Basic
     @Column(name = "danweiname")
     public String getDanweiName() {

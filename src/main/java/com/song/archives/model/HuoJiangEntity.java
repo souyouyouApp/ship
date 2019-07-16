@@ -17,6 +17,16 @@ public class HuoJiangEntity implements Serializable {
     private Date huojiangDate;
     private Long proId;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "奖励类型='" + jiangliType + '\'' +
+                ", 获奖等级='" + huojiangDengji + '\'' +
+                ", 获奖时间=" + huojiangDate +
+                ", 获奖成员信息='" + huojiangInfo + '\'' +
+                '}';
+    }
+
     private String huojiangInfo;
 
     public Long getId() {

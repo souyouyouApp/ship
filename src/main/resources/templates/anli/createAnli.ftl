@@ -100,6 +100,8 @@
 
 
         <div id="myTabContent" class="tab-content">
+            <input type="hidden" id="createTimes" name="createTimes" value="${info.createTimes!}">
+            <input type="hidden" id="creator" name="creator" value="${info.creator!}">
             <div class="tab-pane fade in active" id="sfpl">
                 <input type="hidden" id="tabType"/>
                 <div class="panel-body" style="margin-top: 30px">
@@ -109,7 +111,7 @@
                             <label for="sfpl-title" class="col-sm-1 control-label">标题</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="sfpl-title" name="sfpl-title" placeholder="请输入标题"
-                                       value="${info.title!}">
+                                       value="${info.title!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -117,7 +119,7 @@
                         <div class="form-group">
                             <label for="sfpl-classificlevelId" class="col-sm-1 control-label">密级</label>
                             <div class="col-sm-6">
-                                <select name="sfpl-classificlevelId" id="sfpl-classificlevelId" class="form-control">
+                                <select name="sfpl-classificlevelId" id="sfpl-classificlevelId" class="form-control" <#if info.creator != currentUser>disabled</#if>>
                                     <option value="-1">请选择密级</option>
                                     <#if (levelId >= 4)> <option value="4">机密</option></#if>
                                     <#if (levelId >= 3)> <option value="3">秘密</option></#if>
@@ -130,7 +132,8 @@
                         <div class="form-group">
                             <label for="nationality" class="col-sm-1 control-label">国别</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="nationality" name="nationality" placeholder="请输入国别" value="${info.nationality!}">
+                                <input type="text" class="form-control" id="nationality" name="nationality" placeholder="请输入国别"
+                                       value="${info.nationality!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -138,8 +141,7 @@
                             <label for="caseName" class="col-sm-1 control-label">案例名称</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="caseName" name="caseName"
-                                       placeholder="请输入案例名称"
-                                       value="${info.caseName!}">
+                                       placeholder="请输入案例名称" value="${info.caseName!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -148,8 +150,7 @@
                             <label for="closeTime" class="col-sm-1 control-label">结案时间</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="closeTime" name="closeTime"
-                                       placeholder="请输入结案时间"
-                                       value="${info.closeTime!}">
+                                       placeholder="请输入结案时间" value="${info.closeTime!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -158,10 +159,10 @@
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="finalAppeal" name="finalAppeal"
                                        placeholder="请输入终审法院"
-                                       value="${info.finalAppeal!}">
+                                       value="${info.finalAppeal!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
-
+                        <#if info.creator == currentUser>
                         <div class="form-group">
                             <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
 
@@ -172,7 +173,7 @@
                                    data-toggle="modal" data-target="#paperuploadModal">纸质</a>
                             </div>
                         </div>
-
+                        </#if>
                         <div class="form-group">
                             <label class="col-sm-1 control-label">附件列表</label>
                             <div class="col-sm-6" id="sfpl-attachment">
@@ -183,7 +184,7 @@
                             <label for="sfpl-ckeditor" class="col-sm-1 control-label">摘要</label>
                             <div class="col-sm-6">
                             <textarea id="sfpl-ckeditor" name="sfpl-ckeditor" class="form-control" rows="5"
-                                      cols="38"></textarea>
+                                      cols="38" <#if info.creator != currentUser>readonly</#if>></textarea>
                                 <script type="text/javascript">CKEDITOR.replace('sfpl-ckeditor')</script>
                             </div>
                         </div>
@@ -203,7 +204,7 @@
                                 </@shiro.lacksPermission>
 
                                 <@shiro.hasPermission name="anli:save">
-                                    <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('sfpl')">保存</a>
+                                    <#if info.creator == currentUser><a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('sfpl')">保存</a></#if>
                                 </@shiro.hasPermission>
 
                                 <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
@@ -223,7 +224,7 @@
                             <label for="glzc-title" class="col-sm-1 control-label">标题</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="glzc-title" name="glzc-title" placeholder="请输入标题"
-                                       value="${info.title!}">
+                                       value="${info.title!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -231,7 +232,7 @@
                         <div class="form-group">
                             <label for="glzc-classificlevelId" class="col-sm-1 control-label">密级</label>
                             <div class="col-sm-6">
-                                <select name="glzc-classificlevelId" id="glzc-classificlevelId" class="form-control">
+                                <select name="glzc-classificlevelId" id="glzc-classificlevelId" class="form-control" <#if info.creator != currentUser>disabled</#if>>
                                     <option value="-1">请选择密级</option>
                                     <#if (levelId >= 4)> <option value="4">机密</option></#if>
                                     <#if (levelId >= 3)> <option value="3">秘密</option></#if>
@@ -244,21 +245,24 @@
                         <div class="form-group">
                             <label for="projectName" class="col-sm-1 control-label">项目名称</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="projectName" name="projectName" placeholder="请输入项目名称" value="${info.projectName!}">
+                                <input type="text" class="form-control" id="projectName" name="projectName" placeholder="请输入项目名称"
+                                       value="${info.projectName!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="projectSource" class="col-sm-1 control-label">项目来源</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="projectSource" name="projectSource" placeholder="请输入项目来源" value="${info.projectSource!}">
+                                <input type="text" class="form-control" id="projectSource" name="projectSource" placeholder="请输入项目来源"
+                                       value="${info.projectSource!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="principal" class="col-sm-1 control-label">主要负责人</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="principal" name="principal" placeholder="请输入主要负责人" value="${info.principal!}">
+                                <input type="text" class="form-control" id="principal" name="principal" placeholder="请输入主要负责人"
+                                       value="${info.principal!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -266,14 +270,15 @@
                         <div class="form-group">
                             <label for="participant" class="col-sm-1 control-label">参与人</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="participant" name="participant" placeholder="请输入参与人" value="${info.participant!}">
+                                <input type="text" class="form-control" id="participant" name="participant" placeholder="请输入参与人"
+                                       value="${info.participant!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="judicialStatus" class="col-sm-1 control-label">状态</label>
                             <div class="col-sm-6">
-                                <select class="form-control" id="judicialStatus" name="judicialStatus">
+                                <select class="form-control" id="judicialStatus" name="judicialStatus" <#if info.creator != currentUser>disabled</#if>>
                                     <option value="一审">一审</option>
                                     <option value="二审">二审</option>
                                     <option value="再审">再审</option>
@@ -281,7 +286,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <#if info.creator == currentUser>
                         <div class="form-group">
                             <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
 
@@ -292,7 +297,7 @@
                                    data-toggle="modal" data-target="#paperuploadModal">纸质</a>
                             </div>
                         </div>
-
+                        </#if>
                         <div class="form-group">
                             <label for="ziliaoContent" class="col-sm-1 control-label">附件列表</label>
                             <div class="col-sm-6" id="glzc-attachment">
@@ -303,7 +308,7 @@
                             <label for="glzc-ckeditor" class="col-sm-1 control-label">摘要</label>
                             <div class="col-sm-6">
                             <textarea id="glzc-ckeditor" name="glzc-ckeditor" class="form-control" rows="5"
-                                      cols="38"></textarea>
+                                      cols="38" <#if info.creator != currentUser>readonly</#if>></textarea>
                                 <script type="text/javascript">CKEDITOR.replace('glzc-ckeditor')</script>
                             </div>
                         </div>
@@ -323,7 +328,9 @@
                                 </@shiro.lacksPermission>
 
                                 <@shiro.hasPermission name="anli:save">
+                                    <#if info.creator == currentUser>
                                     <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('glzc')">保存</a>
+                                    </#if>
                                 </@shiro.hasPermission>
 
                                 <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
@@ -342,7 +349,7 @@
                             <label for="hxhz-title" class="col-sm-1 control-label">标题</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="hxhz-title" name="hxhz-title" placeholder="请输入标题"
-                                       value="${info.title!}">
+                                       value="${info.title!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -350,7 +357,7 @@
                         <div class="form-group">
                             <label for="hxhz-classificlevelId" class="col-sm-1 control-label">密级</label>
                             <div class="col-sm-6">
-                                <select name="hxhz-classificlevelId" id="hxhz-classificlevelId" class="form-control">
+                                <select name="hxhz-classificlevelId" id="hxhz-classificlevelId" class="form-control" <#if info.creator != currentUser>disabled</#if>>
                                     <option value="-1">请选择密级</option>
                                     <#if (levelId >= 4)> <option value="4">机密</option></#if>
                                     <#if (levelId >= 3)> <option value="3">秘密</option></#if>
@@ -359,7 +366,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <#if info.creator == currentUser>
                         <div class="form-group">
                             <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
 
@@ -370,7 +377,7 @@
                                    data-toggle="modal" data-target="#paperuploadModal">纸质</a>
                             </div>
                         </div>
-
+                        </#if>
                         <div class="form-group">
                             <label for="ziliaoContent" class="col-sm-1 control-label">附件列表</label>
                             <div class="col-sm-6" id="hxhz-attachment">
@@ -381,7 +388,7 @@
                             <label for="hxhz-ckeditor" class="col-sm-1 control-label">摘要</label>
                             <div class="col-sm-6">
                             <textarea id="hxhz-ckeditor" name="hxhz-ckeditor" class="form-control" rows="5"
-                                      cols="38"></textarea>
+                                      cols="38" <#if info.creator != currentUser>readonly</#if>></textarea>
                                 <script type="text/javascript">CKEDITOR.replace('hxhz-ckeditor')</script>
                             </div>
                         </div>
@@ -401,7 +408,9 @@
                                 </@shiro.lacksPermission>
 
                                 <@shiro.hasPermission name="anli:save">
+                                    <#if info.creator == currentUser>
                                     <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('hxhz')">保存</a>
+                                    </#if>
                                 </@shiro.hasPermission>
 
                                 <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
@@ -420,7 +429,7 @@
                             <label for="zlfw-title" class="col-sm-1 control-label">标题</label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control" id="zlfw-title" name="zlfw-title" placeholder="请输入标题"
-                                       value="${info.title!}">
+                                       value="${info.title!}" <#if info.creator != currentUser>readonly</#if>>
                             </div>
                         </div>
 
@@ -428,7 +437,7 @@
                         <div class="form-group">
                             <label for="zlfw-classificlevelId" class="col-sm-1 control-label">密级</label>
                             <div class="col-sm-6">
-                                <select name="zlfw-classificlevelId" id="zlfw-classificlevelId" class="form-control">
+                                <select name="zlfw-classificlevelId" id="zlfw-classificlevelId" class="form-control" <#if info.creator != currentUser>disabled</#if>>
                                     <option value="-1">请选择密级</option>
                                     <#if (levelId >= 4)> <option value="4">机密</option></#if>
                                     <#if (levelId >= 3)> <option value="3">秘密</option></#if>
@@ -437,7 +446,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <#if info.creator == currentUser>
                         <div class="form-group">
                             <label for="ziliaoContent" class="col-sm-1 control-label">上传附件</label>
 
@@ -448,7 +457,7 @@
                                    data-toggle="modal" data-target="#paperuploadModal">纸质</a>
                             </div>
                         </div>
-
+                        </#if>
                         <div class="form-group">
                             <label for="zlfw-attachment" class="col-sm-1 control-label">附件列表</label>
                             <div class="col-sm-6" id="zlfw-attachment">
@@ -459,7 +468,7 @@
                             <label for="zlfw-ckeditor" class="col-sm-1 control-label">摘要</label>
                             <div class="col-sm-6">
                             <textarea id="zlfw-ckeditor" name="zlfw-ckeditor" class="form-control" rows="5"
-                                      cols="38"></textarea>
+                                      cols="38" <#if info.creator != currentUser>readonly</#if>></textarea>
                                 <script type="text/javascript">CKEDITOR.replace('zlfw-ckeditor')</script>
                             </div>
                         </div>
@@ -479,7 +488,9 @@
                                 </@shiro.lacksPermission>
 
                                 <@shiro.hasPermission name="anli:save">
+                                    <#if info.creator == currentUser>
                                     <a href="javascript:void(0)" class="btn btn-success" onclick="createAnli('zlfw')">保存</a>
+                                    </#if>
                                 </@shiro.hasPermission>
 
                                 <a href="javascript:void(0)" class="btn btn-primary" onclick="back()">返回</a>
@@ -558,7 +569,7 @@
             viewDiv = '<a href="javascript:void(0)" onclick="viewFile(' + id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
         }
 
-        var childInput = '<div><input style="margin-top: 5px;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+        var childInput = '<div><input style="margin-top: 5px;width: 356.33px;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
 
         var type = $('#myTab').find("li.active a")[0].id;
         type = type.substr(0,type.length-1)
@@ -809,7 +820,7 @@
                     var fileName = data.fileName;
 
                     var viewDiv = '审核中';
-                    var childInput = '<div><input style="margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>';
+                    var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;margin-top:5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>';
                     var type = $('#myTab').find("li.active a")[0].id;
                     type = type.substr(0,type.length-1);
 
@@ -1000,7 +1011,9 @@
             principal:$('#principal').val(),
             participant:$('#participant').val(),
             judicialStatus:$('judicialStatus').val(),
-            type:type
+            type:type,
+            createTimes:$('#createTimes').val(),
+            creator:$('#creator').val(),
         }
 
 
@@ -1075,10 +1088,10 @@
         });
     }
 
-
+    debugger
     var classificlevelId = '${info.classificlevelId!}';
 
-    var type = '${info.type}';
+    var type = '${info.type!}';
 
     $('#'+type+"-id").val('${info.id}')
 
@@ -1161,7 +1174,7 @@
                                 }
                             });
 
-                            var childInput = '<div><input style="margin-top: 5px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
+                            var childInput = '<div><input style="margin-top: 5px;width: 356.33px;"  type="text" name="mid" data-value="' + result.id + '" value="' + fileName + '" class="btn btn-default" readonly>' + viewDiv + '</div>'
                             if (finalResult != -1){
                                 var type = '${info.type}';
 
@@ -1180,8 +1193,18 @@
 
     var type = '${info.type}'
 
+    var typeArr = ['sfpl','glzc','hxhz','zlfw']
+    console.log('---------'+type)
     if (type == '' || type == undefined){
         type = 'sfpl';
+    }else {
+        typeArr.forEach(function(pageType){
+            if (type != pageType){
+                $('#'+pageType+'A').removeAttr('href');
+                $('#'+pageType+'A').removeAttr('data-toggle');
+            }
+        });
+
     }
     $('#'+type+'A').tab('show');
 
