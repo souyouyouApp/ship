@@ -87,7 +87,7 @@
 
                                     <div class="form-group col-md-6">
                                         <label>主要完成人</label>
-                                        <select class="selectpicker form-control" multiple id="proCompleteors" onchange="FilterUsers(3)" title='选择参与者 (必选、可多选)' name="proCompleteors">
+                                        <select class="selectpicker form-control" multiple id="proCompleteors" onchange="FilterUsers(3)" title='选择主要完成人(必选、可多选)' name="proCompleteors">
                                         </select>
                                     </div>
 

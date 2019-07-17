@@ -227,7 +227,7 @@ public class ProjectController {
 
     @RequestMapping(value = "GetCyDanweiList")
     @ResponseBody
-    @ArchivesLog(operationType = "GetCyDanweiList", description = "获取乘研单位信息列表")
+    @ArchivesLog(operationType = "GetCyDanweiList", description = "获取乘研单位信息列表",descFlag = true)
     public String GetCyDanweiList(@RequestParam(value = "proid") long proid, @RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer size) {
 

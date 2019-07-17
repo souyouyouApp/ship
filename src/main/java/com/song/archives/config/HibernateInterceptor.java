@@ -2,12 +2,7 @@ package com.song.archives.config;
 
 import com.song.archives.model.*;
 import com.song.archives.utils.LoggerUtils;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.util.CycleDetectionStrategy;
-import net.sf.json.util.PropertySetStrategy;
-import org.apache.tomcat.jni.FileInfo;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -29,7 +24,22 @@ public class HibernateInterceptor extends EmptyInterceptor {
     private HashMap<String, String> announceMap = new HashMap<>();
     private HashMap<String, String> userMap = new HashMap<>();
 
+    private HashMap<String,String> cydwMap=new HashMap<>();
+    private HashMap<String,String> bjMap=new HashMap<>();
+
     {
+        //乘研单位
+        cydwMap.put("danweiName","乘研单位名称");
+        cydwMap.put("contractName","合同名称");
+        cydwMap.put("mobile","手机号");
+        cydwMap.put("contractTime","合同时间");
+        cydwMap.put("yanshouTime","验收时间");
+
+        //报奖
+        bjMap.put("jiangLiType","奖励类型");
+        bjMap.put("shenbaoDengji","申报等级");
+        bjMap.put("baojiangDate","报奖日期");
+
         //项目
         proMap.put("proNo","项目编号");
         proMap.put("proName","项目名称");
@@ -178,9 +188,14 @@ public class HibernateInterceptor extends EmptyInterceptor {
             desc = "查看公告【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof User && request.getRequestURI().equals("/userInfo")){
             desc = "查看用户【"+saveEntity.get("username")+"】,"+o.toString();
-        }else if (entity instanceof FileInfoEntity && (request.getRequestURI().equals("/getFile")||request.getRequestURI().equals("/downLoadFile"))){
+        }else if (entity instanceof FileInfoEntity && (request.getRequestURI().equals("/getFile")||request.getRequestURI().equals("/downLoadFile")||request.getRequestURI().equals("/ReviewProjectFiles")||request.getRequestURI().equals("/BatchDownProjectFiles"))){
             desc = "下载文件【"+saveEntity.get("fileName")+"】";
-        }else {
+        }else if(entity instanceof ChengYanDanWeiEntity){
+            desc="查看乘研单位【"+saveEntity.get("danweiName")+"】,"+o.toString();
+        }else if(entity instanceof BaoJiangEntity){
+            desc="查看报奖信息【"+saveEntity.get("jiangLiType")+"】,"+o.toString();
+        }
+        else {
             return super.onLoad(entity, id, state, propertyNames, types);
         }
 
@@ -197,38 +212,42 @@ public class HibernateInterceptor extends EmptyInterceptor {
         System.out.println("----------onDelete---------------");
 
         for (int i = 0; i < propertyNames.length; i++) {
-            saveEntity.put(propertyNames[i],state[i]);
+            saveEntity.put(propertyNames[i], state[i]);
 
         }
 
         String desc = "";
 
-        if (entity instanceof ZiliaoInfoEntity){
-            desc = "删除资料【"+saveEntity.get("title")+"】,"+entity.toString();
-        }else if (entity instanceof ProjectInfoEntity){
-            desc = "删除项目【"+saveEntity.get("proName")+"】,"+entity.toString();
-        }else if (entity instanceof AnliInfoEntity){
-            desc = "删除案例【"+saveEntity.get("title")+"】,"+entity.toString();
-        }else if (entity instanceof LowInfoEntity){
-            desc = "删除法律法规【"+saveEntity.get("title")+"】,"+entity.toString();
-        }else if (entity instanceof ExpertInfoEntity){
-            desc = "删除专家【"+saveEntity.get("name")+"】,"+entity.toString();
-        }else if (entity instanceof AnnounceInfoEntity){
-            desc = "删除公告【"+saveEntity.get("title")+"】,"+entity.toString();
-        }else if (entity instanceof User){
-            desc = "删除用户【"+saveEntity.get("username")+"】,"+entity.toString();
-        }else if (entity instanceof ChengYanDanWeiEntity){
-            desc = "删除承研单位【"+saveEntity.get("danweiName")+"】,"+entity.toString();
-        }else if (entity instanceof MenuTypeEntity){
-            desc = "删除菜单【"+saveEntity.get("typeName")+"】,"+entity.toString();
-        }else if (entity instanceof Role){
-            desc = "删除角色【"+saveEntity.get("identification")+"】,"+entity.toString();
-        }else {
+        if (entity instanceof ZiliaoInfoEntity) {
+            desc = "删除资料【" + saveEntity.get("title") + "】," + entity.toString();
+        } else if (entity instanceof ProjectInfoEntity) {
+            desc = "删除项目【" + saveEntity.get("proName") + "】," + entity.toString();
+        } else if (entity instanceof AnliInfoEntity) {
+            desc = "删除案例【" + saveEntity.get("title") + "】," + entity.toString();
+        } else if (entity instanceof LowInfoEntity) {
+            desc = "删除法律法规【" + saveEntity.get("title") + "】," + entity.toString();
+        } else if (entity instanceof ExpertInfoEntity) {
+            desc = "删除专家【" + saveEntity.get("name") + "】," + entity.toString();
+        } else if (entity instanceof AnnounceInfoEntity) {
+            desc = "删除公告【" + saveEntity.get("title") + "】," + entity.toString();
+        } else if (entity instanceof User) {
+            desc = "删除用户【" + saveEntity.get("username") + "】," + entity.toString();
+        } else if (entity instanceof ChengYanDanWeiEntity) {
+            desc = "删除承研单位【" + saveEntity.get("danweiName") + "】," + entity.toString();
+        } else if (entity instanceof MenuTypeEntity) {
+            desc = "删除菜单【" + saveEntity.get("typeName") + "】," + entity.toString();
+        } else if (entity instanceof Role) {
+            desc = "删除角色【" + saveEntity.get("identification") + "】," + entity.toString();
+        } else if (entity instanceof ChengYanDanWeiEntity) {
+            desc = "删除乘研单位【" + saveEntity.get("danweiName") + "】，" + entity.toString();
+        } else if (entity instanceof BaoJiangEntity) {
+            desc = "删除报奖信息【" + saveEntity.get("jiangLiType") + "】，" + entity.toString();
+        } else {
             super.onDelete(entity, id, state, propertyNames, types);
         }
 
 //        request.setAttribute(LoggerUtils.LOGGER_DESC,request.getAttribute(LoggerUtils.LOGGER_DESC)==null?desc:(request.getAttribute(LoggerUtils.LOGGER_DESC)+desc));
-        request.setAttribute(LoggerUtils.LOGGER_DESC,desc);
+        request.setAttribute(LoggerUtils.LOGGER_DESC, desc);
         super.onDelete(entity, id, state, propertyNames, types);
 
     }
@@ -301,16 +320,15 @@ public class HibernateInterceptor extends EmptyInterceptor {
         Map after = new HashMap();
 
 
-
         for (int i = 0; i < propertyNames.length; i++) {
 
-            before.put(propertyNames[i],previousState[i]);
-            after.put(propertyNames[i],currentState[i]);
+            before.put(propertyNames[i], previousState[i]);
+            after.put(propertyNames[i], currentState[i]);
 
         }
 
 
-        if (!(entity instanceof ModuleFileEntity)){
+        if (!(entity instanceof ModuleFileEntity)) {
 //            request.setAttribute("before",JSONObject.fromObject(before).toString());
 //            request.setAttribute("after",JSONObject.fromObject(after).toString());
 
@@ -320,37 +338,43 @@ public class HibernateInterceptor extends EmptyInterceptor {
             StringBuffer optDesc = new StringBuffer();
             String desc;
 
-            if (entity instanceof ZiliaoInfoEntity){
-                optDesc.append("更新资料【"+before.get("title")+"】,将");
-                desc = getOperationLog(dataMap,before,after,optDesc);
-            }else if (entity instanceof ProjectInfoEntity){
-                optDesc.append("更新项目【"+before.get("proName")+"】,将");
-                desc = getOperationLog(proMap,before,after,optDesc);
-            }else if (entity instanceof AnliInfoEntity){
-                optDesc.append("更新案例【"+before.get("title")+"】,将");
-                desc = getOperationLog(anliMap,before,after,optDesc);
-            }else if (entity instanceof LowInfoEntity){
-                optDesc.append("更新法律法规【"+before.get("title")+"】,将");
-                desc = getOperationLog(lowsMap,before,after,optDesc);
-            }else if (entity instanceof ExpertInfoEntity){
-                optDesc.append("更新专家【"+before.get("name")+"】,将");
-                desc = getOperationLog(expertMap,before,after,optDesc);
-            }else if (entity instanceof AnnounceInfoEntity){
-                optDesc.append("更新公告【"+before.get("title")+"】,将");
-                desc = getOperationLog(announceMap,before,after,optDesc);
-            }else if (entity instanceof AuditInfo){
-                desc = "审核文件【"+after.get("fileName")+"】,"+after.get("auditContent");
-            }else if (entity instanceof User){
-                optDesc.append("更新用户【"+before.get("username")+"】,将");
-                desc = getOperationLog(userMap,before,after,optDesc);
-            }else {
+            if (entity instanceof ZiliaoInfoEntity) {
+                optDesc.append("更新资料【" + before.get("title") + "】,将");
+                desc = getOperationLog(dataMap, before, after, optDesc);
+            } else if (entity instanceof ProjectInfoEntity) {
+                optDesc.append("更新项目【" + before.get("proName") + "】,将");
+                desc = getOperationLog(proMap, before, after, optDesc);
+            } else if (entity instanceof AnliInfoEntity) {
+                optDesc.append("更新案例【" + before.get("title") + "】,将");
+                desc = getOperationLog(anliMap, before, after, optDesc);
+            } else if (entity instanceof LowInfoEntity) {
+                optDesc.append("更新法律法规【" + before.get("title") + "】,将");
+                desc = getOperationLog(lowsMap, before, after, optDesc);
+            } else if (entity instanceof ExpertInfoEntity) {
+                optDesc.append("更新专家【" + before.get("name") + "】,将");
+                desc = getOperationLog(expertMap, before, after, optDesc);
+            } else if (entity instanceof AnnounceInfoEntity) {
+                optDesc.append("更新公告【" + before.get("title") + "】,将");
+                desc = getOperationLog(announceMap, before, after, optDesc);
+            } else if (entity instanceof AuditInfo) {
+                desc = "审核文件【" + after.get("fileName") + "】," + after.get("auditContent");
+            } else if (entity instanceof User) {
+                optDesc.append("更新用户【" + before.get("username") + "】,将");
+                desc = getOperationLog(userMap, before, after, optDesc);
+            } else if (entity instanceof ChengYanDanWeiEntity) {
+                optDesc.append("更新乘研单位【" + before.get("danweiName") + "】，将");
+                desc = getOperationLog(cydwMap, before, after, optDesc);
+            } else if (entity instanceof BaoJiangEntity) {
+                optDesc.append("更新报奖信息【" + before.get("jiangliType") + "】，将");
+                desc = getOperationLog(bjMap, before, after, optDesc);
+            } else {
                 return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
             }
 
             Object isave = request.getAttribute("isave");
 
-            if (isave == null){
-                request.setAttribute(LoggerUtils.LOGGER_DESC,desc);
+            if (isave == null) {
+                request.setAttribute(LoggerUtils.LOGGER_DESC, desc);
             }
 
 
