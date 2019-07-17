@@ -56,17 +56,17 @@
                 <span class="glyphicon glyphicon-book" aria-hidden="true"></span>添加纸质附件
             </button>
         </@shiro.hasPermission>
-        <@shiro.hasPermission name="project:editfile">
-            <button id="btn_editfile" type="button" class="btn btn-primary"
-                    style="margin-left: 20px;" onclick="EditAttachFile()">
-                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑文件信息
-            </button>
-        </@shiro.hasPermission>
-                <button id="btn_editfile1" data-toggle="modal"
-                        data-target="#addPaperModal" type="button" class="btn btn-primary"
-                        style="margin-left: 20px; display: none">
-                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                </button>
+        <#--<@shiro.hasPermission name="project:editfile">-->
+            <#--<button id="btn_editfile" type="button" class="btn btn-primary"-->
+                    <#--style="margin-left: 20px;" onclick="EditAttachFile()">-->
+                <#--<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑文件信息-->
+            <#--</button>-->
+        <#--</@shiro.hasPermission>-->
+                <#--<button id="btn_editfile1" data-toggle="modal"-->
+                        <#--data-target="#addPaperModal" type="button" class="btn btn-primary"-->
+                        <#--style="margin-left: 20px; display: none">-->
+                    <#--<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>-->
+                <#--</button>-->
         <@shiro.hasPermission name="project:downfile">
             <button id="btn_downloadfile" type="button" class="btn btn-primary"
                     style="margin-left: 20px;" onclick="DownLoadAttachFile()">
@@ -274,6 +274,8 @@
 
     function LoadAuditUsers(obj) {
 
+        //alert($(obj).val());
+
         $.post("getAuditByClassifyForProject", {cl: $(obj).val()}, function (result) {
 
             result = JSON.parse(result);
@@ -316,7 +318,7 @@
             var htmlstr = "";
             $.each(result, function (i, item) {
                 // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
-                htmlstr += "<option value='" + item.username + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.realName + "'>" + item.realName + "</option>";
             })
 
             if (htmlstr != null && htmlstr.length > 0) {

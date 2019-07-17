@@ -87,6 +87,11 @@ $(document).ready(function () {
                 }
             },
             {
+                field:'filingNum',
+                title:'文件归档号',
+                sortable:true
+            },
+            {
                 field: 'classificlevelId',
                 title: '密级',
                 sortable: true,
@@ -374,7 +379,10 @@ $('#savePic').on('click', function () {// 提交图片信息 //
 
 
 function EditAttachFile() {
+
     var selectefid = $("#filetable").bootstrapTable('getSelections');
+
+
     if (selectefid == null || selectefid.length <= 0) {
         layer.msg("请选择要编辑的文件!");
         // $('.modal').map(function () {
@@ -386,9 +394,12 @@ function EditAttachFile() {
 
         $("#paperFileName").val(selectefid[0].fileName);
         $('#paperClassicId').val(selectefid[0].classificlevelId);
+        //alert(selectefid[0].zrr);
         $("#paperzrr").val(selectefid[0].zrr)
         $("#editFileId").val(selectefid[0].id);
+        $("#filingNum").val(selectefid[0].filingNum);
         $("#btn_editfile1").trigger("click");
+
 
         // $.post("getlallusers", {}, function (result) {
         //
@@ -421,19 +432,29 @@ function ReqDownLoadAttachFile() {
         layer.msg("请选择要提交下载请求的文件!");
         return;
     }
-    if(!$("#selreqDown").val()){
+    if (!$("#selreqDown").val()) {
         layer.msg("请选择下载请求审核人!");
         return;
     }
-    debugger;
+    //debugger;
     var downloadok = [], downloadno = [];
 
+    var isPaper = 0;
     for (var i = 0; i < selectedObjs.length; i++) {
+        if (selectedObjs[i].fileType != 1) {
+            isPaper = 1;
+            break;
+        }
         if (selectedObjs[i].audit != 1 && selectedObjs[i].audit != -2 && selectedObjs[i].audit != 4) {
             downloadno.push(selectedObjs[i].id);
         } else {
             downloadok.push(selectedObjs[i].id);
         }
+    }
+
+    if (isPaper) {
+        layer.msg("不能下载纸质文件！");
+        return;
     }
 
     if (downloadno != null && downloadno.length > 0) {
@@ -444,7 +465,7 @@ function ReqDownLoadAttachFile() {
     $.ajax({
         type: "post",
         url: "ReqFileDownLoad",
-        data: {fileId: downloadok.join(","), type: 'DOWNLOAD',daudituser:$("#selreqDown").val()},
+        data: {fileId: downloadok.join(","), type: 'DOWNLOAD', daudituser: $("#selreqDown").val()},
         async: false,
         success: function (result) {
             result = JSON.parse(result);

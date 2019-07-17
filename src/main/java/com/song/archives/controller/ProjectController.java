@@ -2118,11 +2118,12 @@ public class ProjectController {
                 }
                 fileInfoEntity.setCreateTime(myFmt2.format(new Date()));
                 fileInfoEntity.setClassificlevelId(cid);
-                User user=userRepository.findOne(Long.parseLong(zrrName));
-                fileInfoEntity.setZrr(user!=null?user.getRealName():"");
+                //User user=userRepository.findOne(Long.parseLong(zrrName));
+                fileInfoEntity.setZrr(zrrName);
                 fileInfoEntity.setFileName(paperFileName);
                 fileInfoEntity.setFilingNum(filingNum);
                 fileInfoEntity.setFileClassify(1);
+                fileInfoEntity.setFileCode(UUID.randomUUID().toString());
                 FileInfoEntity addedFile = fileInfoRepository.save(fileInfoEntity);
                 if (editFileId <= 0) {
                     //SetProjectFileId(projectInfoEntity, attachid, ((Long) addedFile.getId()).toString(), false);
@@ -2142,6 +2143,8 @@ public class ProjectController {
                     auditInfo.setIsAudit(0);
                     auditInfo.setType("UPLOAD");
                     auditInfo.setFileClassify(1);
+                    auditInfo.setFileType("2");
+                    auditInfo.setFileCode(fileInfoEntity.getFileCode());
                     auditInfo.setAuditUser(auditUser.toString());
                     auditInfo.setClassificlevelId(addedFile.getClassificlevelId());
 
