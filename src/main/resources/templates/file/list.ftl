@@ -144,6 +144,7 @@
 
 
 <script type="text/javascript">
+    var sessionId = '${Session["sessionId"]}';
 
     function auditById(id, result,fileClassify) {
         if (result == 1) {
@@ -451,7 +452,7 @@
 
 
     function ReviewgotoProdetail(prid) {
-        $("#page-wrapper").load("ReviewProject?pid=" + prid);
+        $("#page-wrapper").load("ReviewProject?pid=" + prid+"&sessionId="+sessionId);
     }
 
 </script>

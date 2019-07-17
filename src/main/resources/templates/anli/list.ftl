@@ -233,7 +233,7 @@
     }
 
     function detailView(id) {
-        $("#page-wrapper").load("createAnliPage?aid="+id)
+        $("#page-wrapper").load("createAnliPage?aid="+id+"&sessionId="+sessionId)
     }
 
 
@@ -272,7 +272,7 @@
     }
     
     function createAnli() {
-        $("#page-wrapper").load("createAnliPage")
+        $("#page-wrapper").load("createAnliPage?sessionId="+sessionId)
     }
 
     var modalContent = '<form><div class="form-group"><input id="projectfile" name="projectfile" type="file" multiple/></div></form>';

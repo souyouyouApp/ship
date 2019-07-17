@@ -188,8 +188,11 @@
 
 <script type="text/javascript">
 
+    var sessionId = '${Session["sessionId"]}';
+
+
     function detailView(id) {
-        $("#page-wrapper").load("expert?eid="+id)
+        $("#page-wrapper").load("expert?eid="+id+"&sessionId="+sessionId)
     }
     function deleteById() {
 

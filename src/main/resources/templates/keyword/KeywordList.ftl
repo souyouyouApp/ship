@@ -56,6 +56,8 @@
 
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script type="text/javascript">
+    var sessionId = '${Session["sessionId"]}';
+
     $(document).ready(function () {
 
         $('#table').bootstrapTable({
@@ -213,15 +215,15 @@
     function gotoTarget(eid,tid) {
 
         if (tid == 1) {
-            $("#page-wrapper").load("ProjectDetail?pid=" + eid);
+            $("#page-wrapper").load("ProjectDetail?pid=" + eid+"&sessionId="+sessionId);
         } else if (tid == 2) {
-            $("#page-wrapper").load("createData?zid=" + eid);
+            $("#page-wrapper").load("createData?zid=" + eid+"&sessionId="+sessionId);
         } else if (tid == 3) {
-            $("#page-wrapper").load("createAnliPage?aid=" + eid);
+            $("#page-wrapper").load("createAnliPage?aid=" + eid+"&sessionId="+sessionId);
         } else if (tid == 4) {
-            $("#page-wrapper").load("expert?eid=" + eid);
+            $("#page-wrapper").load("expert?eid=" + eid+"&sessionId="+sessionId);
         } else if (tid == 5){
-            $("#page-wrapper").load("createAnnoucePage?aid=" + eid);
+            $("#page-wrapper").load("createAnnoucePage?aid=" + eid+"&sessionId="+sessionId);
         }
     }
 

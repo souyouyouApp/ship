@@ -194,6 +194,8 @@
 
 
 <script type="text/javascript">
+
+    var sessionId = '${Session["sessionId"]}';
     function exportAttach() {
         var selectedObjs =  $("#table").bootstrapTable('getSelections');
         var ids = [];
@@ -231,7 +233,7 @@
     }
 
     function detailView(id) {
-        $("#page-wrapper").load("createAnnoucePage?aid="+id)
+        $("#page-wrapper").load("createAnnoucePage?aid="+id+"&sessionId="+sessionId)
     }
 
 
@@ -270,7 +272,7 @@
     }
 
     function createAnnouce() {
-        $("#page-wrapper").load("createAnnoucePage")
+        $("#page-wrapper").load("createAnnoucePage?sessionId="+sessionId)
     }
 
     var modalContent = '<form><div class="form-group"><input id="projectfile" name="projectfile" type="file" multiple/></div></form>';
