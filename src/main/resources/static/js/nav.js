@@ -95,3 +95,23 @@ function qryAuditUser(obj,id) {
     });
 }
 
+function qryDownAuditUser(fileId) {
+    var optionAudit = '<option value="-1">请选择审核人员</option>';
+    $.ajax({
+        type: "post",
+        url: "getDownAuditByClassify",
+        data: {fileId: fileId},
+        async: false,
+        success: function (result) {
+            debugger
+            result = JSON.parse(result);
+            if (result && result.length > 0) {
+                for (let i = 0; i < result.length; i++) {
+                    optionAudit += '<option value="'+result[i].id+'">'+result[i].username+'</option>'
+                }
+
+            }
+        }
+    });
+    return optionAudit;
+}

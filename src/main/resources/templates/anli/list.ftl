@@ -196,7 +196,7 @@
 
 
 <script type="text/javascript">
-
+    var sessionId = '${Session["sessionId"]}';
     function exportAttach() {
         var selectedObjs =  $("#table").bootstrapTable('getSelections');
 

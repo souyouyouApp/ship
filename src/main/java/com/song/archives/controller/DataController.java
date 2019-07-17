@@ -918,7 +918,7 @@ public class DataController {
                 result.put("type",auditInfo.getType());
                 return result.toString();
             }else {
-                result.put("auditResult","0");
+                result.put("auditResult","2");
                 result.put("type",auditInfo.getType());
                 return result.toString();
             }

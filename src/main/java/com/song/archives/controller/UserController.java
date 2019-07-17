@@ -1,10 +1,7 @@
 package com.song.archives.controller;
 
 import com.song.archives.aspect.ArchivesLog;
-import com.song.archives.dao.NotifyRepository;
-import com.song.archives.dao.OperationRepository;
-import com.song.archives.dao.StorageRepository;
-import com.song.archives.dao.UserRepository;
+import com.song.archives.dao.*;
 import com.song.archives.model.*;
 import com.song.archives.utils.DateUtil;
 import com.song.archives.utils.LoggerUtils;
@@ -74,6 +71,9 @@ public class UserController {
     private StorageRepository storageRepository;
     @Autowired
     private NotifyRepository notifyRepository;
+
+    @Autowired
+    private FileInfoRepository fileInfoRepository;
     @Value("${backup.path}")
     private String savePath;
     @Value("${project.overdate}")
@@ -694,6 +694,15 @@ public class UserController {
         return JSONArray.fromObject(auditUserByClassify).toString();
     }
 
+    @RequestMapping(value = "/getDownAuditByClassify")
+    @ResponseBody
+    public String getDownAuditByClassify(Long fileId){
+        FileInfoEntity fileInfoEntity = fileInfoRepository.findById(fileId);
+        List<User> auditUserByClassify = userRepository.findAuditUserByClassify(fileInfoEntity.getClassificlevelId(),getUser().getId());
+
+        return JSONArray.fromObject(auditUserByClassify).toString();
+    }
+
     @RequestMapping(value = "/test")
     @ResponseBody
     public String test(HttpServletRequest request){
@@ -907,6 +916,7 @@ public class UserController {
             SecurityUtils.getSubject().getSession().setTimeout(timeOut*1000);
 
             session.setAttribute("user", user);
+            session.setAttribute("sessionId",session.getId());
 
             UpdateStorageInfo(user, session);
             msg = SUCCESS;

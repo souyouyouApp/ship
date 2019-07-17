@@ -162,7 +162,7 @@
 
 <!-- Page-Level Demo Scripts - Tables - Use for reference -->
 <script type="text/javascript">
-
+    var sessionId = '${Session["sessionId"]}';
     var promodalContent = ' <form>\n' +
             '                    <div class="form-group col-md-12"><input id="importProjFile" name="importProjFile" type="file" multiple></div>\n' +
             '\n' +

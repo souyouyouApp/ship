@@ -54,7 +54,9 @@ public class LoggerInterceptor implements HandlerInterceptor {
         String path = request.getRequestURI();
         String paramData = JSON.toJSONString(request.getParameterMap(), SerializerFeature.DisableCircularReferenceDetect,SerializerFeature.WriteMapNullValue);
 
-        operationEntity.setIp(LoggerUtils.getCliectIp(request));
+        //clientIp
+        Object clientIp = request.getSession().getAttribute("clientIp");
+        operationEntity.setIp(null == clientIp?LoggerUtils.getCliectIp(request):clientIp.toString());
         operationEntity.setMethod(request.getMethod());
         operationEntity.setParamData(paramData);
         operationEntity.setUri(path);

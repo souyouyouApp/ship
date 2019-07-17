@@ -735,7 +735,8 @@
             data: {fileId: fileId,type:'DOWNLOAD',auditUser:auditUser},
             async: false,
             success: function (result) {
-                var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser1" class="form-control"><option value="-1">请选择审核人员</option><#foreach user in auditUsers><option value="${user.id?c}">${user.username!}</option></#foreach></select></div></form></div></div></div>'
+                var options = qryDownAuditUser(fileId);
+                var paperContent = '<div class="panel-body"><div class="row"><div class="col-lg-6"><form role="form"><div class="form-group"><label for="select">审核人员</label><select name="auditUser" id="auditUser1" class="form-control"><option value="-1">请选择审核人员</option>'+options+'</select></div></form></div></div></div>'
 
 
                 result = JSON.parse(result);
