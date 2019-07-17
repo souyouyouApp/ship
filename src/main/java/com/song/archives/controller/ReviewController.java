@@ -125,14 +125,14 @@ public class ReviewController {
 
             if (null != fileClassify && fileClassify.equals(1)){
                 FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
-                fileInfo.setAudit(1);
+                fileInfo.setAudit(auditResult!=1?-1:1);
                 fileInfoRepository.save(fileInfo);
-            }
-
-            if (null != auditInfo && auditInfo.getType().equals("UPLOAD")){
-                FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
-                fileInfo.setAudit(1);
-                fileInfoRepository.save(fileInfo);
+            }else {
+                if (null != auditInfo && auditInfo.getType().equals("UPLOAD")) {
+                    FileInfoEntity fileInfo = fileInfoRepository.findById(auditInfo.getFileId());
+                    fileInfo.setAudit(1);
+                    fileInfoRepository.save(fileInfo);
+                }
             }
 
 
