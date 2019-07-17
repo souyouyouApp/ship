@@ -641,6 +641,7 @@ public class UserController {
 
 
                 session.setAttribute("user", user);
+                session.setAttribute("sessionId",session.getId());
 
                 UpdateStorageInfo(user, session);
                 user.setPwdErrorTime(0);

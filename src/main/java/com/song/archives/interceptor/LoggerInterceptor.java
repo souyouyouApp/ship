@@ -14,18 +14,35 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
 
 public class LoggerInterceptor implements HandlerInterceptor {
 
     public static final String LOGGER_ENTITY="_logger_entity";
 
+    public static Set<String> sessinIF = new HashSet<>();
+
+    static {
+        sessinIF.add("/downLoadFile");
+        sessinIF.add("/downLoadAttach");
+    }
+
 
     //调用请求的时候执行
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException, IOException {
+
+        if (sessinIF.contains(request.getRequestURI())){
+            String sessionId = request.getParameter("sessionId");
+            if (null == sessionId || !request.getSession().getId().equals(sessionId)){
+                request.getRequestDispatcher("/login").forward(request,response);
+                return false;
+            }
+        }
 
         //创建请求实体
         OperationEntity operationEntity = new OperationEntity();
@@ -42,6 +59,12 @@ public class LoggerInterceptor implements HandlerInterceptor {
         operationEntity.setBeginTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
         operationEntity.setReturnTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
 
+        //记录用户信息
+        User user = (User) request.getSession().getAttribute("user");
+        if (null != user){
+            operationEntity.setUserId(String.valueOf(user.getId()));
+            operationEntity.setUserName(user.getRealName());
+        }
         //设置请求实体到request中，方便after调用
         request.setAttribute(LOGGER_ENTITY,operationEntity);
         return true;
@@ -74,12 +97,7 @@ public class LoggerInterceptor implements HandlerInterceptor {
         operationEntity.setResult(null == result?"":result.toString());
         operationEntity.setDescription(null == desc?"":desc.toString());
 
-        //记录用户信息
-        User user = (User) request.getSession().getAttribute("user");
-        if (null != user){
-            operationEntity.setUserId(String.valueOf(user.getId()));
-            operationEntity.setUserName(user.getRealName());
-        }
+
 
         //将日志写入到数据库
         LoggerJpa loggerJpa = getDAO(LoggerJpa.class,request);

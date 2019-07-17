@@ -288,7 +288,7 @@
                          */
                         var fileType;
                         //AL：案例；GG：公告；PJ：项目 DT:资料
-
+                        var sessionId = '${Session["sessionId"]}';
                         if (row.type == 'ATTACHMENT'){
                             if (row.fileClassify == 1)
                                 fileType = 'PJ'
@@ -301,13 +301,14 @@
                             if (row.fileClassify == 5)
                                 fileType = 'FL'
 
-                            return '<a href="downLoadAttach?ids=' + row.fileId + '&type='+fileType+'" download="'+value+'">' + value + '</a>'
+                            return '<a href="downLoadAttach?ids=' + row.fileId + '&type='+fileType+'&sessionId='+sessionId+'" download="'+value+'">' + value + '</a>'
 
                         } else {
                             if (row.fileType == "0"){
                                 return '<span>'+row.fileName+'</span><a href="javascript:void(0)" onclick="viewFile1('+row.fileCode+')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
                             } else {
-                                return '<a href="downLoadFile?fileId=' + row.fileId + '" download="'+row.fileName+'">' + value + '</a>';
+
+                                return '<a href="downLoadFile?fileId=' + row.fileId + '&sessionId='+sessionId+'" download="'+row.fileName+'">' + value + '</a>';
                             }
 
                         }
