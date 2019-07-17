@@ -32,6 +32,7 @@ public class LoggerInterceptor implements HandlerInterceptor {
         sessinIF.add("/createData");
         sessinIF.add("/ReviewProject");
         sessinIF.add("/createAnnoucePage");
+        sessinIF.add("/ProjectDetail");
     }
 
 

@@ -811,6 +811,10 @@ public class ProjectController {
 
         List<User> auditUser = userRepository.findAuditUser();
 
+        List<User> auditUserByClassLevel=userRepository.findAuditUserByClassify(getUser().getPermissionLevel(),getUser().getId());
+
+        model.addObject("auditUsersByLevel",auditUserByClassLevel);
+
         model.addObject("auditUsers",auditUser);
 
         LoggerUtils.setLoggerSuccess(request);

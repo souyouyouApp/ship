@@ -112,7 +112,7 @@
                                     <#--<option value="${user.username}">${user.username}</option>-->
                                 <#--</#list>-->
                                     <option value="-1">请选择审核人员</option>
-                                                <#foreach user in auditUsers>
+                                                <#foreach user in auditUsersByLevel>
                                 <option value="${user.id?c}">${user.username!}</option>
                                                 </#foreach>
                             </select>
@@ -204,6 +204,19 @@
                             <label>文件名称</label>
                             <input class="form-control" id="paperFileName" name="paperFileName">
                         </div>
+                        <div class="form-group col-md-12">
+                            <label>密级</label>
+                            <select class="form-control" id="paperClassicId" name="paperClassicId" onchange="FilterUsersForPaper(this)">
+                              <#if (proClassLevel >= 4)> <option value="4">机密</option></#if>
+                   <#if (proClassLevel >= 3)> <option value="3">秘密</option></#if>
+                   <#if (proClassLevel >= 2)> <option value="2">内部</option></#if>
+                   <#if (proClassLevel >= 1)>  <option value="1">公开</option></#if>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>文件归档号</label>
+                            <input class="form-control" id="filingNum" name="filingNum" placeholder="请输入文件归档号"/>
+                        </div>
 
                         <div class="form-group col-md-12">
                             <label>保管人</label>
@@ -217,24 +230,10 @@
                             <label>指定审核人员</label>
                             <select name="pauditUser" id="pauditUser" class="form-control">
                                 <option value="-1" selected>请选择</option>
-        <#foreach user in auditUsers>
-            <option value="${user.id?c}">${user.username!}</option>
-        </#foreach>
+
                             </select>
                         </div>
-                        <div class="form-group col-md-12">
-                            <label>文件归档号</label>
-                            <input class="form-control" id="filingNum" name="filingNum" placeholder="请输入文件归档号"/>
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label>密级</label>
-                            <select class="form-control" id="paperClassicId" name="paperClassicId">
-                              <#if (proClassLevel >= 4)> <option value="4">机密</option></#if>
-                   <#if (proClassLevel >= 3)> <option value="3">秘密</option></#if>
-                   <#if (proClassLevel >= 2)> <option value="2">内部</option></#if>
-                   <#if (proClassLevel >= 1)>  <option value="1">公开</option></#if>
-                            </select>
-                        </div>
+
                     </form>
                 </div>
             </div>
@@ -272,9 +271,10 @@
     $("#phaselist").removeAttr("disabled")
     $("#attachlist").removeAttr("disabled")
     $("#selreqDown").removeAttr("disabled");
+
     function LoadAuditUsers(obj) {
 
-        $.post("getAuditByClassifyForProject", {cl:$(obj).val()}, function (result) {
+        $.post("getAuditByClassifyForProject", {cl: $(obj).val()}, function (result) {
 
             result = JSON.parse(result);
             var htmlstr = "";
@@ -284,6 +284,7 @@
             })
 
             if (htmlstr != null && htmlstr.length > 0) {
+
                 $("#eauditUser").html("")
                 $("#eauditUser").append(htmlstr);
             }
@@ -291,6 +292,40 @@
 
     }
 
+    function FilterUsersForPaper(obj) {
 
+        $.post("getAuditByClassifyForProject", {cl: $(obj).val()}, function (result) {
+
+            result = JSON.parse(result);
+            var htmlstr = "";
+            $.each(result, function (i, item) {
+                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+            })
+
+            if (htmlstr != null && htmlstr.length > 0) {
+                $("#pauditUser").html("")
+                $("#pauditUser").append(htmlstr);
+            }
+        });
+
+
+        $.post("getusersByClassLevel", {cl: $(obj).val()}, function (result) {
+
+            result = JSON.parse(result);
+            var htmlstr = "";
+            $.each(result, function (i, item) {
+                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.username + "'>" + item.username + "</option>";
+            })
+
+            if (htmlstr != null && htmlstr.length > 0) {
+                //$("#proLeaders").innerHTML(htmlstr);
+                $("#paperzrr").html("")
+                $("#paperzrr").append(htmlstr);
+            }
+        })
+
+    }
 
     </script>
