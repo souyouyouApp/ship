@@ -272,6 +272,7 @@ public class ReviewController {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(criteriaBuilder.equal(root.get("isAudit"),0));
+            predicates.add(criteriaBuilder.equal(root.get("auditUser"),getUser().getId()));
 
             if (fileClassify == 6 || fileClassify == 7){
                 predicates.add(criteriaBuilder.between(root.get("fileClassify"), fileClassify,fileClassify+1));
