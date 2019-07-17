@@ -343,15 +343,15 @@
     function gotoSearchdetail(resultKey, resultType, miniResultType) {
 
         if (resultType == "project") {
-            $("#page-wrapper").load("ProjectDetail?pid=" + resultKey);
+            $("#page-wrapper").load("ProjectDetail?pid=" + resultKey+"&sessionId="+sessionId);
         } else if (resultType == "anli") {
-            $("#page-wrapper").load("createAnliPage?aid=" + resultKey);
+            $("#page-wrapper").load("createAnliPage?aid=" + resultKey+"&sessionId="+sessionId);
         } else if (resultType == "ziliao") {
-            $("#page-wrapper").load("createData?zid=" + resultKey);
+            $("#page-wrapper").load("createData?zid=" + resultKey+"&sessionId="+sessionId);
         } else if (resultType == "expert") {
-            $("#page-wrapper").load("expert?eid=" + resultKey);
+            $("#page-wrapper").load("expert?eid=" + resultKey+"&sessionId="+sessionId);
         } else if (resultType == "announce") {
-            $("#page-wrapper").load("createAnnoucePage?aid=" + resultKey);
+            $("#page-wrapper").load("createAnnoucePage?aid=" + resultKey+"&sessionId="+sessionId);
         } else if (resultType == "keyword") {
 
             gotoSearchdetail(resultKey, miniResultType);

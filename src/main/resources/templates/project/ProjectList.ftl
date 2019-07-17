@@ -594,7 +594,7 @@
     }
 
     function gotodetail(prid) {
-        $("#page-wrapper").load("ProjectDetail?pid=" + prid);
+        $("#page-wrapper").load("ProjectDetail?pid=" + prid+"&sessionId="+sessionId);
     }
 
 </script>

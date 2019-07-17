@@ -29,6 +29,9 @@ public class LoggerInterceptor implements HandlerInterceptor {
     static {
         sessinIF.add("/downLoadFile");
         sessinIF.add("/downLoadAttach");
+        sessinIF.add("/createData");
+        sessinIF.add("/ReviewProject");
+        sessinIF.add("/createAnnoucePage");
     }
 
 

@@ -101,7 +101,7 @@
     })
 
     function detailView(id) {
-        $("#page-wrapper").load("createData?zid=" + id)
+        $("#page-wrapper").load("createData?zid=" + id+"&sessionId="+sessionId)
     }
 
     function deleteById() {

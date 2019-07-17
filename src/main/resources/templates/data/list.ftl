@@ -197,9 +197,9 @@
 
 
 <script type="text/javascript">
-
+    var sessionId = '${Session["sessionId"]}';
     function detailView(id) {
-        $("#page-wrapper").load("createData?zid="+id)
+        $("#page-wrapper").load("createData?zid="+id+"&sessionId="+sessionId)
     }
     
     function deleteById() {
@@ -237,7 +237,7 @@
     
     function createData() {
 
-        $("#page-wrapper").load("createData")
+        $("#page-wrapper").load("createData?sessionId="+sessionId)
     }
 
     function exportAttach() {
