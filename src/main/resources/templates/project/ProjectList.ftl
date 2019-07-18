@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="static/css/bootstrap-table.min.css">
+<link rel="stylesheet" href="static/css/bootstrap-table.min.css" xmlns="http://www.w3.org/1999/html">
 <link rel="stylesheet" href="static/css/layer.css">
 <link rel="stylesheet" href="static/css/fileinput.css">
 
@@ -139,8 +139,16 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="importProjModalLabel">导入项目</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 0px">
+                <#--<form>-->
+                    <div class="form-group col-md-12 fileuploaddiv"><input id="importProjFile" name="importProjFile" type="file" multiple></div>
 
+                    <div class="form-group col-md-12"><label>指定审核人员</label>
+                        <select name="pauditUser" id="pauditUser" class="form-control">
+                            <option value="-1" selected>请选择审核人员</option>
+                        </select>
+                    </div>
+                <#--</form>-->
             </div>
 
             <div class="modal-footer">
@@ -174,6 +182,8 @@
             '                    </div>\n' +
             '\n' +
             '                </form>';
+
+    var modalContent='<input id="importProjFile" name="importProjFile" type="file" multiple>'
 
     function DownProjectTemplate() {
         window.location.href = "downLoadDataTempate?fileName=项目模板.xlsx"
@@ -231,10 +241,10 @@
 
     function ImportProject() {
 
-        $("#importProjModal .modal-body").html(promodalContent);
+        $("#importProjModal .modal-body .fileuploaddiv").html(modalContent);
 
         $("#startImport").removeAttr("disabled");
-        LoadAuditUsers();
+        //LoadAuditUsers();
         InitFileInput();
 
     }
@@ -242,7 +252,7 @@
     $('#startImport').on('click', function () {// 提交图片信息 //
         //先上传文件，然后在回调函数提交表单
 
-        InitFileInput();
+        //InitFileInput();
         //alert($("#pauditUser").val());
         $('#importProjFile').fileinput('upload');
 
@@ -256,7 +266,7 @@
             var htmlstr = "";
             $.each(result, function (i, item) {
                 // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
-                htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.id + "'>" + item.realName + "</option>";
             })
 
             if (htmlstr != null && htmlstr.length > 0) {
@@ -280,7 +290,7 @@
 // //            })
 // //            return uname;
 //                 });
-      //  LoadAuditUsers();
+        LoadAuditUsers();
 
         $('#table').bootstrapTable({
             url: 'LoadProjectList',         //请求后台的URL（*）
@@ -574,11 +584,22 @@
             return;
         }
 
+        var pids = [];
+        var isProAudit=0;
+        $.each(selected, function (i, item) {
+            if(item.proAuditState==0)
+            {
+                isProAudit=1;
+            }
+            pids.push(item.id);
+        })
+
+        if(isProAudit==1) {
+            layer.msg('不能删除审核中的项目！');
+            return;
+        }
+
         var index = layer.confirm("确定要删除所选的项目吗？", function () {
-            var pids = [];
-            $.each(selected, function (i, item) {
-                pids.push(item.id);
-            })
 
             $.post("DeleteProjectByIds", {pids: pids.join(',')}, function (result) {
                 result = JSON.parse(result)

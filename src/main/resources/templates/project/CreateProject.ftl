@@ -492,7 +492,7 @@
            var htmlstr = "";
            $.each(result, function (i, item) {
                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
-               htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
+               htmlstr += "<option value='" + item.id + "'>" + item.realName + "</option>";
            })
 
            if (htmlstr != null && htmlstr.length > 0) {
@@ -509,7 +509,7 @@
             var htmlstr = "";
             $.each(result, function (i, item) {
                // htmlstr += "<option value='" + item.id + "'>" + item.username + "</option>";
-                htmlstr += "<option value='" + item.username + "'>" + item.username + "</option>";
+                htmlstr += "<option value='" + item.realName + "'>" + item.realName + "</option>";
             })
 
             if (htmlstr != null && htmlstr.length > 0) {
