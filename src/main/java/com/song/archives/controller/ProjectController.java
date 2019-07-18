@@ -503,7 +503,7 @@ public class ProjectController {
                                 "<i class=\"fa fa-comment fa-bitbucket\"></i>");
                         pAlertHtml.append("项目【");
                         pAlertHtml.append(tempPro.getProName());
-                        pAlertHtml.append("】距离<font style=\"font-size: large;color:red\">后期</font>管理还有");
+                        pAlertHtml.append("】距离<font style=\"font-size: large;color:red\">验收</font>管理还有");
                         calendar.setTime(d1);
                         pAlertHtml.append("<font style=\"font-size: large;color:red\">" + (calendar.get(Calendar.DAY_OF_YEAR) - Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) + "</font>天<br>");
                         pAlertHtml.append("<span class=\"text-muted small\"><em>预定时间：" + tempPro.getEndPhasetime() + "</em>\n</span>\n</a>");
@@ -672,13 +672,13 @@ public class ProjectController {
                 allProObj.add(proObj4);
 
                 JSONObject proObj5 = new JSONObject();
-                proObj5.put("name", "后期阶段");
+                proObj5.put("name", "验收阶段");
                 proObj5.put("desc", "");
                 JSONArray ephaseObjs = new JSONArray();
                 JSONObject endPhaseObj = new JSONObject();
                 endPhaseObj.put("from", myFmt2.parse(projectInfoEntityList.get(i).getEndPhasetime()).getTime());
                 endPhaseObj.put("to", myFmt2.parse(projectInfoEntityList.get(i).getEndPhasetime()).getTime() + 3600);
-                endPhaseObj.put("label", "后期阶段");
+                endPhaseObj.put("label", "验收阶段");
                 endPhaseObj.put("customClass", "ganttRed");
                 ephaseObjs.add(endPhaseObj);
                 proObj5.put("values", ephaseObjs);
@@ -745,7 +745,7 @@ public class ProjectController {
         return modelAndView;
     }
     @RequestMapping(value = "/ProjectList")
-    @ArchivesLog(operationType = "ProjectList", description = "查询项目列表")
+    @ArchivesLog(operationType = "ProjectList", description = "查询项目列表",descFlag = true)
     public ModelAndView ProjectList() {
 
         ModelAndView modelAndView = new ModelAndView();
@@ -835,7 +835,7 @@ public class ProjectController {
     }
     @RequestMapping(value = "LoadJianDingList")
     @ResponseBody
-    @ArchivesLog(operationType = "LoadJianDingList", description = "查看拟鉴定奖列表")
+    @ArchivesLog(operationType = "LoadJianDingList", description = "查看拟鉴定奖列表",descFlag = true)
     public String LoadJianDingList(@RequestParam(value = "pageIndex", defaultValue = "0") Integer currentpage,
                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer size,
                                    @RequestParam(value = "proid") Long proid) {

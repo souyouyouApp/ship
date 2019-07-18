@@ -5,6 +5,12 @@ function ProjectValid() {
         return false;
     }
 
+
+    if (!$("#classificlevelId").val() || $("#classificlevelId").val() == -1) {
+        layer.msg("密级不能为空");
+        return false;
+    }
+
     if (!$("#proNo").val()) {
         layer.msg("项目编号不能为空");
         return false;
@@ -106,10 +112,6 @@ function ProjectValid() {
     }
 
 
-    if (!$("#classificlevelId").val() || $("#classificlevelId").val() == -1) {
-        layer.msg("密级不能为空");
-        return false;
-    }
 
     // if(!$("#proauditUser").val()||$("#proauditUser").val()==-1){
     //     layer.msg("请选择此项目的审核人员！");

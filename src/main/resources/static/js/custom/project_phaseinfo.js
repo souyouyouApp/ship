@@ -188,12 +188,24 @@ function DeleteAttachFile() {
         return;
     }
 
+    var fids = [];
+    var isInAudit=0;
+    $.each(selectefid, function (i, item) {
+        if(item.audit==2||item.audit==3)
+        {
+            isInAudit=1;
+        }
+        fids.push(item.id);
+    })
+
+    if(isInAudit) {
+        layer.msg('不能删除正在审核中的文件！');
+        return;
+    }
+
+
     var index = layer.confirm("确定要删除所选的文件吗？", function () {
         debugger;
-        var fids = [];
-        $.each(selectefid, function (i, item) {
-            fids.push(item.id);
-        })
 
         $.post("DeleteFilesByIds", {
             fids: fids.join(','),
@@ -337,14 +349,14 @@ function AddModalContent() {
     $('#projectfile').on("fileuploaded", function (event, data, previewId, index) {
         if (data.response.success == "success") {
             layer.msg("文件上传成功!");
-            //UpdateFilesClassId
+            //UpdateFilesClassI
             $.post("UpdateFilesClassId", {
                 "fids": data.response.fid,
                 "classid": $("#seldzfile").val(),
                 "eaudituser":$("#eauditUser").val()
             }, function (result) {
-                $("#eauditUser").val(-1);
-                $("#seldzfile").val(-1);
+                //$("#eauditUser").val(-1);
+               // $("#seldzfile").val(-1);
             });
             $("#savePic").attr("disabled", "disabled");
             $("#savePic1").trigger("click");
