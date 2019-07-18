@@ -185,6 +185,7 @@ public class HibernateInterceptor extends EmptyInterceptor {
         }else if (entity instanceof ExpertInfoEntity && request.getRequestURI().equals("/expert")){
             desc = "查看专家【"+saveEntity.get("name")+"】,"+o.toString();
         }else if (entity instanceof AnnounceInfoEntity && request.getRequestURI().equals("/createAnnoucePage")){
+            System.out.println("查看公告【"+saveEntity.get("title")+"】,"+o.toString());
             desc = "查看公告【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof User && request.getRequestURI().equals("/userInfo")){
             desc = "查看用户【"+saveEntity.get("username")+"】,"+o.toString();
