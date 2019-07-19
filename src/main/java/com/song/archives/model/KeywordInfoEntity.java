@@ -18,7 +18,7 @@ public class KeywordInfoEntity implements Serializable{
     private Integer userId;
     private Integer modules;
     private Integer entityId;
-    private Timestamp createTime;
+    private String createTime;
     private String userName;
 
     private Integer isPrivate;
@@ -74,11 +74,11 @@ public class KeywordInfoEntity implements Serializable{
 
     @Basic
     @Column(name = "create_time")
-    public Timestamp getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 

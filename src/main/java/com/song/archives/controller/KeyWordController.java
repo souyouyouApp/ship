@@ -3,6 +3,7 @@ package com.song.archives.controller;
 import com.song.archives.dao.KeyWordRepository;
 import com.song.archives.model.KeywordInfoEntity;
 import com.song.archives.model.User;
+import com.song.archives.utils.DateUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -64,7 +65,7 @@ public class KeyWordController {
         map.put(4, "专家");
         map.put(5, "公告");
         KeywordInfoEntity keywordInfoEntity = new KeywordInfoEntity();
-        keywordInfoEntity.setCreateTime(new Timestamp(new Date().getTime()));
+        keywordInfoEntity.setCreateTime(DateUtil.parseDateToStr(new Date(),DateUtil.DATE_TIME_FORMAT_YYYY_MM_DD_HH_MI_SS));
         keywordInfoEntity.setEntityId(tid);
         keywordInfoEntity.setKeywordValue(keywords);
         keywordInfoEntity.setUserId(Integer.parseInt(getUser().getId().toString()));
