@@ -280,6 +280,14 @@ public class LowController {
             if (null != ids && ids.length >0){
                 for (Long id:ids){
                     LowInfoEntity entity = lowRepository.findOne(id);
+
+                    if (!entity.getCreator().equals(getUser().getUsername())){
+                        msg = "不能删除非本人的信息";
+                        result.put("msg", msg);
+                        LoggerUtils.setLoggerFailed(request,msg);
+                        return result.toString();
+                    }
+
                     lowRepository.delete(entity);
 
                 }

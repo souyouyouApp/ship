@@ -305,7 +305,7 @@
         } else {
             viewDiv = '<a href="javascript:void(0)" onclick="viewFile(' + id + ')"><span class="fa fa-eye" style="margin-left: 6px"></span></a>';
         }
-        var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;margin-top:5px ;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+        var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;margin-top:5px ;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><#if info.creator == currentUser><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span></#if>' + viewDiv + '</div>'
         $("#attachment").append(childInput)
 
     }
@@ -533,7 +533,7 @@
                     var fileName = data.fileName;
 
                     var viewDiv = '审核中';
-                    var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;margin-top:5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+                    var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;margin-top:5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><#if info.creator == currentUser><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span></#if>' + viewDiv + '</div>'
                     $("#attachment").append(childInput)
                     layer.msg("文件上传成功!");
 
@@ -837,7 +837,7 @@
 
                             var fileType = result.fileType;
                             var mid = result.id;
-                            var viewDiv = '<@shiro.hasPermission name="low:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
+                            var viewDiv = '<@shiro.hasPermission name="low:delete"><#if info.creator == currentUser><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></#if></@shiro.hasPermission>';
                             $.ajax({
                                 type: "post",
                                 url: "getFileAuditResult",

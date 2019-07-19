@@ -314,7 +314,7 @@
         }
 
 
-        var childInput = '<div><input style="margin-top: 5px;width: 356.33px;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+        var childInput = '<div><input style="margin-top: 5px;width: 356.33px;" type="text" name="mid" data-value="' + id + '" value="' + fileName + '" class="btn btn-default" readonly><#if info.creator == currentUser><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></#if>' + viewDiv + '</div>'
         $("#attachment").append(childInput)
 
     }
@@ -543,7 +543,7 @@
                     var fileName = data.fileName;
 
                     var viewDiv = '审核中';
-                    var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span>' + viewDiv + '</div>'
+                    var childInput = '<div><input style="margin-bottom: 5px;width: 356.33px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="text" name="mid" data-value="' + mid + '" value="' + fileName + '" class="btn btn-default" readonly><#if info.creator == currentUser><span class="glyphicon glyphicon-remove" style="color: red;    margin-left: 6px" onclick="removeInput(this)"></span></#if>' + viewDiv + '</div>'
                     $("#attachment").append(childInput)
                     layer.msg("文件上传成功!");
 
@@ -828,7 +828,7 @@
                             finalResult = result.finalResult
                             var fileType = result.fileType;
                             var mid = result.id;
-                            var viewDiv = '<@shiro.hasPermission name="announce:delete"><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></@shiro.hasPermission>';
+                            var viewDiv = '<@shiro.hasPermission name="announce:delete"><#if info.creator == currentUser><span class="glyphicon glyphicon-remove" style="color: red;margin-left: 6px" onclick="removeInput(this)"></span></#if></@shiro.hasPermission>';
 
                             $.ajax({
                                 type: "post",
