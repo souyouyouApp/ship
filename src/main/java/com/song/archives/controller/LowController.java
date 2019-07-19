@@ -231,10 +231,12 @@ public class LowController {
             Predicate whereLike = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
 
             List<Predicate> predicateArr = new ArrayList<>();
-
-            predicateArr.add(whereLike);
-            predicateArr.add(whereEquals);
-
+            if (predicatesWhereArr.size() > 0){
+                predicateArr.add(whereEquals);
+            }
+            if (predicates.size() > 0){
+                predicateArr.add(whereLike);
+            }
 
             return criteriaQuery.where(predicateArr.toArray(new Predicate[predicateArr.size()])).getRestriction();
         };
