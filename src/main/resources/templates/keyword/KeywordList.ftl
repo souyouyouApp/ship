@@ -136,13 +136,13 @@
                     field: 'createTime',
                     title: '创建时间',
                     sortable: true,
-                    formatter: function (value, row, index) {
-                        if (value == null) {
-                            return "";
-                        }
-                        var offlineTimeStr = new Date(value.time).toLocaleDateString();
-                        return offlineTimeStr;
-                    }
+                    // formatter: function (value, row, index) {
+                    //     if (value == null) {
+                    //         return "";
+                    //     }
+                    //     var offlineTimeStr = new Date(value.time).toLocaleDateString();
+                    //     return offlineTimeStr;
+                    // }
                 }
             ]
         })
