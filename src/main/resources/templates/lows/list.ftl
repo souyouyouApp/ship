@@ -207,7 +207,7 @@
             $.post('delLow', {ids: ids.join(',')}, function (result) {
                 result = JSON.parse(result)
                 layer.close(load);
-                if (result && result.msg != 'success') {
+                if (result && result.msg == 'success') {
                     return layer.msg('删除成功。');
                 }else {
                     return layer.msg(result.msg);
