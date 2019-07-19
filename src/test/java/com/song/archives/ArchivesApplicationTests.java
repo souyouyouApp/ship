@@ -11,4 +11,10 @@ import java.util.Date;
 
 public class ArchivesApplicationTests {
 
+    @Test
+    public void test1(){
+        String url = "/ship/index";
+        System.out.println(url.contains("/index"));
+    }
+
 }

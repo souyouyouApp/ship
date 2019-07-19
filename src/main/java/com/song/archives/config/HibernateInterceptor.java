@@ -174,22 +174,22 @@ public class HibernateInterceptor extends EmptyInterceptor {
 
         String desc;
 
-        if (entity instanceof ZiliaoInfoEntity && request.getRequestURI().equals("/createData")){
+        if (entity instanceof ZiliaoInfoEntity && request.getRequestURI().contains("/createData")){
             desc = "查看资料【"+saveEntity.get("title")+"】,"+o.toString();
-        }else if (entity instanceof ProjectInfoEntity && request.getRequestURI().equals("/ProjectDetail")){
+        }else if (entity instanceof ProjectInfoEntity && request.getRequestURI().contains("/ProjectDetail")){
             desc = "查看项目【"+saveEntity.get("proName")+"】,"+o.toString();
         }else if (entity instanceof AnliInfoEntity){
             desc = "查看案例【"+saveEntity.get("title")+"】,"+o.toString();
         }else if (entity instanceof LowInfoEntity){
             desc = "查看法律法规【"+saveEntity.get("title")+"】,"+o.toString();
-        }else if (entity instanceof ExpertInfoEntity && request.getRequestURI().equals("/expert")){
+        }else if (entity instanceof ExpertInfoEntity && request.getRequestURI().contains("/expert")){
             desc = "查看专家【"+saveEntity.get("name")+"】,"+o.toString();
-        }else if (entity instanceof AnnounceInfoEntity && request.getRequestURI().equals("/createAnnoucePage")){
+        }else if (entity instanceof AnnounceInfoEntity && request.getRequestURI().contains("/createAnnoucePage")){
             System.out.println("查看公告【"+saveEntity.get("title")+"】,"+o.toString());
             desc = "查看公告【"+saveEntity.get("title")+"】,"+o.toString();
-        }else if (entity instanceof User && request.getRequestURI().equals("/userInfo")){
+        }else if (entity instanceof User && request.getRequestURI().contains("/userInfo")){
             desc = "查看用户【"+saveEntity.get("username")+"】,"+o.toString();
-        }else if (entity instanceof FileInfoEntity && (request.getRequestURI().equals("/getFile")||request.getRequestURI().equals("/downLoadFile")||request.getRequestURI().equals("/ReviewProjectFiles")||request.getRequestURI().equals("/BatchDownProjectFiles"))){
+        }else if (entity instanceof FileInfoEntity && (request.getRequestURI().contains("/getFile")||request.getRequestURI().contains("/downLoadFile")||request.getRequestURI().contains("/ReviewProjectFiles")||request.getRequestURI().contains("/BatchDownProjectFiles"))){
             desc = "下载文件【"+saveEntity.get("fileName")+"】";
         }else if(entity instanceof ChengYanDanWeiEntity){
             desc="查看乘研单位【"+saveEntity.get("danweiName")+"】,"+o.toString();
