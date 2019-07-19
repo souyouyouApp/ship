@@ -406,7 +406,7 @@
                     title: '上传人',
                     sortable: true,
                 },{
-                    field: 'createTime',
+                    field: 'createTimes',
                     title: '上传时间',
                     sortable: true,
                 }]
