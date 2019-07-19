@@ -232,7 +232,7 @@ public class LowController {
 
             List<Predicate> predicateArr = new ArrayList<>();
 
-//            predicateArr.add(whereLike);
+            predicateArr.add(whereLike);
             predicateArr.add(whereEquals);
 
 
