@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
@@ -107,6 +108,14 @@ public class LoggerInterceptor implements HandlerInterceptor {
 
         //将日志写入到数据库
         LoggerJpa loggerJpa = getDAO(LoggerJpa.class,request);
+
+        HttpSession session = request.getSession();
+
+        if (null != session && null != session.getAttribute("user")){
+            User user = (User) session.getAttribute("user");
+            operationEntity.setUserId(String.valueOf(user.getId()));
+            operationEntity.setUserName(user.getRealName());
+        }
 
 
         HandlerMethod method= ((HandlerMethod)handler);
