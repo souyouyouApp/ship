@@ -268,7 +268,7 @@ public class AnliController {
                 predicates.add(criteriaBuilder.like(root.get("title"), "%" + searchValue + "%"));
                 predicates.add(criteriaBuilder.like(root.get("content"), "%" + searchValue + "%"));
                 predicates.add(criteriaBuilder.like(root.get("creator"), "%" + searchValue + "%"));
-                predicates.add(criteriaBuilder.like(root.get("createTime"), "%" + searchValue + "%"));
+                predicates.add(criteriaBuilder.like(root.get("createTimes"), "%" + searchValue + "%"));
             }
 
             Predicate whereLike = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
