@@ -226,6 +226,7 @@ public class LowController {
                 predicates.add(criteriaBuilder.like(root.get("content"), "%" + searchValue + "%"));
                 predicates.add(criteriaBuilder.like(root.get("keyword"), "%" + searchValue + "%"));
                 predicates.add(criteriaBuilder.like(root.get("uploader"), "%" + searchValue + "%"));
+                predicates.add(criteriaBuilder.like(root.get("title"), "%" + searchValue + "%"));
             }
 
             Predicate whereLike = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
