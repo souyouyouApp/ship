@@ -208,7 +208,7 @@
                 result = JSON.parse(result)
                 layer.close(load);
                 if (result && result.msg != 'success') {
-                    return layer.msg(result, so.default), !1;
+                    return layer.msg(result.msg, so.default), !1;
                 }
                 layer.msg('删除成功。');
                 $('#table').bootstrapTable('refresh');
