@@ -261,10 +261,11 @@
             $.post('delAnnounce', {ids: ids.join(',')}, function (result) {
                 result = JSON.parse(result)
                 layer.close(load);
-                if (result && result.msg != 'success') {
-                    return layer.msg(result, so.default), !1;
+                if (result && result.msg == 'success') {
+                    return layer.msg('删除成功。');
+                }else {
+                    return layer.msg(result.msg);
                 }
-                layer.msg('删除成功。');
                 $('#table').bootstrapTable('refresh');
             });
         });

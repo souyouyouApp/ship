@@ -158,6 +158,14 @@ public class AnnounceController {
             if (null != ids && ids.length >0){
                 for (Long id:ids){
                     AnnounceInfoEntity entity = announceRepository.findOne(id);
+
+                    if (!entity.getCreator().equals(getUser().getUsername())){
+                        msg = "不能删除非本人新建的记录";
+                        result.put("msg", msg);
+                        LoggerUtils.setLoggerFailed(request,msg);
+                        return result.toString();
+                    }
+
                     announceRepository.delete(entity);
 
                 }

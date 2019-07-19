@@ -688,6 +688,14 @@ public class DataController {
             if (null != ids && ids.length >0){
                 for (Long id:ids){
                     ZiliaoInfoEntity entity = dataRepository.findOne(id);
+
+                    if (!entity.getCreator().equals(getUser().getUsername())){
+                        msg = "不能删除非本人新建的记录";
+                        result.put("msg", msg);
+                        LoggerUtils.setLoggerFailed(request,msg);
+                        return result.toString();
+                    }
+
                     dataRepository.delete(entity);
 
                 }

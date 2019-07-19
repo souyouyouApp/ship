@@ -61,9 +61,6 @@ public class ExpertController {
     @Autowired
     private ExpertRepository expertRepository;
 
-    @Autowired
-    private ModuleFileRespository moduleFileRespository;
-
     /**
      * 删除专家
      *
@@ -80,6 +77,14 @@ public class ExpertController {
             if (null != ids && ids.length > 0) {
                 for (Long id : ids) {
                     ExpertInfoEntity entity = expertRepository.findOne(id);
+
+                    if (!entity.getCreator().equals(getUser().getUsername())){
+                        msg = "不能删除非本人新建的记录";
+                        result.put("msg", msg);
+                        LoggerUtils.setLoggerFailed(request,msg);
+                        return result.toString();
+                    }
+
                     expertRepository.delete(entity);
 
                 }

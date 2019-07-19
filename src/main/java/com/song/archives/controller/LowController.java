@@ -282,7 +282,7 @@ public class LowController {
                     LowInfoEntity entity = lowRepository.findOne(id);
 
                     if (!entity.getCreator().equals(getUser().getUsername())){
-                        msg = "不能删除非本人的信息";
+                        msg = "不能删除非本人新建的记录";
                         result.put("msg", msg);
                         LoggerUtils.setLoggerFailed(request,msg);
                         return result.toString();
