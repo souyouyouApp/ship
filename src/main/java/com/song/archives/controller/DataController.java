@@ -777,7 +777,7 @@ public class DataController {
                 predicates.add(criteriaBuilder.like(root.get("ziliaoFrom"), "%" + searchValue + "%"));
                 predicates.add(criteriaBuilder.like(root.get("ziliaoContent"), "%" + searchValue + "%"));
                 predicates.add(criteriaBuilder.like(root.get("creator"), "%" + searchValue + "%"));
-                predicates.add(criteriaBuilder.like(root.get("createTime"), "%" + searchValue + "%"));
+                predicates.add(criteriaBuilder.like(root.get("createTimes"), "%" + searchValue + "%"));
             }
 
             Predicate whereLike = criteriaBuilder.or(predicates.toArray(new Predicate[predicates.size()]));
