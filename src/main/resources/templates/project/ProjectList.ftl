@@ -335,11 +335,11 @@
                     sortable: true,
                     formatter: function (value, row, index) {
                         //
-//                    <i class="glyphicon glyphicon-eye-open"></i>&nbsp;
+//                    <i class="glyphicon glyphicon-eye-open"></i>&nbsp; target="_blank"
                         if (row.proAuditState != 1) {
                             return value;
                         } else {
-                            return '<a href="javascript:void(0)" target="_blank" onclick="gotodetail(' + row.id + ')">' + row.proName + '</a>'
+                            return '<a href="javascript:void(0)"  onclick="gotodetail(' + row.id + ')">' + row.proName + '</a>'
                         }
                     }
                 },

@@ -19,7 +19,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>项目密级</label>
-                            <select class="form-control" id="classificlevelId" name="classificlevelId" onchange="refreshUsrList()">
+                            <select class="form-control" id="classificlevelId" disabled="disabled" name="classificlevelId" onchange="refreshUsrList()">
                             <#--<option value="-1">请选择</option>-->
                                <#if (levelId >= 4)> <option value="4">机密</option></#if>
                    <#if (levelId >= 3)> <option value="3">秘密</option></#if>
@@ -328,6 +328,9 @@
 
 <script src="static/js/custom/projectValidateNew.js"></script>
 <script language="JavaScript" type="text/javascript">
+
+    $("#classificlevelId").attr("disabled","disabled");
+
 
     function FilterUsers(tag) {
 
