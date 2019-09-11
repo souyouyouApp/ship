@@ -243,7 +243,10 @@ public class HibernateInterceptor extends EmptyInterceptor {
             desc = "删除乘研单位【" + saveEntity.get("danweiName") + "】，" + entity.toString();
         } else if (entity instanceof BaoJiangEntity) {
             desc = "删除报奖信息【" + saveEntity.get("jiangLiType") + "】，" + entity.toString();
-        } else {
+        }else if(entity instanceof FileInfoEntity){
+            desc = "删除项目附件【" + saveEntity.get("fileName") + "】";
+        }
+        else {
             super.onDelete(entity, id, state, propertyNames, types);
         }
 
@@ -368,7 +371,8 @@ public class HibernateInterceptor extends EmptyInterceptor {
             } else if (entity instanceof BaoJiangEntity) {
                 optDesc.append("更新报奖信息【" + before.get("jiangliType") + "】，将");
                 desc = getOperationLog(bjMap, before, after, optDesc);
-            } else {
+            }
+            else {
                 return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
             }
 
